@@ -1,9 +1,12 @@
 import './App.css'
-import LandingPage from './pages/landingPage'
+// import LandingPage from './pages/landingPage'
+import Login from './pages/login.jsx'
+
 function App() {
   return (
     <>
-      <LandingPage />
+      {/* <LandingPage /> */}
+      <Login />
     </>
   )
 }
