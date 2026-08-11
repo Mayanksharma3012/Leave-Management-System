@@ -1,0 +1,21 @@
+.sidebar{
+  width:100%; max-width:300px; min-height:100vh; position:sticky; top:0; align-self:flex-start; padding:2rem 1.25rem; background:var(--sidebar); color:#F8FAFC; border-radius:20px; box-shadow: 0 20px 40px rgba(2,6,23,0.5); border: 1px solid rgba(255,255,255,0.04); display:flex; flex-direction:column; gap:1.5rem; justify-content:space-between;
+}
+
+.toplogo{ display:flex; gap:0.9rem; align-items:center; }
+.logo{ width:56px; height:56px; border-radius:16px; background: linear-gradient(135deg, var(--primary), #8B5CF6); box-shadow: 0 18px 40px rgba(37,99,235,0.18); }
+.brand-text{ display:flex; flex-direction:column; }
+.name{ margin:0; font-size:1.05rem; font-weight:800; color:#fff; }
+.tagline{ margin:0; font-size:0.9rem; color:rgba(255,255,255,0.75); }
+
+.sidebarLinks{ display:flex; flex-direction:column; gap:0.6rem; margin-top:1.5rem; }
+.sidebarLinks a{ color: rgba(255,255,255,0.9); text-decoration:none; padding:0.8rem 0.9rem; border-radius:12px; font-weight:700; display:flex; align-items:center; gap:0.6rem; transition: all 0.15s ease; }
+.sidebarLinks a:hover{ transform:translateX(6px); background: rgba(255,255,255,0.04); }
+.sidebarLinks a.active{ background: linear-gradient(90deg, rgba(37,99,235,0.14), rgba(37,99,235,0.06)); color:#fff; box-shadow: 0 8px 20px rgba(37,99,235,0.08); }
+
+.sidebarLogOut{ margin-top:auto; }
+.sidebarLogOut button{ width:100%; padding:0.9rem; border-radius:999px; background:transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; font-weight:800; cursor:pointer; transition: all 0.15s ease; }
+.sidebarLogOut button:hover{ background:#ef4444; border-color:transparent; box-shadow: 0 12px 30px rgba(239,68,68,0.12); transform:translateY(-2px); }
+
+@media (max-width:900px){ .sidebar{ position:relative; border-radius:12px; max-width:100%; } }
+
