@@ -1,0 +1,295 @@
+.employeeLeavePage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.employeeLeaveMain {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  width: 90%;
+  max-width: 1240px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+.employeeLeaveMain .topNavbar {
+  width: 100%;
+}
+
+
+.leaveMain {
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.applyLeave {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  border-radius: 24px;
+  padding: 2rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.applyLeave h2 {
+  margin: 0;
+  font-size: 1.65rem;
+  color: var(--text-primary);
+}
+
+.applyLeave span {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.applyLeave select,
+.applyLeave input[type="date"],
+.applyLeave input[type="text"],
+.applyLeave input[type="file"] {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 0.95rem 1rem;
+  font: inherit;
+  color: var(--text-primary);
+  background: #f8fafc;
+  outline: none;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.applyLeave select {
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-secondary) 50%), linear-gradient(135deg, var(--text-secondary) 50%, transparent 50%);
+  background-position: calc(100% - 1rem) calc(50% - 0.15rem), calc(100% - 0.6rem) calc(50% - 0.15rem);
+  background-size: 8px 8px;
+  background-repeat: no-repeat;
+  appearance: none;
+}
+
+.applyLeave input[type="file"] {
+  padding: 0.75rem 1rem;
+  background: transparent;
+}
+
+.applyLeave input:focus,
+.applyLeave select:focus {
+  border-color: rgba(37, 99, 235, 0.4);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.selectDates {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.startDate,
+.endDate {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.startDate span,
+.endDate span {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.daysOff {
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--text-primary);
+  font-weight: 700;
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  width: fit-content;
+}
+
+.leaveReason,
+.attachDocument {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.attachDocument {
+  padding: 1.25rem;
+  border-radius: 20px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid var(--border);
+}
+
+.attachDocument h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+.attachDocument span {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.actionButton {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.actionButton button {
+  min-width: 120px;
+  padding: 0.95rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+
+.actionButton button:hover {
+  transform: translateY(-1px);
+}
+
+button.cancel {
+  background: #f8fafc;
+  color: var(--text-primary);
+  border-color: var(--border);
+}
+
+button.Submit {
+  background: linear-gradient(90deg, var(--primary), #1D4ED8);
+  color: #fff;
+  box-shadow: 0 14px 30px rgba(37, 99, 235, 0.18);
+}
+
+.leaveBalance {
+  min-height: 320px;
+  border-radius: 24px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 1.75rem;
+  display: grid;
+  gap: 1.5rem;
+}
+
+.leaveBalanceHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.leaveBalanceHeader h3,
+.holidayHeader h4 {
+  margin: 0;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+}
+
+.balanceList {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.balanceItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  border-radius: 18px;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.14);
+  color: var(--text-primary);
+}
+
+.balanceItem span {
+  font-weight: 600;
+}
+
+.balanceItem strong {
+  font-size: 1rem;
+}
+
+.holidaySection {
+  display: grid;
+  gap: 1rem;
+}
+
+.holidayList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 0.9rem;
+}
+
+.holidayItem {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.95rem 1rem;
+  border-radius: 18px;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1px solid var(--border);
+}
+
+.holidayDate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 64px;
+  border-radius: 12px;
+  padding: 0.55rem 0.75rem;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary);
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+@media (max-width: 1000px) {
+  .leaveMain {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+@media (max-width: 700px) {
+  .employeeLeaveMain {
+    padding: 1.25rem 0;
+  }
+
+  .applyLeave {
+    padding: 1.5rem;
+  }
+
+  .selectDates {
+    grid-template-columns: 1fr;
+  }
+
+  .actionButton {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actionButton button {
+    width: 100%;
+  }
+}
+
+

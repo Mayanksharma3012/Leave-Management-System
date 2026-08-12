@@ -1,6 +1,9 @@
 import './sidebar.css'
+import { useState } from 'react'
+function Sidebar({active, setActive}){
 
-function Sidebar(){
+    // const [active, setActive] = useState('')
+
     return(
         <div className="sidebar">
             <div className="toplogo">     
@@ -12,11 +15,11 @@ function Sidebar(){
             </div>
 
             <nav className="sidebarLinks" aria-label="Main navigation">
-                <a href="#" className="active">Dashboard</a>
-                <a href="#">Apply Leave</a>
-                <a href="#">My Leaves</a>
-                <a href="#">Calendar</a>
-                <a href="#">Settings</a>
+                <a href="#" className={(active === 'Dashboard' || '')? 'active':''} onClick={()=> setActive('Dashboard')}>Dashboard</a>
+                <a href="#" className={active==='Apply Leave'? 'active':''} onClick={()=> setActive('Apply Leave')}>Apply Leave</a>
+                <a href="#" className={active==='My Leaves'? 'active':''} onClick={()=> setActive('My Leaves')}>My Leaves</a>
+                <a href="#" className={active==='Calendar'? 'active':''} onClick={()=> setActive('Calendar')}>Calendar</a>
+                <a href="#" className={active==='Settings'? 'active':''} onClick={()=> setActive('Settings')}>Settings</a>
             </nav>
 
             <div className="sidebarLogOut">

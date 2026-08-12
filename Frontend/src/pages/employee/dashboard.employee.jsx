@@ -1,5 +1,6 @@
 import './dashboard.employee.css'
 import Sidebar from '../../components/sidebar'
+import Navbar from '../../components/header'
 
 function StatusBadge({status}){
   const map = {
@@ -12,8 +13,7 @@ function StatusBadge({status}){
   )
 }
 
-function EmployeeDashboard(){
-    const userName = 'Mayank Sharma'
+function EmployeeDashboard({active, setActive}){
 
     const stats = [
       {label: 'Total Leaves', value: 18, icon: '📅'},
@@ -31,22 +31,11 @@ function EmployeeDashboard(){
 
     return(
         <div className="dashboardPage">
-            <Sidebar />
+            <Sidebar active={active}/>
 
             <main className="dashboardMain container">
                 {/* Top navbar */}
-                <header className="topNavbar card">
-                    <div className="greeting">
-                        <div className="greetingText">
-                          <div className="muted">Welcome back,</div>
-                          <h1 className="welcomeName">{userName}</h1>
-                        </div>
-                        <div className="navActions">
-                          <button className="iconBtn" aria-label="Notifications">🔔</button>
-                          <button className="avatarBtn" aria-label="Profile">M</button>
-                        </div>
-                    </div>
-                </header>
+                <Navbar/>
 
                 {/* Stats row */}
                 <section className="statsRow">
