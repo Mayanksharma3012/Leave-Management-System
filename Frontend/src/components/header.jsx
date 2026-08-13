@@ -20,7 +20,12 @@ function Navbar({active}) {
                             <h1 className="applyHeading">Apply for leave</h1>
                             <p className="applyInfo">Complete your request and submit it quickly for approval.</p>
                         </>
-                    ) : (
+                    ) : active === 'My Leaves' ? (
+                        <>
+                            <h1 className="applyHeading">My Leaves</h1>
+                            <p className="applyInfo">View and manage your leave requests.</p>
+                        </>
+                    ):( // else
                         <>
                             <h1 className="applyHeading">Welcome</h1>
                             <p className="applyInfo">Use the sidebar to navigate through your dashboard and requests.</p>
