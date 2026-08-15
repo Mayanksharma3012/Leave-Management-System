@@ -13,6 +13,10 @@ const settingsTabs = [
 
 function EmployeeSettings({ active, setActive }) {
     const [settingPage, setSettingPage] = useState('Profile')
+    const [changePassword, setChangePassword] = useState(false)
+    const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+    const [showNewPassword, setShowNewPassword] = useState(false)
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
 
     return (
         <div className="employeeSettingsPage">
@@ -96,7 +100,94 @@ function EmployeeSettings({ active, setActive }) {
                                     <div className="sectionHeadingRow">
                                         <h2>Security</h2>
                                     </div>
-                                    <div className="emptyState">Security settings content coming soon.</div>
+
+                                    {!changePassword ? (
+                                        <div className="securityCard">
+                                            <div className="securityInfoRow">
+                                                <div className="securityTextBlock">
+                                                    <h3>Password</h3>
+                                                    <span>Last changed 24 days ago</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="settingsActions securityAction">
+                                                <button type="button" className="secondaryBtn" onClick={() => setChangePassword(true)}>
+                                                    [ Change Password ]
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="changePasswordBlock">
+                                            <div className="securityHeaderMini">
+                                                <h3>Change Password</h3>
+                                            </div>
+
+                                            <div className="fieldGrid passwordGrid">
+                                                <div className="fieldBlock passwordFieldWrap">
+                                                    <label htmlFor="currentpassword">Current password</label>
+                                                    <div className="passwordField">
+                                                        <input
+                                                            type={showCurrentPassword ? 'text' : 'password'}
+                                                            id="currentpassword"
+                                                            placeholder="Enter current password"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className={showCurrentPassword ? 'showBtn show' : 'showBtn hide'}
+                                                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                                                            aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
+                                                        >
+                                                            <i className={showCurrentPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="fieldBlock passwordFieldWrap">
+                                                    <label htmlFor="newpassword">New password</label>
+                                                    <div className="passwordField">
+                                                        <input
+                                                            type={showNewPassword ? 'text' : 'password'}
+                                                            id="newpassword"
+                                                            placeholder="Enter new password"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className={showNewPassword ? 'showBtn show' : 'showBtn hide'}
+                                                            onClick={() => setShowNewPassword(!showNewPassword)}
+                                                            aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
+                                                        >
+                                                            <i className={showNewPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+
+                                                <div className="fieldBlock passwordFieldWrap">
+                                                    <label htmlFor="confirmnewpassword">Confirm new password</label>
+                                                    <div className="passwordField">
+                                                        <input
+                                                            type={showConfirmPassword ? 'text' : 'password'}
+                                                            id="confirmnewpassword"
+                                                            placeholder="Confirm new password"
+                                                        />
+                                                        <button
+                                                            type="button"
+                                                            className={showConfirmPassword ? 'showBtn show' : 'showBtn hide'}
+                                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                            aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+                                                        >
+                                                            <i className={showConfirmPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="settingsActions securityAction">
+                                                <button type="button" className="primaryBtn" onClick={() => setChangePassword(false)}>
+                                                    [ Update Password ]
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

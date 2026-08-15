@@ -274,6 +274,99 @@
   box-shadow: 0 16px 30px rgba(37, 99, 235, 0.18);
 }
 
+.securityCard,
+.changePasswordBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  padding: 1.2rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
+  border: 1px solid rgba(37, 99, 235, 0.08);
+}
+
+.securityInfoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.securityTextBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.securityTextBlock h3,
+.securityHeaderMini h3 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.securityTextBlock span {
+  color: var(--text-secondary);
+  font-size: 0.96rem;
+}
+
+.securityAction {
+  justify-content: flex-start;
+  margin-top: 0;
+}
+
+.passwordGrid {
+  display: grid;
+  gap: 1rem;
+}
+
+.passwordFieldWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.passwordField {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.passwordField input {
+  width: 100%;
+  min-height: 52px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #f8fafc;
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.9rem 3rem 0.9rem 1rem;
+  outline: none;
+}
+
+.passwordField input:focus {
+  border-color: rgba(37, 99, 235, 0.35);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.08);
+}
+
+.showBtn {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem;
+}
+
+.showBtn.show {
+  color: var(--primary);
+}
+
 .emptyState {
   padding: 2rem 1rem;
   border-radius: 18px;
