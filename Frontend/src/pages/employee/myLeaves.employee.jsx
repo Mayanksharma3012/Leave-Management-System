@@ -1,13 +1,9 @@
 import Navbar from '../../components/header'
 import Sidebar from '../../components/sidebar'
+import SummaryGrid from '../../components/summaryGrid'
 import './myLeaves.employee.css'
 
-const summaryCards = [
-  { label: 'Total', value: 18, tone: 'total' },
-  { label: 'Approved', value: 12, tone: 'approved' },
-  { label: 'Pending', value: 3, tone: 'pending' },
-  { label: 'Rejected', value: 3, tone: 'rejected' },
-]
+
 
 const leaveRows = [
   { type: 'Sick Leave', icon: '🩺', duration: 'Aug 10 – Aug 12', days: 3, status: 'Approved' },
@@ -23,14 +19,7 @@ function MyLeaves({ active, setActive }) {
         <Navbar active={active} />
 
         <section className="myLeavesMain">
-          <div className="summaryGrid" aria-label="Leave summary">
-            {summaryCards.map((item) => (
-              <div key={item.label} className={`summaryCard ${item.tone}`}>
-                <h3>{item.label}</h3>
-                <span>{item.value}</span>
-              </div>
-            ))}
-          </div>
+          <SummaryGrid/>
 
           <div className="leaveHistoryPanel">
             <div className="historyHeadingRow">

@@ -1,0 +1,49 @@
+.summaryGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.summaryCard {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 1.25rem 1.35rem;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+  min-height: 118px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.summaryCard::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, rgba(37,99,235,0.9), rgba(59,130,246,0.15));
+}
+
+.summaryCard h3 {
+  margin: 0 0 0.7rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  font-weight: 700;
+}
+
+.summaryCard span {
+  font-size: clamp(2rem, 2vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.summaryCard.total::before { background: linear-gradient(90deg, #0f172a, #475569); }
+.summaryCard.approved::before { background: linear-gradient(90deg, #22c55e, #86efac); }
+.summaryCard.pending::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.summaryCard.rejected::before { background: linear-gradient(90deg, #ef4444, #fca5a5); }

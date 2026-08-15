@@ -25,7 +25,14 @@ function Navbar({active}) {
                             <h1 className="applyHeading">My Leaves</h1>
                             <p className="applyInfo">View and manage your leave requests.</p>
                         </>
-                    ):( // else
+                    ) : active === 'Calendar' ? (
+                        <>
+                        
+                            <h1 className="applyHeading">Leave Calendar</h1>
+                            <p className="applyInfo">Track your leaves, holidays and upcoming time off.</p>
+                        </>
+                    )
+                    :( // else
                         <>
                             <h1 className="applyHeading">Welcome</h1>
                             <p className="applyInfo">Use the sidebar to navigate through your dashboard and requests.</p>
