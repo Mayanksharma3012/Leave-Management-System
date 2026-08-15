@@ -31,6 +31,12 @@ function Navbar({active}) {
                             <h1 className="applyHeading">Leave Calendar</h1>
                             <p className="applyInfo">Track your leaves, holidays and upcoming time off.</p>
                         </>
+                    ) : active === 'Settings' ? (
+                        <>
+                        
+                            <h1 className="applyHeading">Settings</h1>
+                            <p className="applyInfo">Manage your account and application preferences.</p>
+                        </>
                     )
                     :( // else
                         <>
