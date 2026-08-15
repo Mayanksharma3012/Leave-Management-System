@@ -367,6 +367,96 @@
   color: var(--primary);
 }
 
+.notificationCard {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  padding: 1.1rem;
+  border-radius: 20px;
+  background: linear-gradient(180deg, #f8fafc, #eef2ff);
+  border: 1px solid rgba(37, 99, 235, 0.08);
+}
+
+.notificationGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.notificationGroup h3 {
+  margin: 0 0 0.2rem;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.notificationRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.notificationText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  flex: 1;
+}
+
+.notificationText label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.notificationText span {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.switch {
+  position: relative;
+  width: 58px;
+  height: 32px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: #dfe7f5;
+  border-radius: 999px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+.switch.on {
+  background: linear-gradient(90deg, var(--primary), #3b82f6);
+  border-color: rgba(37, 99, 235, 0.3);
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+}
+
+.switchThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.12);
+  transition: transform 0.2s ease;
+}
+
+.switch.on .switchThumb {
+  transform: translateX(26px);
+}
+
 .emptyState {
   padding: 2rem 1rem;
   border-radius: 18px;

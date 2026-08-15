@@ -17,6 +17,20 @@ function EmployeeSettings({ active, setActive }) {
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
     const [showNewPassword, setShowNewPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+    const [notificationSettings, setNotificationSettings] = useState({
+        approvedReq: true,
+        rejectedReq: true,
+        pendingReq: false,
+        companyAnnounce: true,
+        upcomingRemainder: false,
+    })
+
+    const toggleNotification = (key) => {
+        setNotificationSettings((prev) => ({
+            ...prev,
+            [key]: !prev[key],
+        }))
+    }
 
     return (
         <div className="employeeSettingsPage">
@@ -196,7 +210,94 @@ function EmployeeSettings({ active, setActive }) {
                                     <div className="sectionHeadingRow">
                                         <h2>Notifications</h2>
                                     </div>
-                                    <div className="emptyState">Notification preferences coming soon.</div>
+
+                                    <div className="notificationCard">
+                                        <div className="notificationGroup">
+                                            <h3>Leave Requests</h3>
+
+                                            <div className="notificationRow">
+                                                <div className="notificationText">
+                                                    <label>Leave request approved</label>
+                                                    <span>Receive a notification when your leave request is approved.</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={`switch ${notificationSettings.approvedReq ? 'on' : ''}`}
+                                                    aria-label={notificationSettings.approvedReq ? 'Turn off approved leave notification' : 'Turn on approved leave notification'}
+                                                    onClick={() => toggleNotification('approvedReq')}
+                                                >
+                                                    <span className="switchThumb" />
+                                                </button>
+                                            </div>
+
+                                            <div className="notificationRow">
+                                                <div className="notificationText">
+                                                    <label>Leave request rejected</label>
+                                                    <span>Receive a notification when your manager rejects your request.</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={`switch ${notificationSettings.rejectedReq ? 'on' : ''}`}
+                                                    aria-label={notificationSettings.rejectedReq ? 'Turn off rejected leave notification' : 'Turn on rejected leave notification'}
+                                                    onClick={() => toggleNotification('rejectedReq')}
+                                                >
+                                                    <span className="switchThumb" />
+                                                </button>
+                                            </div>
+
+                                            <div className="notificationRow">
+                                                <div className="notificationText">
+                                                    <label>Leave request pending</label>
+                                                    <span>Notify me when a manager takes action.</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={`switch ${notificationSettings.pendingReq ? 'on' : ''}`}
+                                                    aria-label={notificationSettings.pendingReq ? 'Turn off pending leave notification' : 'Turn on pending leave notification'}
+                                                    onClick={() => toggleNotification('pendingReq')}
+                                                >
+                                                    <span className="switchThumb" />
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div className="notificationGroup">
+                                            <h3>System</h3>
+
+                                            <div className="notificationRow">
+                                                <div className="notificationText">
+                                                    <label>Company announcements</label>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={`switch ${notificationSettings.companyAnnounce ? 'on' : ''}`}
+                                                    aria-label={notificationSettings.companyAnnounce ? 'Turn off company announcements' : 'Turn on company announcements'}
+                                                    onClick={() => toggleNotification('companyAnnounce')}
+                                                >
+                                                    <span className="switchThumb" />
+                                                </button>
+                                            </div>
+
+                                            <div className="notificationRow">
+                                                <div className="notificationText">
+                                                    <label>Upcoming leave reminder</label>
+                                                    <span>Remind me before my approved leave.</span>
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    className={`switch ${notificationSettings.upcomingRemainder ? 'on' : ''}`}
+                                                    aria-label={notificationSettings.upcomingRemainder ? 'Turn off upcoming leave reminder' : 'Turn on upcoming leave reminder'}
+                                                    onClick={() => toggleNotification('upcomingRemainder')}
+                                                >
+                                                    <span className="switchThumb" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="settingsActions">
+                                        <button type="button" className="primaryBtn">Save Preferences</button>
+                                    </div>
                                 </div>
                             )}
 
