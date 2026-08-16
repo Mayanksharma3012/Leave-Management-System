@@ -5,6 +5,7 @@
   grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
+  background: var(--bg);
 }
 
 .employeeMyLeavesMain {
@@ -23,12 +24,11 @@
   gap: 1.5rem;
 }
 
-
 .leaveHistoryPanel {
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 26px;
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.06);
+  box-shadow: var(--shadow);
   padding: 1.5rem;
 }
 
@@ -56,12 +56,16 @@
   height: 48px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: #f8fafc;
+  background: var(--card-soft);
   color: var(--text-primary);
   font: inherit;
   padding: 0 1rem;
   outline: none;
   transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.historyFilters input::placeholder {
+  color: var(--text-secondary);
 }
 
 .historyFilters input:focus,
@@ -79,7 +83,7 @@
 }
 
 .dateButton {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  background: linear-gradient(180deg, var(--card) 0%, var(--card-soft) 100%);
   font-weight: 600;
   cursor: pointer;
 }
@@ -89,7 +93,7 @@
   overflow-x: auto;
   border: 1px solid var(--border);
   border-radius: 20px;
-  background: #fff;
+  background: var(--card);
 }
 
 .leaveTable {
@@ -104,14 +108,14 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-secondary);
-  background: #f8fafc;
+  background: var(--card-soft);
   padding: 1rem 1.1rem;
   border-bottom: 1px solid var(--border);
 }
 
 .leaveTable tbody td {
   padding: 1.15rem 1.1rem;
-  border-bottom: 1px solid #edf2f7;
+  border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   font-size: 0.98rem;
 }
@@ -121,7 +125,7 @@
 }
 
 .leaveTable tbody tr:hover {
-  background: rgba(37, 99, 235, 0.02);
+  background: rgba(37, 99, 235, 0.04);
 }
 
 .leaveTypeCell {
@@ -162,22 +166,22 @@
 }
 
 .statusBadge.approved {
-  color: #166534;
-  background: rgba(34, 197, 94, 0.12);
+  color: #bbf7d0;
+  background: rgba(34, 197, 94, 0.14);
 }
 
 .statusBadge.approved::before { background: var(--approved); }
 
 .statusBadge.pending {
-  color: #92400e;
-  background: rgba(245, 158, 11, 0.12);
+  color: #fcd34d;
+  background: rgba(245, 158, 11, 0.14);
 }
 
 .statusBadge.pending::before { background: var(--pending); }
 
 .statusBadge.rejected {
-  color: #991b1b;
-  background: rgba(239, 68, 68, 0.12);
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.14);
 }
 
 .statusBadge.rejected::before { background: var(--rejected); }
@@ -187,7 +191,7 @@
   height: 34px;
   border-radius: 10px;
   border: 1px solid var(--border);
-  background: #f8fafc;
+  background: var(--card-soft);
   color: var(--text-primary);
   font-size: 1.25rem;
   cursor: pointer;
@@ -197,6 +201,20 @@
 .tableAction:hover {
   transform: translateX(2px);
   box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+:root[data-theme='dark'] .leaveHistoryPanel,
+:root[data-theme='dark'] .tableWrapper,
+:root[data-theme='dark'] .historyFilters input,
+:root[data-theme='dark'] .historyFilters select,
+:root[data-theme='dark'] .dateButton,
+:root[data-theme='dark'] .tableAction,
+:root[data-theme='dark'] .leaveTable thead th {
+  box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.06);
+}
+
+:root[data-theme='dark'] .leaveHistoryPanel {
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.48);
 }
 
 @media (max-width: 1000px) {

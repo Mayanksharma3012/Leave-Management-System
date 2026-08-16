@@ -1,6 +1,5 @@
 import './settings.employee.css'
 import Sidebar from './../../components/sidebar.jsx'
-import Navbar from '../../components/header.jsx'
 import fakeProfile from './../../assets/fakeProfile.png'
 import { useState } from 'react'
 
@@ -11,7 +10,13 @@ const settingsTabs = [
     { id: 'Appearance', label: '🎨 Appearance' },
 ]
 
-function EmployeeSettings({ active, setActive }) {
+const themeOptions = [
+    { id: 'light', label: 'Light', caption: 'Use the standard day mode.', icon: '☀️' },
+    { id: 'dark', label: 'Dark', caption: 'Switch the dashboard to dark mode.', icon: '🌙' },
+    { id: 'system', label: 'System', caption: 'Match your device preference automatically.', icon: '🖥️' },
+]
+
+function EmployeeSettings({ active, setActive, theme, setTheme }) {
     const [settingPage, setSettingPage] = useState('Profile')
     const [changePassword, setChangePassword] = useState(false)
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -37,8 +42,6 @@ function EmployeeSettings({ active, setActive }) {
             <Sidebar active={active} setActive={setActive} />
 
             <main className="employeeSettingsMain container">
-                
-
                 <section className="settingsMain">
                     <div className="settingsHeader">
                         <div>
@@ -306,7 +309,24 @@ function EmployeeSettings({ active, setActive }) {
                                     <div className="sectionHeadingRow">
                                         <h2>Appearance</h2>
                                     </div>
-                                    <div className="emptyState">Appearance settings coming soon.</div>
+
+                                    <div className="appearanceOptions">
+                                        {themeOptions.map((option) => (
+                                            <button
+                                                key={option.id}
+                                                type="button"
+                                                className={`themeOption ${theme === option.id ? 'selected' : ''}`}
+                                                onClick={() => setTheme(option.id)}
+                                            >
+                                                <span className="themeIcon" aria-hidden="true">{option.icon}</span>
+                                                <span className="themeText">
+                                                    <strong>{option.label}</strong>
+                                                    <small>{option.caption}</small>
+                                                </span>
+                                                <span className={`themeRadio ${theme === option.id ? 'checked' : ''}`} aria-hidden="true" />
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

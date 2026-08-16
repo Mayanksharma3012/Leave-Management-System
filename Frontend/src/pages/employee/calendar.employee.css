@@ -4,6 +4,8 @@
   grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
+  background: var(--bg);
+  color: var(--text-primary);
 }
 
 .employeeCalendarMain {
@@ -23,25 +25,13 @@
 }
 
 .calendar-container {
-  background: #ffffff;
-  padding: 24px;
-  border-radius: 20px;
-  border: 1px solid #e2e8f0;
-}
-
-
-/* =========================================
-   CALENDAR CONTAINER
-   ========================================= */
-
-.calendar-container {
   width: 100%;
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 20px;
   padding: 24px;
   box-sizing: border-box;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+  box-shadow: var(--shadow);
 }
 
 .leave-calendar {
@@ -51,7 +41,7 @@
 .fc {
   width: 100%;
   font-family: inherit;
-  color: #111827;
+  color: var(--text-primary);
 }
 
 .fc .fc-toolbar {
@@ -61,20 +51,20 @@
   justify-content: space-between;
   gap: 16px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--border);
 }
 
 .fc .fc-toolbar-title {
   font-size: 22px;
   font-weight: 800;
-  color: #111827;
+  color: var(--text-primary);
   letter-spacing: -0.02em;
 }
 
 .fc .fc-button {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
-  color: #475569;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
   font-size: 13px;
   font-weight: 700;
   padding: 8px 12px;
@@ -88,15 +78,15 @@
 }
 
 .fc .fc-button:hover {
-  background: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background: rgba(37, 99, 235, 0.08);
+  border-color: rgba(37, 99, 235, 0.25);
+  color: var(--primary);
 }
 
 .fc .fc-button-primary:not(:disabled).fc-button-active,
 .fc .fc-button-primary:not(:disabled):active,
 .fc .fc-today-button {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  background: linear-gradient(135deg, var(--primary), var(--primary-strong));
   border-color: transparent;
   color: #ffffff;
   box-shadow: 0 10px 24px rgba(37, 99, 235, 0.18);
@@ -108,7 +98,7 @@
 }
 
 .fc .fc-scrollgrid {
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--border);
   border-radius: 14px;
   overflow: hidden;
 }
@@ -118,13 +108,13 @@
 }
 
 .fc .fc-col-header-cell {
-  background: #f8fafc;
-  border-color: #e2e8f0;
+  background: var(--card-soft);
+  border-color: var(--border);
 }
 
 .fc .fc-col-header-cell-cushion {
   padding: 13px 8px;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -133,38 +123,38 @@
 }
 
 .fc .fc-daygrid-day {
-  background: #ffffff;
-  border-color: #e2e8f0;
+  background: var(--card);
+  border-color: var(--border);
   transition: background 0.15s ease;
 }
 
 .fc .fc-daygrid-day:hover {
-  background: #f8fafc;
+  background: var(--card-soft);
 }
 
 .fc .fc-daygrid-day-number {
   padding: 10px;
-  color: #475569;
+  color: var(--text-primary);
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
 }
 
 .fc .fc-day-today {
-  background: rgba(37, 99, 235, 0.04) !important;
+  background: rgba(96, 165, 250, 0.08) !important;
 }
 
 .fc .fc-day-today .fc-daygrid-day-number {
-  color: #2563eb;
+  color: var(--primary);
   font-weight: 800;
 }
 
 .fc .fc-day-other {
-  background: #fafafa;
+  background: var(--bg);
 }
 
 .fc .fc-day-other .fc-daygrid-day-number {
-  color: #cbd5e1;
+  color: rgba(148, 163, 184, 0.8);
 }
 
 .fc .fc-daygrid-event {
@@ -216,7 +206,7 @@
 
 .fc .fc-day-sat,
 .fc .fc-day-sun {
-  background: #fcfcfd;
+  background: rgba(148, 163, 184, 0.04);
 }
 
 .calendar-legend {
@@ -225,8 +215,8 @@
   gap: 18px;
   margin-top: 18px;
   padding-top: 14px;
-  border-top: 1px solid #e2e8f0;
-  color: #64748b;
+  border-top: 1px solid var(--border);
+  color: var(--text-secondary);
   font-size: 12px;
   font-weight: 600;
   flex-wrap: wrap;
@@ -259,6 +249,30 @@
 }
 .calendar-legend span:nth-child(4)::before {
   background: #dc2626;
+}
+
+:root[data-theme='dark'] .fc .fc-button {
+  background: rgba(15, 23, 42, 0.9);
+  border-color: var(--border);
+  color: var(--text-primary);
+}
+
+:root[data-theme='dark'] .fc .fc-button:hover {
+  background: rgba(96, 165, 250, 0.12);
+  color: #bfdbfe;
+}
+
+:root[data-theme='dark'] .fc .fc-day-other {
+  background: rgba(148, 163, 184, 0.04);
+}
+
+:root[data-theme='dark'] .fc .fc-day-sat,
+:root[data-theme='dark'] .fc .fc-day-sun {
+  background: rgba(148, 163, 184, 0.03);
+}
+
+:root[data-theme='dark'] .calendar-container {
+  box-shadow: 0 18px 40px rgba(2, 6, 23, 0.55);
 }
 
 @media (max-width: 768px) {
