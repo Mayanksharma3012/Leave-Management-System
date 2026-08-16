@@ -1,5 +1,6 @@
 import './landingPage.css'
 import Footer from '../components/footer'
+import { Link } from 'react-router-dom'
 const calendarCells = [
     { day: '1',status: 'holiday', label: 'Holiday' },
     { day: '2', status: 'approved', label: 'Approved' },
@@ -55,8 +56,8 @@ function LandingPage(){
                         <a href="#contact">Contact</a>
                     </nav>
                     <div className="sign">
-                        <button className='loginBtn'>Login</button>
-                        <button className='getStartedBtn'>Get Started</button>
+                        <button className='loginBtn'><Link to='/login'></Link>Login</button>
+                        <button className='getStartedBtn'><Link to='/register'></Link>Get Started</button>
                     </div>
                 </div>
             </header>
@@ -67,7 +68,7 @@ function LandingPage(){
                     <h1>Manage employee leave with speed, clarity, and confidence.</h1>
                     <p>Track requests, approve faster, and keep your team aligned with a clean, modern dashboard built for HR and managers.</p>
                     <div className="hero-buttons">
-                        <button className="btn btn-primary">Get Started</button>
+                        <button className="btn btn-primary"><Link to='/register'></Link>Get Started</button>
                         <button className="btn btn-secondary">See Features</button>
                     </div>
                 </section>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import './App.css'
 
 import LandingPage from './pages/landingPage'
@@ -55,14 +56,19 @@ function App() {
 
   return (
     <>
-      {/* <LandingPage /> */}
-      {/* <Login /> */}
-      {/* <Register/> */}
-      {/* <EmployeeDashboard active={active} setActive={setActive} /> */}
-      {/* <ApplyLeaveEmployee active={active} setActive={setActive} /> */}
-      {/* <MyLeaves active={active} setActive={setActive} /> */}
-      {/* <CalendarEmployee active={active} setActive={setActive} /> */}
-      <EmployeeSettings active={active} setActive={setActive} theme={theme} setTheme={setTheme} />
+    <BrowserRouter>
+      <Routes>
+      <Route path='/' element={<LandingPage />} />
+      <Route path='/login' element={<Login />} />
+      <Route path='/register' element={<Register/>} />
+      <Route path='/employee/dashboard' element={<EmployeeDashboard active={active} setActive={setActive} />} />
+      <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee active={active} setActive={setActive} />} />
+      <Route path='/employee/my-leaves' element={<MyLeaves active={active} setActive={setActive} /> } />
+      <Route path='/employee/calendar' element={<CalendarEmployee active={active} setActive={setActive} />} />
+      <Route path='/employee/settings' element={<EmployeeSettings active={active} setActive={setActive} theme={theme} setTheme={setTheme} />} />
+        
+      </Routes>
+    </BrowserRouter>
     </>
   )
 }
