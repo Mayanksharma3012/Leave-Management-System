@@ -2,10 +2,10 @@ import './landingPage.css'
 import Footer from '../components/footer'
 import { Link } from 'react-router-dom'
 const calendarCells = [
-    { day: '1',status: 'holiday', label: 'Holiday' },
+    { day: '1', status: 'holiday', label: 'Holiday' },
     { day: '2', status: 'approved', label: 'Approved' },
     { day: '3', status: 'work', label: 'Work Day' },
-    { day: '4', status: 'work', label: 'Work Day'  },
+    { day: '4', status: 'work', label: 'Work Day' },
     { day: '5', status: 'work', label: 'Work Day' },
     { day: '6', status: 'holiday', label: 'Holiday' },
     { day: '7', status: 'approved', label: 'Approved' },
@@ -19,7 +19,7 @@ const calendarCells = [
     { day: '15', status: 'holiday', label: 'Holiday' },
     { day: '16', status: 'work', label: 'Work Day' },
     { day: '17', status: 'work', label: 'Work Day' },
-    { day: '18', status: 'holiday', label: 'Holiday'  },
+    { day: '18', status: 'holiday', label: 'Holiday' },
     { day: '19', status: 'work', label: 'Work Day' },
     { day: '20', status: 'work', label: 'Work Day' },
     { day: '21', status: 'work', label: 'Work Day' },
@@ -35,9 +35,9 @@ const calendarCells = [
     { day: '31', status: 'work', label: 'Work Day' },
 ]
 
-function LandingPage(){
-    return(
-        <>
+function LandingPage() {
+    return (
+        <div data-theme='light'>
             <header className="landingNavbar">
                 <div className="left">
                     <div className="logo"></div>
@@ -56,8 +56,13 @@ function LandingPage(){
                         <a href="#contact">Contact</a>
                     </nav>
                     <div className="sign">
-                        <button className='loginBtn'><Link to='/login'></Link>Login</button>
-                        <button className='getStartedBtn'><Link to='/register'></Link>Get Started</button>
+                        <Link to="/login" className="loginBtn">
+                            Login
+                        </Link>
+
+                        <Link to="/register" className="getStartedBtn">
+                            Get Started
+                        </Link>
                     </div>
                 </div>
             </header>
@@ -68,7 +73,7 @@ function LandingPage(){
                     <h1>Manage employee leave with speed, clarity, and confidence.</h1>
                     <p>Track requests, approve faster, and keep your team aligned with a clean, modern dashboard built for HR and managers.</p>
                     <div className="hero-buttons">
-                        <button className="btn btn-primary"><Link to='/register'></Link>Get Started</button>
+                        <Link className="btn btn-primary" to='/register'>Get Started</Link>
                         <button className="btn btn-secondary">See Features</button>
                     </div>
                 </section>
@@ -102,7 +107,7 @@ function LandingPage(){
                         <p className="section-eyebrow">Leave overview</p>
                         <h2>Track the month at a glance.</h2>
                     </div>
-                    <div className="calendar-legend">
+                    <div className="calendar-legendl">
                         <span><i className="legend-dot holiday"></i>Holiday</span>
                         <span><i className="legend-dot approved"></i>Approved</span>
                         <span><i className="legend-dot rejected"></i>Rejected</span>
@@ -125,8 +130,8 @@ function LandingPage(){
                     </div>
                 </div>
             </section>
-            <Footer/>
-        </>
+            <Footer />
+        </div>
     )
 }
 

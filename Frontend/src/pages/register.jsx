@@ -5,7 +5,7 @@ function Register() {
     const [showpass, setShowPass] = useState(false)
 
     return (
-        <>
+        <div className='loginPage'>
             <header className="landingNavbar">
                 <div className="left">
                     <div className="logo"></div>
@@ -63,7 +63,7 @@ function Register() {
                     </footer>
                 </form>
             </div>
-        </>
+        </div>
     )
 }
 

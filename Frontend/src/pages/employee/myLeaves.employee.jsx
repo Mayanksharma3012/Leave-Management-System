@@ -11,12 +11,12 @@ const leaveRows = [
   { type: 'Paid Leave', icon: '💼', duration: 'Sep 02 – Sep 04', days: 3, status: 'Rejected' },
 ]
 
-function MyLeaves({ active, setActive }) {
+function MyLeaves() {
   return (
     <div className="employeeMyLeavesPage">
-      <Sidebar active={active} setActive={setActive} />
+      <Sidebar />
       <main className="employeeMyLeavesMain container">
-        <Navbar active={active} />
+        <Navbar />
 
         <section className="myLeavesMain">
           <SummaryGrid/>

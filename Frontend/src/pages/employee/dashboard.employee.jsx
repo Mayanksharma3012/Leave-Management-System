@@ -13,7 +13,7 @@ function StatusBadge({status}){
   )
 }
 
-function EmployeeDashboard({active, setActive}){
+function EmployeeDashboard(){
 
     const stats = [
       {label: 'Total Leaves', value: 18, icon: '📅'},
@@ -31,7 +31,7 @@ function EmployeeDashboard({active, setActive}){
 
     return(
         <div className="dashboardPage">
-            <Sidebar active={active}/>
+            <Sidebar/>
 
             <main className="dashboardMain container">
                 {/* Top navbar */}

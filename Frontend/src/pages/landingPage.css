@@ -1,3 +1,19 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body{
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    color: #111827;
+    background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 55%, #0F172A 100%);
+}
 
 .landingNavbar{
     width: 100%;
@@ -5,7 +21,7 @@
     top: 0;
     z-index: 20;
     padding: 0 1.5rem;
-    background: rgba(248,250,252,0.92);
+    background: rgba(255,255,255,0.92);
     backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(148,163,184,0.35);
     display: flex;
@@ -35,29 +51,18 @@
     gap: 0.1rem;
 }
 
-.name{
+.landingNavbar .brand-text .name {
     margin: 0;
     font-size: 1.15rem;
     font-weight: 800;
     letter-spacing: -0.03em;
-    color: var(--text-primary);
+    color: #111827 !important;
 }
 
-.tagline{
+.landingNavbar .brand-text .tagline {
     margin: 0;
     font-size: 0.94rem;
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .landingNavbar {
-    background: rgba(11, 18, 32, 0.92);
-    border-bottom-color: rgba(148, 163, 184, 0.15);
-    box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.06);
-}
-
-:root[data-theme='dark'] .name,
-:root[data-theme='dark'] .tagline {
-    color: var(--text-primary);
+    color: #475569 !important;
 }
 
 .landingNavbar .right{
@@ -80,18 +85,12 @@
     color: #334155;
     font-weight: 500;
     transition: color 0.2s ease;
+    display: flex;
+    justify-content: center;
 }
 
 .landingNavbar .right .links a:hover{
     color: #2563EB;
-}
-
-:root[data-theme='dark'] .landingNavbar .right .links a {
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .landingNavbar .right .links a:hover {
-    color: var(--primary);
 }
 
 .landingNavbar .right .sign{
@@ -99,46 +98,33 @@
     gap: 1rem;
 }
 
-.landingNavbar .right .sign button{
+.landingNavbar .right .sign a {
     min-width: 100px;
     padding: 0.9rem 1rem;
     border-radius: 999px;
     font-weight: 700;
-    border: 1px solid transparent;
+    text-decoration: none;
+    text-align: center;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
-    font-weight: bolder;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.landingNavbar .right .sign .loginBtn{
-    background-color: rgba(255,255,255,0.95);
-    color: #2563EB;
-    border-color: rgba(148,163,184,0.25);
+.landingNavbar .right .sign .loginBtn {
+    background-color: rgba(255, 255, 255, 0.95);
+    color: #2563eb;
+    border: 1px solid rgba(148, 163, 184, 0.25);
 }
 
-.landingNavbar .right .sign .getStartedBtn{
-    background-color: #2563EB;
+.landingNavbar .right .sign .getStartedBtn {
+    background-color: #2563eb;
     color: white;
     border: none;
 }
 
-:root[data-theme='dark'] .landingNavbar .right .sign .loginBtn {
-    background-color: rgba(15, 23, 42, 0.9);
-    color: var(--primary);
-    border-color: rgba(148, 163, 184, 0.2);
-}
-
-:root[data-theme='dark'] .landingNavbar .right .sign .getStartedBtn {
-    background: linear-gradient(90deg, var(--primary), #3b82f6);
-    color: white;
-    border: none;
-}
-
-.landingNavbar .right .sign button:hover{
+.landingNavbar .right .sign a:hover {
     transform: translateY(-1px);
-    box-shadow: 0 14px 28px rgba(37,99,235,0.18);
+    box-shadow: 0 14px 28px rgba(37, 99, 235, 0.18);
 }
-
 .hero-section{
     max-width: 1240px;
     margin: 4rem auto 2rem;
@@ -151,18 +137,6 @@
 
 .hero-copy{
     color: #F8FAFC;
-}
-
-:root[data-theme='dark'] .hero-section {
-    color: var(--text-primary);
-}
-
-:root[data-theme='dark'] .hero-copy h1 {
-    color: var(--text-primary);
-}
-
-:root[data-theme='dark'] .hero-copy p {
-    color: var(--text-secondary);
 }
 
 .hero-badge{
@@ -211,6 +185,10 @@
 .btn-primary{
     background: #FFFFFF;
     color: #2563EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
 }
 
 .btn-secondary{
@@ -313,7 +291,7 @@
     font-size: clamp(1.45rem, 2.2vw, 2rem);
 }
 
-.calendar-legend{
+.calendar-legendl{
     display: flex;
     flex-wrap: wrap;
     gap: 0.8rem;
@@ -321,7 +299,7 @@
     font-size: 0.92rem;
 }
 
-.calendar-legend span{
+.calendar-legendl span{
     display: inline-flex;
     align-items: center;
     gap: 0.45rem;
@@ -333,7 +311,7 @@
     border-radius: 999px;
     display: inline-block;
 }
-/* todo */
+
 .legend-dot.holiday{ background:#3B82F6; }
 .legend-dot.approved{ background:#22C55E; }
 .legend-dot.rejected{ background:#EF4444; }
@@ -390,7 +368,12 @@
     opacity: 0.92;
 }
 
-
+.calendar-day.holiday{ background: rgba(59,130,246,0.55); }
+.calendar-day.approved{ background: rgba(34,197,94,0.55); }
+.calendar-day.rejected{ background: rgba(239,68,68,0.58); }
+.calendar-day.pending{ background: rgba(250,204,21,0.6); color: #0F172A; }
+.calendar-day.pending em{ color: #0F172A; }
+.calendar-day.work{ background: rgba(148,163,184,0.32); color: #F8FAFC; }
 
 @media (max-width: 980px) {
     .landingNavbar{

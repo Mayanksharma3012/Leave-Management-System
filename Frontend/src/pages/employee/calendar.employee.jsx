@@ -5,16 +5,16 @@ import SummaryGrid from '../../components/summaryGrid'
 import './calendar.employee.css'
 
 
-function CalendarEmployee({ active, setActive }) {
+function CalendarEmployee() {
 
     
 
     return (
         <>
             <div className="employeeCalendarPage">
-                <Sidebar active={active} setActive={setActive} />
+                <Sidebar />
                 <main className="employeeCalendarMain container">
-                    <Navbar active={active} />
+                    <Navbar  />
                     <section className='calendarMain'>
                         <SummaryGrid/>
                         <div className="calendar-container">

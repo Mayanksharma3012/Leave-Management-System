@@ -4,7 +4,8 @@
   grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
-  background: var(--bg);
+  /* background: var(--primary-strong); */
+      background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 55%, #0F172A 100%);
   color: var(--text-primary);
 }
 

@@ -26,7 +26,7 @@ function getInitialTheme() {
 }
 
 function App() {
-  const [active, setActive] = useState('Dashboard')
+  // const [active, setActive] = useState('Dashboard')
   const [theme, setTheme] = useState(getInitialTheme)
 
   useEffect(() => {
@@ -61,11 +61,11 @@ function App() {
       <Route path='/' element={<LandingPage />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register/>} />
-      <Route path='/employee/dashboard' element={<EmployeeDashboard active={active} setActive={setActive} />} />
-      <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee active={active} setActive={setActive} />} />
-      <Route path='/employee/my-leaves' element={<MyLeaves active={active} setActive={setActive} /> } />
-      <Route path='/employee/calendar' element={<CalendarEmployee active={active} setActive={setActive} />} />
-      <Route path='/employee/settings' element={<EmployeeSettings active={active} setActive={setActive} theme={theme} setTheme={setTheme} />} />
+      <Route path='/employee/dashboard' element={<EmployeeDashboard  />} />
+      <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  />} />
+      <Route path='/employee/my-leaves' element={<MyLeaves  /> } />
+      <Route path='/employee/calendar' element={<CalendarEmployee  />} />
+      <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
         
       </Routes>
     </BrowserRouter>

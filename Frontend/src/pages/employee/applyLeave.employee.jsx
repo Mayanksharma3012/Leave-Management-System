@@ -2,7 +2,7 @@ import './applyLeave.employee.css'
 import Sidebar from '../../components/sidebar'
 import Navbar from '../../components/header'
 
-function ApplyLeaveEmployee({active, setActive}){
+function ApplyLeaveEmployee(){
     const balances = [
       {label: 'Casual', days: '12 days'},
       {label: 'Sick', days: '8 days'},
@@ -17,9 +17,9 @@ function ApplyLeaveEmployee({active, setActive}){
     return(
         <>
             <div className="employeeLeavePage">
-                <Sidebar active={active} setActive={setActive}/>
+                <Sidebar />
                 <main className="employeeLeaveMain container">
-                    <Navbar active={active}/>
+                    <Navbar />
                     <section className='leaveMain'>
                         <form className="applyLeave">
                             <h2>Leave Request</h2>

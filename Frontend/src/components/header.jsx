@@ -1,57 +1,83 @@
 import './header.css'
+import { useLocation } from 'react-router-dom'
 
+function Navbar() {
 
-function Navbar({active}) {
+    const location = useLocation()
 
     const userName = 'Mayank Sharma'
+
+    const pageInfo = {
+        '/employee/dashboard': {
+            title: `Welcome back, ${userName}`,
+            subtitle: 'Here’s an overview of your leave activity.'
+        },
+
+        '/employee/apply-leave': {
+            title: 'Apply for leave',
+            subtitle: 'Complete your request and submit it quickly for approval.'
+        },
+
+        '/employee/my-leaves': {
+            title: 'My Leaves',
+            subtitle: 'View and manage your leave requests.'
+        },
+
+        '/employee/calendar': {
+            title: 'Leave Calendar',
+            subtitle: 'Track your leaves, holidays and upcoming time off.'
+        },
+
+        '/employee/settings': {
+            title: 'Settings',
+            subtitle: 'Manage your account and application preferences.'
+        }
+    }
+
+    const currentPage = pageInfo[location.pathname] || {
+        title: 'Welcome',
+        subtitle: 'Use the sidebar to navigate through your dashboard and requests.'
+    }
 
     return (
         <header className="topNavbar card">
 
             <div className="greeting">
-                <div className="greetingText">
-                    {active === 'Dashboard' ? (
-                        <>
-                            <div className="muted">Welcome back,</div>
-                            <h1 className="welcomeName">{userName}</h1>
-                        </>
-                    ) : active === 'Apply Leave' ? (
-                        <>
-                            <h1 className="applyHeading">Apply for leave</h1>
-                            <p className="applyInfo">Complete your request and submit it quickly for approval.</p>
-                        </>
-                    ) : active === 'My Leaves' ? (
-                        <>
-                            <h1 className="applyHeading">My Leaves</h1>
-                            <p className="applyInfo">View and manage your leave requests.</p>
-                        </>
-                    ) : active === 'Calendar' ? (
-                        <>
-                        
-                            <h1 className="applyHeading">Leave Calendar</h1>
-                            <p className="applyInfo">Track your leaves, holidays and upcoming time off.</p>
-                        </>
-                    ) : active === 'Settings' ? (
-                        <>
-                        
-                            <h1 className="applyHeading">Settings</h1>
-                            <p className="applyInfo">Manage your account and application preferences.</p>
-                        </>
-                    )
-                    :( // else
-                        <>
-                            <h1 className="applyHeading">Welcome</h1>
-                            <p className="applyInfo">Use the sidebar to navigate through your dashboard and requests.</p>
-                        </>
-                    )}
-                </div>
-                <div className="navActions">
-                    <button className="iconBtn" aria-label="Notifications">🔔</button>
-                    <button className="avatarBtn" aria-label="Profile">M</button>
-                </div>
-            </div>
-        </header>
 
+                <div className="greetingText">
+
+                    <h1 className="applyHeading">
+                        {currentPage.title}
+                    </h1>
+
+                    <p className="applyInfo">
+                        {currentPage.subtitle}
+                    </p>
+
+                </div>
+
+
+                <div className="navActions">
+
+                    <button
+                        className="iconBtn"
+                        aria-label="Notifications"
+                    >
+                        🔔
+                    </button>
+
+                    <button
+                        className="avatarBtn"
+                        aria-label="Profile"
+                    >
+                        M
+                    </button>
+
+                </div>
+
+            </div>
+
+        </header>
     )
 }
 

@@ -16,7 +16,7 @@ const themeOptions = [
     { id: 'system', label: 'System', caption: 'Match your device preference automatically.', icon: '🖥️' },
 ]
 
-function EmployeeSettings({ active, setActive, theme, setTheme }) {
+function EmployeeSettings({ theme, setTheme }) {
     const [settingPage, setSettingPage] = useState('Profile')
     const [changePassword, setChangePassword] = useState(false)
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
@@ -39,7 +39,7 @@ function EmployeeSettings({ active, setActive, theme, setTheme }) {
 
     return (
         <div className="employeeSettingsPage">
-            <Sidebar active={active} setActive={setActive} />
+            <Sidebar  />
 
             <main className="employeeSettingsMain container">
                 <section className="settingsMain">

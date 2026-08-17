@@ -1,318 +1,501 @@
+/* =========================================
+   LOGIN PAGE — ALWAYS LIGHT MODE
+========================================= */
 
-.landingNavbar {
+.loginPage {
+    min-height: 100vh;
+    /* background: #f8fafc; */
+    background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 55%, #0F172A 100%);
+
+    color: #111827;
+
+    /* Prevent browser dark-mode form controls */
+    color-scheme: light;
+}
+
+
+/* =========================================
+   NAVBAR
+========================================= */
+
+/* =========================================
+   LOGIN NAVBAR — ALWAYS LIGHT
+========================================= */
+
+.loginPage .loginNavbar {
     width: 100%;
+    min-height: 72px;
+
     position: sticky;
     top: 0;
     z-index: 20;
-    padding: 0 1.5rem;
-    background: rgba(248, 250, 252, 0.92);
-    backdrop-filter: blur(18px);
-    border-bottom: 1px solid rgba(148, 163, 184, 0.35);
+
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    min-height: 72px;
+
+    padding: 0 1.5rem;
+
+    background: #ffffff !important;
+
+    border-bottom: 1px solid #e2e8f0 !important;
+
+    box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05);
+
+    color: #0f172a !important;
+
+    backdrop-filter: none;
 }
 
-.landingNavbar .left {
+
+/* LEFT */
+
+.loginPage .loginNavbarLeft {
     display: flex;
     align-items: center;
     gap: 1rem;
 }
 
-.logo {
+
+/* LOGO */
+
+.loginPage .loginLogo {
     width: 48px;
     height: 48px;
+
+    flex-shrink: 0;
+
     border-radius: 14px;
-    background: linear-gradient(135deg, #2563eb, #8b5cf6);
-    box-shadow: 0 16px 40px rgba(37, 99, 235, 0.18);
+
+    background: linear-gradient(
+        135deg,
+        #2563eb,
+        #8b5cf6
+    ) !important;
+
+    box-shadow:
+        0 16px 40px rgba(37, 99, 235, 0.18);
 }
 
-.brand-text {
+
+/* BRAND */
+
+.loginPage .loginBrand {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 2px;
 }
 
-.name {
+
+/* NAME */
+
+.loginPage .loginBrand h1 {
     margin: 0;
+
+    color: #0f172a !important;
+
     font-size: 1.15rem;
     font-weight: 800;
+
     letter-spacing: -0.03em;
-    color: var(--text-primary);
 }
 
-.tagline {
+
+/* TAGLINE */
+
+.loginPage .loginBrand p {
     margin: 0;
+
+    color: #475569 !important;
+
     font-size: 0.94rem;
-    color: var(--text-secondary);
 }
+/* =========================================
+   LOGIN BACKGROUND
+========================================= */
 
-:root[data-theme='dark'] .landingNavbar {
-    background: rgba(11, 18, 32, 0.92);
-    border-bottom-color: rgba(148, 163, 184, 0.15);
-    box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.06);
-}
-
-:root[data-theme='dark'] .name,
-:root[data-theme='dark'] .tagline {
-    color: var(--text-primary);
-}
-
-.loginContainer {
+.loginPage .loginContainer {
     min-height: calc(100vh - 72px);
+
     padding: 2rem 1rem 3rem;
+
     display: flex;
     flex-direction: column;
+
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #f8fbff 0%, #eef4ff 45%, #f8fafc 100%);
+
+    /* background:
+        linear-gradient(
+            135deg,
+            #f8fbff 0%,
+            #eef4ff 45%,
+            #f8fafc 100%
+        ); */
 }
 
-:root[data-theme='dark'] .loginContainer {
-    background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #0f172a 100%);
-}
 
-.loginMain {
+/* =========================================
+   TITLE
+========================================= */
+
+.loginPage .loginMain {
     margin-bottom: 1rem;
+
     text-align: center;
 }
 
-.loginMain span {
+
+.loginPage .loginMain span {
     font-size: 0.95rem;
+
     font-weight: 600;
-    color: #2563eb;
+
+    color: white !important;
+
     letter-spacing: 0.08em;
+
     text-transform: uppercase;
 }
 
-.loginContainer form {
+
+/* =========================================
+   FORM CARD
+========================================= */
+
+.loginPage .loginContainer form {
     width: min(100%, 440px);
-    background: rgba(255, 255, 255, 0.95);
-    border: 1px solid rgba(148, 163, 184, 0.22);
+
+    background: #ffffff !important;
+
+    border: 1px solid #e2e8f0;
+
     border-radius: 24px;
+
     padding: 2rem;
-    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+
+    box-shadow:
+        0 18px 45px rgba(15, 23, 42, 0.08);
 }
 
-.emailPas,
-.passwordPass,
-.rememberMe {
+
+/* =========================================
+   LABELS
+========================================= */
+
+.loginPage .emailPas,
+.loginPage .passwordPass,
+.loginPage .rememberMe {
     display: flex;
+
     flex-direction: column;
+
     gap: 0.6rem;
+
     margin-bottom: 1rem;
 }
 
-.emailPas span,
-.passAndForget span,
-.rememberMe span {
+
+.loginPage .emailPas span,
+.loginPage .passAndForget span,
+.loginPage .rememberMe span {
     font-size: 0.95rem;
+
     font-weight: 600;
-    color: #334155;
+
+    color: #334155 !important;
 }
 
-.emailPas input,
-.passwordPass input {
+
+/* =========================================
+   INPUTS
+========================================= */
+
+.loginPage .emailPas input,
+.loginPage .passwordPass input {
     width: 100%;
+
     padding: 0.9rem 1rem;
+
     border: 1px solid #dbe4f0;
+
     border-radius: 12px;
+
     font-size: 1rem;
-    background: #f8fafc;
-    color: #0f172a;
+
+    background: #f8fafc !important;
+
+    color: #0f172a !important;
+
     outline: none;
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.emailPas input:focus,
-.passwordPass input:focus {
+
+/* Input placeholder */
+
+.loginPage input::placeholder {
+    color: #94a3b8;
+}
+
+
+/* Focus */
+
+.loginPage .emailPas input:focus,
+.loginPage .passwordPass input:focus {
     border-color: #2563eb;
-    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+
+    box-shadow:
+        0 0 0 4px rgba(37, 99, 235, 0.1);
 }
 
-.passAndForget {
+
+/* =========================================
+   PASSWORD
+========================================= */
+
+.loginPage .passAndForget {
     display: flex;
+
     align-items: center;
+
     justify-content: space-between;
+
     gap: 0.75rem;
 }
 
-.passAndForget a {
+
+.loginPage .passAndForget a {
     font-size: 0.9rem;
-    color: #2563eb;
+
+    color: #2563eb !important;
+
     text-decoration: none;
+
     font-weight: 600;
 }
 
-.passAndForget a:hover {
+
+.loginPage .passAndForget a:hover {
     text-decoration: underline;
 }
 
-.password {
+
+.loginPage .password {
     position: relative;
 }
 
-.password .showBtn {
+
+/* Eye button */
+
+.loginPage .password .showBtn {
     position: absolute;
+
     right: 0.7rem;
+
     top: 50%;
+
     transform: translateY(-50%);
+
     border: none;
-    background: transparent;
-    color: #64748b;
+
+    background: transparent !important;
+
+    color: #64748b !important;
+
     cursor: pointer;
+
     font-size: 1rem;
 }
 
-.rememberMe {
+
+/* =========================================
+   REMEMBER ME
+========================================= */
+
+.loginPage .rememberMe {
     flex-direction: row;
+
     align-items: center;
+
     gap: 0.6rem;
+
     margin-top: 0.2rem;
 }
 
-.rememberMe input {
+
+.loginPage .rememberMe input {
     width: 1rem;
     height: 1rem;
+
     accent-color: #2563eb;
 }
 
-.signInBtn {
+
+/* =========================================
+   SIGN IN BUTTON
+========================================= */
+
+.loginPage .signInBtn {
     width: 100%;
+
     margin-top: 0.25rem;
+
     border: none;
+
     border-radius: 12px;
+
     padding: 0.95rem 1rem;
-    background: linear-gradient(135deg, #2563eb, #3b82f6);
-    color: #fff;
+
+    background:
+        linear-gradient(
+            135deg,
+            #2563eb,
+            #3b82f6
+        );
+
+    color: #ffffff !important;
+
     font-weight: 700;
+
     font-size: 1rem;
+
     cursor: pointer;
-    box-shadow: 0 10px 25px rgba(37, 99, 235, 0.2);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    box-shadow:
+        0 10px 25px rgba(37, 99, 235, 0.2);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-.signInBtn:hover {
+
+.loginPage .signInBtn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+
+    box-shadow:
+        0 14px 30px rgba(37, 99, 235, 0.24);
 }
 
-.otherOption {
+
+/* =========================================
+   GOOGLE / GITHUB
+========================================= */
+
+.loginPage .otherOption {
     display: flex;
+
     flex-wrap: wrap;
+
     align-items: center;
+
     justify-content: center;
+
     gap: 0.75rem;
+
     margin: 1.25rem 0;
-    color: #64748b;
+
+    color: #64748b !important;
+
     font-size: 0.95rem;
 }
 
-.otherOption button {
+
+.loginPage .otherOption button {
     border: 1px solid #dbe4f0;
+
     border-radius: 999px;
+
     padding: 0.6rem 0.9rem;
-    background: #fff;
-    color: #334155;
+
+    background: #ffffff !important;
+
+    color: #334155 !important;
+
     font-weight: 600;
+
     cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        color 0.2s ease,
+        background 0.2s ease;
 }
 
-.otherOption button:hover {
+
+.loginPage .otherOption button:hover {
     border-color: #2563eb;
-    color: #2563eb;
+
+    color: #2563eb !important;
+
+    background: #f8fbff !important;
 }
 
-.loginContainer footer {
+
+/* Icons */
+
+.loginPage .otherOption button i {
+    color: inherit;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.loginPage .loginContainer footer {
     display: flex;
+
     justify-content: center;
+
     align-items: center;
+
     gap: 0.4rem;
+
     margin-top: 1rem;
+
     font-size: 0.95rem;
-    color: #475569;
+
+    color: #475569 !important;
 }
 
-.loginContainer footer a {
-    color: #2563eb;
+
+.loginPage .loginContainer footer a {
+    color: #2563eb !important;
+
     font-weight: 700;
+
     text-decoration: none;
 }
 
-.loginContainer footer a:hover {
+
+.loginPage .loginContainer footer a:hover {
     text-decoration: underline;
 }
 
-:root[data-theme='dark'] .loginContainer form {
-    background: rgba(17, 24, 39, 0.95);
-    border-color: rgba(148, 163, 184, 0.15);
-    box-shadow: 0 18px 45px rgba(2, 6, 23, 0.48);
-}
 
-:root[data-theme='dark'] .emailPas span,
-:root[data-theme='dark'] .passAndForget span,
-:root[data-theme='dark'] .rememberMe span,
-:root[data-theme='dark'] .loginMain span {
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .emailPas input,
-:root[data-theme='dark'] .passwordPass input {
-    background: rgba(15, 23, 42, 0.9);
-    border-color: rgba(148, 163, 184, 0.2);
-    color: var(--text-primary);
-}
-
-:root[data-theme='dark'] .emailPas input::placeholder,
-:root[data-theme='dark'] .passwordPass input::placeholder {
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .password .showBtn {
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .passAndForget a {
-    color: var(--primary);
-}
-
-:root[data-theme='dark'] .otherOption {
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .otherOption button {
-    border-color: rgba(148, 163, 184, 0.2);
-    background: rgba(15, 23, 42, 0.9);
-    color: var(--text-primary);
-}
-
-:root[data-theme='dark'] .otherOption button:hover {
-    border-color: var(--primary);
-    color: var(--primary);
-}
-
-:root[data-theme='dark'] .loginContainer footer {
-    color: var(--text-secondary);
-}
-
-:root[data-theme='dark'] .loginContainer footer a {
-    color: var(--primary);
-}
+/* =========================================
+   MOBILE
+========================================= */
 
 @media (max-width: 480px) {
-    .landingNavbar {
+
+    .loginPage .landingNavbar {
         padding: 0 1rem;
     }
 
-    .loginContainer form {
+    .loginPage .loginContainer form {
         padding: 1.5rem;
+
         border-radius: 18px;
     }
 
-    .passAndForget {
+    .loginPage .passAndForget {
         flex-direction: column;
+
         align-items: flex-start;
     }
 }
