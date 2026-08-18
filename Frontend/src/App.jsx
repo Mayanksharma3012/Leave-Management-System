@@ -28,6 +28,12 @@ function getInitialTheme() {
 function App() {
   // const [active, setActive] = useState('Dashboard')
   const [theme, setTheme] = useState(getInitialTheme)
+  const [submitedFormData, setSubmitedFormData] = useState([])
+
+  useEffect(() => {
+    console.log(submitedFormData)
+  },[submitedFormData]
+  )
 
   useEffect(() => {
     const root = document.documentElement
@@ -62,7 +68,7 @@ function App() {
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register/>} />
       <Route path='/employee/dashboard' element={<EmployeeDashboard  />} />
-      <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  />} />
+      <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
       <Route path='/employee/my-leaves' element={<MyLeaves  /> } />
       <Route path='/employee/calendar' element={<CalendarEmployee  />} />
       <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />

@@ -344,3 +344,18 @@ button.Submit {
 }
 
 
+.errorMsg {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.4rem;
+    color: #dc2626;
+    font-size: 0.82rem;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+#LeaveTypes:has(+ .errorMsg), #sDate:has(+ .errorMsg), #eDate:has(+ .errorMsg), #eReason:has(+ .errorMsg) {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.08);
+}
