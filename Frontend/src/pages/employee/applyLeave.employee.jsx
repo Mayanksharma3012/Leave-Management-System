@@ -55,8 +55,8 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
         }
         const start = new Date(formData.startDate)
         const end = new Date(formData.endDate)
-
-        console.log(formData)
+        
+        // console.log(formData)
 
         if (end < start) {
             // invalid date range
@@ -64,7 +64,19 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
             return
         }
 
-        setSubmitedFormData([...submitedFormData, formData])
+        const newEnd = end.setDate(end.getDate() + 1)
+        const newStrEnd = new Date(newEnd).toISOString().split('T')[0];
+        // console.log(newStrEnd)
+
+        setSubmitedFormData([...submitedFormData, {
+            title: formData.leaveType,
+            start: formData.startDate,
+            end: newStrEnd,
+            endReal: formData.endDate,
+            classNames: ["pending-leave"],
+            reason: formData.reason,
+            document: formData.document,
+        }])
         setFormData({
         leaveType: '',
         startDate: '',
@@ -108,15 +120,15 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
                                 }
                             >
                                 <option value="" disabled selected>-- Choose a leave type --</option>
-                                <option value="annual">Annual Leave</option>
-                                <option value="sick">Sick Leave</option>
-                                <option value="casual">Casual Leave</option>
-                                <option value="maternity">Maternity Leave</option>
-                                <option value="study">Study Leave</option>
-                                <option value="unpaid">Unpaid Leave</option>
-                                <option value="volunteer">Volunteer Leave</option>
-                                <option value="medical">Medical Leave</option>
-                                <option value="halfday">Half-Day Leave</option>
+                                <option value="annual Leave">Annual Leave</option>
+                                <option value="sick Leave">Sick Leave</option>
+                                <option value="casual Leave">Casual Leave</option>
+                                <option value="maternity Leave">Maternity Leave</option>
+                                <option value="study Leave">Study Leave</option>
+                                <option value="unpaid Leave">Unpaid Leave</option>
+                                <option value="volunteer Leave">Volunteer Leave</option>
+                                <option value="medical Leave">Medical Leave</option>
+                                <option value="halfday Leave">Half-Day Leave</option>
 
                             </select>
                             {formDataErr === 'leaveType' && <span className="errorMsg">Please select a leave type for your leave.</span>}

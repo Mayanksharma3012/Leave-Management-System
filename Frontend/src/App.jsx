@@ -28,12 +28,34 @@ function getInitialTheme() {
 function App() {
   // const [active, setActive] = useState('Dashboard')
   const [theme, setTheme] = useState(getInitialTheme)
-  const [submitedFormData, setSubmitedFormData] = useState([])
+  const [submitedFormData, setSubmitedFormData] = useState([{
+    title: 'casual Leave',
+    start: '2026-08-20',
+    end: '2026-08-23',
+    reason: 'enjoy time with family',
+    document: null,
+    classNames: ["approved-leave"]
+  },{
+    title: 'casual Leave',
+    start: '2026-08-03',
+    end: '2026-08-04',
+    reason: 'enjoy time with family',
+    document: null,
+    classNames: ["rejected-leave"]
+  },{
+    leaveType: 'Independence Day',
+    startDate: '2026-08-15',
+    endDate: '2026-08-15',
+    reason: 'Company holiday',
+    document: null,
+    classNames: ["company-holiday"]
 
-  useEffect(() => {
-    console.log(submitedFormData)
-  },[submitedFormData]
-  )
+  }])
+
+  // useEffect(() => {
+  //   console.log(submitedFormData)
+  // },[submitedFormData]
+  // )
 
   useEffect(() => {
     const root = document.documentElement
@@ -70,7 +92,7 @@ function App() {
       <Route path='/employee/dashboard' element={<EmployeeDashboard  />} />
       <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
       <Route path='/employee/my-leaves' element={<MyLeaves  /> } />
-      <Route path='/employee/calendar' element={<CalendarEmployee  />} />
+      <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
       <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
         
       </Routes>

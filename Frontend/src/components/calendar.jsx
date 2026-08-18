@@ -1,7 +1,7 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 
-function LeaveCalendar() {
+function LeaveCalendar({submitedFormData}) {
 
   const events = [
     {
@@ -30,11 +30,11 @@ function LeaveCalendar() {
   ];
 
   // const handleDateClick = (info) => {
-  //   // console.log("Clicked:", info.dateStr);
+  //   console.log("Clicked:", info.dateStr);
   // };
 
   // const handleEventClick = (info) => {
-  //   // console.log("Clicked event:", info.event);
+  //   console.log("Clicked event:", info.event);
   // };
 
   return (
@@ -43,7 +43,7 @@ function LeaveCalendar() {
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
-        events={events}
+        events={submitedFormData}
 
         headerToolbar={{
           left: "prev,next",

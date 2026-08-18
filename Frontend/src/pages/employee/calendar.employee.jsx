@@ -5,7 +5,7 @@ import SummaryGrid from '../../components/summaryGrid'
 import './calendar.employee.css'
 
 
-function CalendarEmployee() {
+function CalendarEmployee({submitedFormData}) {
 
     
 
@@ -18,7 +18,7 @@ function CalendarEmployee() {
                     <section className='calendarMain'>
                         <SummaryGrid/>
                         <div className="calendar-container">
-                            <LeaveCalendar/>
+                            <LeaveCalendar submitedFormData={submitedFormData}/>
                         </div>
                       
 
