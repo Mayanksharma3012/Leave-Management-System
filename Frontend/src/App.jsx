@@ -43,9 +43,9 @@ function App() {
     document: null,
     classNames: ["rejected-leave"]
   },{
-    leaveType: 'Independence Day',
-    startDate: '2026-08-15',
-    endDate: '2026-08-15',
+    title: 'Independence Day',
+    start: '2026-08-15',
+    end: '2026-08-15',
     reason: 'Company holiday',
     document: null,
     classNames: ["company-holiday"]
