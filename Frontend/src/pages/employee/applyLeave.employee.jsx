@@ -76,6 +76,7 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
             classNames: ["pending-leave"],
             reason: formData.reason,
             document: formData.document,
+            days: totalDays
         }])
         setFormData({
         leaveType: '',

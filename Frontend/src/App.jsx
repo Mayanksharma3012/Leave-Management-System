@@ -32,23 +32,28 @@ function App() {
     title: 'casual Leave',
     start: '2026-08-20',
     end: '2026-08-23',
+    endReal: '2026-08-22',
     reason: 'enjoy time with family',
     document: null,
-    classNames: ["approved-leave"]
+    classNames: ["approved-leave"],
+    days: 3
   },{
     title: 'casual Leave',
     start: '2026-08-03',
     end: '2026-08-04',
+    endReal: '2026-08-03',
     reason: 'enjoy time with family',
     document: null,
-    classNames: ["rejected-leave"]
+    classNames: ["rejected-leave"],
+    days: 1
   },{
     title: 'Independence Day',
     start: '2026-08-15',
     end: '2026-08-15',
     reason: 'Company holiday',
     document: null,
-    classNames: ["company-holiday"]
+    classNames: ["holiday-leave"],
+    days: 1
 
   }])
 
@@ -91,7 +96,7 @@ function App() {
       <Route path='/register' element={<Register/>} />
       <Route path='/employee/dashboard' element={<EmployeeDashboard  />} />
       <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
-      <Route path='/employee/my-leaves' element={<MyLeaves  /> } />
+      <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
       <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
       <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
         

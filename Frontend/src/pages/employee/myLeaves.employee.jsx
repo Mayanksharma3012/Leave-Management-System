@@ -2,16 +2,49 @@ import Navbar from '../../components/header'
 import Sidebar from '../../components/sidebar'
 import SummaryGrid from '../../components/summaryGrid'
 import './myLeaves.employee.css'
+import { useState } from 'react'
+
+const leaveIcons = {
+  annual: '🌴',
+  casual: '🏖',
+  sick: '🩺',
+  paid: '💼',
+  maternity: '🍼',
+  study: '📚',
+  unpaid: '📅',
+  volunteer: '🤝',
+  medical: '⚕️',
+  halfday: '⏱️',
+}
+
+function getLeaveIcon(title = '') {
+  const leaveType = title.toLowerCase().split(' ')[0]
+  return leaveIcons[leaveType] || '🗓️'
+}
+
+function formatDate(date) {
+  if (!date) return 'Not provided'
+  return new Date(`${date}T00:00:00`).toLocaleDateString(undefined, {
+    month: 'short',
+    day: '2-digit',
+    year: 'numeric',
+  })
+}
 
 
+function getLeaveStatus(leave) {
+  const validStatuses = ['pending', 'approved', 'rejected']
+  const status =  leave.classNames?.[0]?.replace('-leave', '') || 'pending'
+  if (!validStatuses.includes(status)) {
+    return null
+}
+  return status
+}
 
-const leaveRows = [
-  { type: 'Sick Leave', icon: '🩺', duration: 'Aug 10 – Aug 12', days: 3, status: 'Approved' },
-  { type: 'Casual Leave', icon: '🏖', duration: 'Aug 20 – Aug 21', days: 2, status: 'Pending' },
-  { type: 'Paid Leave', icon: '💼', duration: 'Sep 02 – Sep 04', days: 3, status: 'Rejected' },
-]
 
-function MyLeaves() {
+function MyLeaves({ submitedFormData }) {
+  const [selectedLeave, setSelectedLeave] = useState(null)
+
   return (
     <div className="employeeMyLeavesPage">
       <Sidebar />
@@ -19,7 +52,7 @@ function MyLeaves() {
         <Navbar />
 
         <section className="myLeavesMain">
-          <SummaryGrid/>
+          <SummaryGrid />
 
           <div className="leaveHistoryPanel">
             <div className="historyHeadingRow">
@@ -39,12 +72,12 @@ function MyLeaves() {
 
               <select defaultValue="" aria-label="Filter by leave type">
                 <option value="" disabled>Leave Type</option>
-                <option value="annual">Annual Leave</option>
-                <option value="sick">Sick Leave</option>
-                <option value="casual">Casual Leave</option>
-                <option value="paid">Paid Leave</option>
-                <option value="maternity">Maternity Leave</option>
-                <option value="study">Study Leave</option>
+                <option value="annual Leave">Annual Leave</option>
+                <option value="sick Leave">Sick Leave</option>
+                <option value="casual Leave">Casual Leave</option>
+                <option value="paid Leave">Paid Leave</option>
+                <option value="maternity Leave">Maternity Leave</option>
+                <option value="study Leave">Study Leave</option>
               </select>
 
               <button type="button" className="dateButton">Date</button>
@@ -62,32 +95,117 @@ function MyLeaves() {
                   </tr>
                 </thead>
                 <tbody>
-                  {leaveRows.map((row) => (
-                    <tr key={`${row.type}-${row.duration}`}>
-                      <td>
-                        <div className="leaveTypeCell">
-                          <span className="typeIcon" aria-hidden="true">{row.icon}</span>
-                          <span>{row.type}</span>
-                        </div>
-                      </td>
-                      <td>{row.duration}</td>
-                      <td>{row.days}</td>
-                      <td>
-                        <span className={`statusBadge ${row.status.toLowerCase()}`}>{row.status}</span>
-                      </td>
-                      <td>
-                        <button className="tableAction" aria-label={`View ${row.type}`}>
-                          →
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {submitedFormData.map((leave, index) => {
+
+                    const status = getLeaveStatus(leave)
+                    if( status === null ) return [];
+
+                    const endDate = leave.endReal || leave.end
+                    return (
+                      <tr key={`${leave.title}-${leave.start}-${index}`}>
+                        <td>
+                          <div className="leaveTypeCell">
+                            <span className="typeIcon" aria-hidden="true">{getLeaveIcon(leave.title)}</span>
+                            <span>{leave.title}</span>
+                          </div>
+                        </td>
+                        <td>{formatDate(leave.start)} - {formatDate(endDate)}</td>
+                        <td>{leave.days || '—'}</td>
+                        <td>
+                          <span className={`statusBadge ${status}`}>{status}</span>
+                        </td>
+                        <td>
+                          <button
+                            type="button"
+                            className="tableAction"
+                            onClick={() => setSelectedLeave(leave)}
+                          >
+                            View
+                          </button>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
           </div>
         </section>
       </main>
+      {selectedLeave && (
+        <div
+          className="leaveDetailsBackdrop"
+          onClick={() => setSelectedLeave(null)}
+        >
+          <section
+            className="leaveDetailsDialog"
+            role="dialog"
+            aria-modal="true"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              className="closeDetailsButton"
+              onClick={() => setSelectedLeave(null)}
+            >
+              ×
+            </button>
+
+            <div className="detailsHeader">
+              <span className="typeIcon">
+                {getLeaveIcon(selectedLeave.title)}
+              </span>
+
+              <div>
+                <p className="detailsLabel">Leave Request</p>
+                <h2>{selectedLeave.title}</h2>
+              </div>
+            </div>
+
+            <div className="detailsStatus">
+              <span className={`statusBadge ${getLeaveStatus(selectedLeave)}`}>
+                {getLeaveStatus(selectedLeave)}
+              </span>
+            </div>
+
+            <div className="detailsGrid">
+
+              <div>
+                <span>Date Range</span>
+                <strong>
+                  {formatDate(selectedLeave.start)} –{' '}
+                  {formatDate(selectedLeave.endReal || selectedLeave.end)}
+                </strong>
+              </div>
+
+              <div>
+                <span>Duration</span>
+                <strong>
+                  {selectedLeave.days ?? '—'} days
+                </strong>
+              </div>
+
+              <div className="reasonDetail">
+                <span>Reason</span>
+                <strong>
+                  {selectedLeave.reason || 'Not provided'}
+                </strong>
+              </div>
+
+            </div>
+
+            {selectedLeave.document && (
+              <div className="documentDetail">
+                <span>Attachment</span>
+                <button type="button">
+                  View Document
+                </button>
+              </div>
+            )}
+
+          </section>
+        </div>
+      )}
     </div>
   )
 }
