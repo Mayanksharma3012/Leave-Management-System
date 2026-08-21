@@ -1,9 +1,10 @@
 .dashboardPage {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: minmax(260px, 300px) 1fr;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
+  overflow-x: hidden;
 }
 
 .dashboardMain {
@@ -11,7 +12,10 @@
   flex-direction: column;
   gap: 1.25rem;
   padding: 2rem 0;
-  width: 80%;
+  width: 90%;
+  max-width: 1440px;
+  margin: 0 auto;
+  min-width: 0;
 }
 
 /* Top navbar (white / glass) */
@@ -115,13 +119,17 @@
 /* Main grid */
 .mainGrid {
   display: grid;
-  grid-template-columns: 1fr 420px;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 34%);
   gap: 1rem;
   align-items: start;
+  min-width: 0;
 }
 
 .calendarCard {
-  padding: 1rem;
+  width: 100%;
+  padding: 1.25rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .cardHeader {
@@ -134,7 +142,76 @@
 .calendarPlaceholder {
   background: transparent;
   border-radius: 12px;
-  padding: 0.5rem;
+  padding: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.calendarPlaceholder .leave-calendar,
+.calendarPlaceholder .fc {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.calendarPlaceholder .fc .fc-scroller,
+.calendarPlaceholder .fc .fc-scroller-harness,
+.calendarPlaceholder .fc .fc-view-harness {
+  overflow: hidden !important;
+}
+
+.calendarPlaceholder .fc .fc-scrollgrid {
+  width: 100%;
+  max-width: 100%;
+}
+
+.calendarPlaceholder .fc .fc-daygrid-day {
+  transition: background 0.15s ease;
+}
+
+.calendarPlaceholder .fc .fc-daygrid-day:has(.approved-leave) {
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.08)) !important;
+}
+
+.calendarPlaceholder .fc .fc-daygrid-day:has(.pending-leave) {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.08)) !important;
+}
+
+.calendarPlaceholder .fc .fc-daygrid-day:has(.rejected-leave) {
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08)) !important;
+}
+
+.calendarPlaceholder .fc .fc-daygrid-day:has(.holiday-leave),
+.calendarPlaceholder .fc .fc-daygrid-day:has(.company-holiday) {
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.18), rgba(37, 99, 235, 0.08)) !important;
+}
+
+.calendarPlaceholder .fc .approved-leave {
+  background: linear-gradient(180deg, rgba(34, 197, 94, 0.18), rgba(34, 197, 94, 0.08));
+  border-color: rgba(34, 197, 94, 0.28);
+  color: var(--text-primary);
+}
+
+.calendarPlaceholder .fc .pending-leave {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.08));
+  border-color: rgba(245, 158, 11, 0.3);
+  color: var(--text-primary);
+}
+
+.calendarPlaceholder .fc .rejected-leave {
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.18), rgba(239, 68, 68, 0.08));
+  border-color: rgba(239, 68, 68, 0.28);
+  color: var(--text-primary);
+}
+
+.calendarPlaceholder .fc .holiday-leave,
+.calendarPlaceholder .fc .company-holiday {
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.18), rgba(37, 99, 235, 0.08));
+  border-color: rgba(37, 99, 235, 0.28);
+  color: var(--text-primary);
+}
+
+.calendarPlaceholder .fc .fc-daygrid-event {
+  box-shadow: none;
 }
 
 .calendarGrid {
@@ -173,6 +250,65 @@
 /* Recent leaves table */
 .recentCard {
   padding: 1rem;
+  overflow: hidden;
+  background: linear-gradient(145deg, var(--card), var(--card-soft));
+  border-color: color-mix(in srgb, var(--primary) 14%, var(--border));
+}
+
+.recentCard .cardHeader {
+  padding: 0.25rem 0.35rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.recentCard .cardHeader h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+}
+
+.recentCard .cardHeader .muted {
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.recentCard .tableWrap {
+  margin-top: 0.35rem;
+}
+
+.recentCard .recentTable th {
+  padding-top: 0.7rem;
+  padding-bottom: 0.65rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.recentCard .recentTable th:last-child,
+.recentCard .recentTable td:last-child {
+  text-align: center;
+}
+
+.recentCard .recentTable td {
+  padding-top: 0.8rem;
+  padding-bottom: 0.8rem;
+  font-size: 0.88rem;
+}
+
+.recentCard .recentTable tbody tr:hover {
+  background: color-mix(in srgb, var(--primary) 5%, transparent);
+}
+
+@media (max-width: 520px) {
+  .recentCard .cardHeader {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .recentCard .cardHeader .muted {
+    white-space: normal;
+  }
 }
 
 .tableWrap {
@@ -209,11 +345,23 @@
 .statusBadge {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.4rem 0.65rem;
   border-radius: 999px;
   font-weight: 700;
   font-size: 0.85rem;
+  line-height: 1;
+  text-transform: capitalize;
+}
+
+.statusBadge::before {
+  content: '';
+  width: 0.45rem;
+  height: 0.45rem;
+  flex: 0 0 0.45rem;
+  border-radius: 50%;
+  background: currentColor;
 }
 
 .statusBadge.approved {
@@ -253,5 +401,10 @@
 
   .container {
     padding: 0 1rem;
+  }
+
+  .dashboardMain {
+    padding-top: 1rem;
+    width: 100%;
   }
 }

@@ -1,19 +1,37 @@
+import './calendar.employee.css'
 import './dashboard.employee.css'
 import Sidebar from '../../components/sidebar'
 import Navbar from '../../components/header'
+import LeaveCalendar from '../../components/calendar'
 
 function StatusBadge({status}){
-  const map = {
-    Approved: 'approved',
-    Pending: 'pending',
-    Rejected: 'rejected'
+
+  const validStatuses = ['pending', 'approved', 'rejected']
+  const statusClass = Array.isArray(status)
+  ? status.find((item) => validStatuses.includes(item?.replace('-leave', '').toLowerCase()))
+    : status
+  const normalizedStatus = statusClass?.replace('-leave', '').toLowerCase()
+
+  if (!validStatuses.includes(normalizedStatus)) {
+    return null
   }
   return (
-    <span className={`statusBadge ${map[status]||''}`}>{status}</span>
+    <span className={`statusBadge ${normalizedStatus}`}>
+      {normalizedStatus}
+    </span>
   )
 }
 
-function EmployeeDashboard(){
+function checkleave(leave) {
+  const validStatuses = ['pending', 'approved', 'rejected']
+  const status =  leave.classNames?.[0]?.replace('-leave', '').toLowerCase()
+  if (!validStatuses.includes(status)) {
+    return null
+}
+  return status
+}
+
+function EmployeeDashboard({ submitedFormData }){
 
     const stats = [
       {label: 'Total Leaves', value: 18, icon: '📅'},
@@ -53,13 +71,10 @@ function EmployeeDashboard(){
                 {/* Main grid: calendar + recent leaves */}
                 <section className="mainGrid">
                   <div className="calendarCard card">
-                    <div className="cardHeader">
-                      <h3>Calendar</h3>
-                      <div className="muted">Highlights: Approved / Pending / Holiday</div>
-                    </div>
+                    
                     <div className="calendarPlaceholder">
                       {/* Minimal calendar mock - replace with real calendar component later */}
-                      <div className="calendarGrid">
+                      {/* <div className="calendarGrid">
                         {Array.from({length: 30}).map((_, i) => {
                           const day = i+1
                           const classes = [ 'day' ]
@@ -69,7 +84,10 @@ function EmployeeDashboard(){
                           if([14].includes(day)) classes.push('holiday')
                           return <div key={i} className={classes.join(' ')}>{day}</div>
                         })}
-                      </div>
+                      </div> */}
+
+                      <LeaveCalendar submitedFormData={submitedFormData}/>
+
                     </div>
                   </div>
 
@@ -88,11 +106,13 @@ function EmployeeDashboard(){
                           </tr>
                         </thead>
                         <tbody>
-                          {recent.map((r, idx) => (
+                          {(submitedFormData || [])
+                            .filter((leave) => checkleave(leave))
+                            .map((leave, idx) => (
                             <tr key={idx}>
-                              <td>{r.type}</td>
-                              <td>{r.date}</td>
-                              <td><StatusBadge status={r.status} /></td>
+                              <td>{leave.title}</td>
+                              <td>{leave.start}</td>
+                              <td><StatusBadge status={leave.classNames} /></td>
                             </tr>
                           ))}
                         </tbody>

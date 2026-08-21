@@ -94,7 +94,7 @@ function App() {
       <Route path='/' element={<LandingPage />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register/>} />
-      <Route path='/employee/dashboard' element={<EmployeeDashboard  />} />
+      <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
       <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
       <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
       <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
