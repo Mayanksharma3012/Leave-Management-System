@@ -19,7 +19,7 @@ async function startServer(){
   try {
     await connectDB() 
     //todo create Authentation controller
-    app.use('/register', userRouter)
+    app.use('/user', userRouter)
   
     app.listen(port, () => {
       console.log(`Example app listening on port ${port}`)

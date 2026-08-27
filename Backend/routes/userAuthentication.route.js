@@ -1,6 +1,7 @@
 import express from 'express';
-import { handleUserSignUp } from '../controller/userAuthentication.controller.js';
+import { handleUserSignUp, handleUserLogin } from '../controller/userAuthentication.controller.js';
 
 export const userRouter = express.Router()
 
-userRouter.post('/', handleUserSignUp)
+userRouter.post('/register', handleUserSignUp)
+userRouter.post('/login', handleUserLogin)

@@ -13,7 +13,7 @@ function Register() {
       e.preventDefault();
 
       try {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/register`, signup)
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/register`, signup)
         console.log('Server Response : ', response.data)
         alert('leave appliend succesfull')
       } catch (error) {

@@ -13,7 +13,7 @@ export async function handleUserSignUp(req, res){
             userName, email, password, department, leaveBalance
         });
 
-        return res.status(201).json({message: 'success'});
+        return res.status(201).json({message: 'success', user: userName, ema: email, pass: password, d: department, lb: leaveBalance});
     } catch (error) {
         if (error.code === 11000) {
             return res.status(409).json({message: 'Email is already registered'});
@@ -22,4 +22,18 @@ export async function handleUserSignUp(req, res){
         console.error('Error registering user:', error);
         return res.status(500).json({message: 'Unable to register user'});
     }
+}
+
+export async function handleUserLogin(req, res){
+    const {email, password} = req.body
+    const user = await User.findOne({email})
+    
+    if(!user) return res.status(401).json({message: 'Invalid email or password'});
+
+    const isMatch = await user.matchPassword(password)
+    if (!isMatch) {
+        return res.status(401).json({message: 'Invalid email or password'});
+    }
+    
+    // else return res.status(201).json({message: 'success',  ema: email, pass: password})
 }

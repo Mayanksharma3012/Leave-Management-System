@@ -1,10 +1,29 @@
 import './login.css'
 import { useState } from 'react';
+import axios from 'axios'
 
 function Login() {
 
     const [showpass, setShowPass] = useState(false)
+    const [login, setlogin] = useState({
+            email: '',
+            password: ''
+        })
 
+
+    const handleSubmit = async (e) => {
+          e.preventDefault();
+    
+          try {
+            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, login)
+            console.log('Server Response : ', response.data)
+            alert('leave appliend succesfull')
+          } catch (error) {
+                    console.log('error submitting the form', error)
+                    alert(error.response?.data?.message ?? 'Unable to register user')
+          }
+        }
+    
     return (
         <div className="loginPage">
 
@@ -28,11 +47,14 @@ function Login() {
                     <span>Sign in to your account</span>
                 </div>
 
-                <form>
+                <form onSubmit={handleSubmit}>
 
                     <div className="emailPas">
                         <span>Email</span>
-                        <input type="text" />
+                        <input type="text" name='email' value={login.email}
+                        onChange={(e)=> 
+                            setlogin({...login, email: e.target.value  })
+                        }/>
                     </div>
 
 
@@ -48,7 +70,8 @@ function Login() {
                         <div className="password">
 
                             <input
-                                type={showpass ? 'text' : 'password'}
+                                type={showpass ? 'text' : 'password'} name='password' value={login.password}
+                                onChange={(e)=> setlogin({...login, password: e.target.value})}
                             />
 
                             <button
