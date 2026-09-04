@@ -19,8 +19,8 @@ function Login() {
             console.log('Server Response : ', response.data)
             alert('leave appliend succesfull')
           } catch (error) {
-                    console.log('error submitting the form', error)
-                    alert(error.response?.data?.message ?? 'Unable to register user')
+                console.log('error submitting the form', error)
+                alert(error.response?.data?.message ?? 'Unable to login user')
           }
         }
     

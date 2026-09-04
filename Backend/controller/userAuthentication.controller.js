@@ -1,5 +1,5 @@
 import {User} from '../models/user.model.js'
-
+import jwt from 'jsonwebtoken'
 
 export async function handleUserSignUp(req, res){
     const {userName, email, password, department, leaveBalance} = req.body ?? {};
@@ -24,9 +24,15 @@ export async function handleUserSignUp(req, res){
     }
 }
 
+const secret_Key = process.env.JWT_SECRET_KEY
 export async function handleUserLogin(req, res){
-    const {email, password} = req.body
-    const user = await User.findOne({email})
+    const {email, password, userName} = req.body ?? {}
+
+    if (!email || !password) {
+        return res.status(400).json({message: 'Email and password are required'});
+    }
+
+    const user = await User.findOne({email}) 
     
     if(!user) return res.status(401).json({message: 'Invalid email or password'});
 
@@ -34,6 +40,10 @@ export async function handleUserLogin(req, res){
     if (!isMatch) {
         return res.status(401).json({message: 'Invalid email or password'});
     }
-    
+    else{
+        const token = jwt.sign({email, userName},secret_Key,{expiresIn:process.env.JWT_EXPIREIN})
+        return res.json({message: 'success',  ema: email, name: userName, jwtToken: token})
+        // return res.status(201).json({message: 'success',  ema: email, name: userName, jwtToken: token})
+    }
     // else return res.status(201).json({message: 'success',  ema: email, pass: password})
 }
