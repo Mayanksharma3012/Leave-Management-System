@@ -1,6 +1,7 @@
 import './login.css'
 import { useState } from 'react';
 import axios from 'axios'
+import { useNavigate } from 'react-router-dom';   
 
 function Login() {
 
@@ -10,19 +11,26 @@ function Login() {
             password: ''
         })
 
+    const navigate = useNavigate();   
+
 
     const handleSubmit = async (e) => {
-          e.preventDefault();
-    
-          try {
-            const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/login`, login)
-            console.log('Server Response : ', response.data)
-            alert('leave appliend succesfull')
-          } catch (error) {
-                console.log('error submitting the form', error)
-                alert(error.response?.data?.message ?? 'Unable to login user')
-          }
+        e.preventDefault();
+
+        try {
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/user/login`,
+                login,
+                { withCredentials: true }
+            )
+            navigate('/employee/dashboard');
+
+        } catch (error) {
+            console.log('error submitting the form', error)
+            alert(error.response?.data?.message ?? 'Unable to login user')
         }
+    }
+
     
     return (
         <div className="loginPage">

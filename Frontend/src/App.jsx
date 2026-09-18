@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ProtectedRoute from './components/authenticate.jsx';
 import './App.css'
 
 import LandingPage from './pages/landingPage'
@@ -87,6 +88,9 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleSystemThemeChange)
   }, [theme])
 
+
+  
+
   return (
     <>
     <BrowserRouter>
@@ -94,12 +98,16 @@ function App() {
       <Route path='/' element={<LandingPage />} />
       <Route path='/login' element={<Login />} />
       <Route path='/register' element={<Register/>} />
-      <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
-      <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
-      <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
-      <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
-      <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
+
+      <Route element={<ProtectedRoute/>}>
+
+        <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
+        <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
+        <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
+        <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
+        <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
         
+      </Route>
       </Routes>
     </BrowserRouter>
     </>
