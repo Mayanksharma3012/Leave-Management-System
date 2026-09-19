@@ -1,11 +1,13 @@
 import './header.css'
 import { useLocation } from 'react-router-dom'
+import { useContext } from 'react'
+import { userContext } from '../context/userContext.js'
 
 function Navbar() {
 
     const location = useLocation()
-
-    const userName = 'Mayank Sharma'
+    const user = useContext(userContext);
+    const userName = user?.userName || user?.email || 'there'
 
     const pageInfo = {
         '/employee/dashboard': {

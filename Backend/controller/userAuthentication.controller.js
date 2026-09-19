@@ -49,5 +49,15 @@ export async function handleUserLogin(req, res) {
             maxAge: 1296000000
         })
         // return res.json({message: 'success',  ema: email, name: userName, jwtToken: token})
-        return res.status(201).json({message: 'success',  ema: email, name: userName, jwtToken: token})    }
+        return res.status(201).json({message: 'success',  ema: email, name: userName, jwtToken: token})   
+        
+        // const user = await User.findOne({email});
+        // if (user) {
+        //     // console.log(user); // Returns full user object
+        //     return res.json({user: user})
+        // } else {
+        //     console.log("User not found");
+        // }   
+
+    }
 }

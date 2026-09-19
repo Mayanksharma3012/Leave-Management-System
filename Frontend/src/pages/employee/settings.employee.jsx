@@ -1,7 +1,8 @@
 import './settings.employee.css'
 import Sidebar from './../../components/sidebar.jsx'
 import fakeProfile from './../../assets/fakeProfile.png'
-import { useState } from 'react'
+import { useState, useContext } from 'react'
+import { userContext } from '../../context/userContext.js'
 
 const settingsTabs = [
     { id: 'Profile', label: '👤 Profile' },
@@ -36,6 +37,11 @@ function EmployeeSettings({ theme, setTheme }) {
             [key]: !prev[key],
         }))
     }
+
+    const user = useContext(userContext);
+    const fullName = user?.userName ||  'example'
+    const userEmail =  user?.email || 'example.com'
+    const department = user?.department || 'none'
 
     return (
         <div className="employeeSettingsPage">
@@ -91,17 +97,17 @@ function EmployeeSettings({ theme, setTheme }) {
                                         <div className="fieldGrid">
                                             <div className="fieldBlock">
                                                 <label htmlFor="fullName">Full Name</label>
-                                                <input id="fullName" type="text" value="Mayank Sharma" readOnly />
+                                                <input id="fullName" type="text" value={fullName} readOnly />
                                             </div>
 
                                             <div className="fieldBlock">
                                                 <label htmlFor="email">Email</label>
-                                                <input id="email" type="email" value="mayank@example.com" readOnly />
+                                                <input id="email" type="email" value={userEmail} readOnly />
                                             </div>
 
                                             <div className="fieldBlock">
                                                 <label htmlFor="department">Department</label>
-                                                <input id="department" type="text" value="Engineering" readOnly />
+                                                <input id="department" type="text" value={department} readOnly />
                                             </div>
                                         </div>
                                     </div>

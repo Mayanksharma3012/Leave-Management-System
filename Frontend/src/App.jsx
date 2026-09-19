@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProtectedRoute from './components/authenticate.jsx';
+import { userContext } from './context/userContext.js'
 import './App.css'
 
 import LandingPage from './pages/landingPage'
@@ -55,7 +56,6 @@ function App() {
     document: null,
     classNames: ["holiday-leave"],
     days: 1
-
   }])
 
   // useEffect(() => {
@@ -88,27 +88,28 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleSystemThemeChange)
   }, [theme])
 
-
   
+  
+  const [userData, setUserData] = useState(null)
 
   return (
     <>
     <BrowserRouter>
-      <Routes>
-      <Route path='/' element={<LandingPage />} />
-      <Route path='/login' element={<Login />} />
-      <Route path='/register' element={<Register/>} />
+      <userContext.Provider value={userData}>
+        <Routes>
+        <Route path='/' element={<LandingPage />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register/>} />
 
-      <Route element={<ProtectedRoute/>}>
-
-        <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
-        <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
-        <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
-        <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
-        <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
-        
-      </Route>
-      </Routes>
+        <Route element={<ProtectedRoute setUserData={setUserData}/> }>
+          <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
+          <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
+          <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
+          <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
+          <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
+        </Route>
+        </Routes>
+      </userContext.Provider>
     </BrowserRouter>
     </>
   )
