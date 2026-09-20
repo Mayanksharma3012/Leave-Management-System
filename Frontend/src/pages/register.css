@@ -130,6 +130,66 @@
     box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
 }
 
+.userName {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.userName span {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.userName input {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #dbe4f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #f8fafc;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.userName input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
+.department {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+}
+
+.department span {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #334155;
+}
+
+.department select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid #dbe4f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: #f8fafc;
+    color: #0f172a;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.department select:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+}
+
 .emailPas,
 .passwordPass,
 .rememberMe {
@@ -213,6 +273,39 @@
 .signUpBtn:hover {
     transform: translateY(-1px);
     box-shadow: 0 14px 30px rgba(37, 99, 235, 0.24);
+}
+
+.registrationActions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.registrationActions .signUpBtn {
+    margin-top: 0.25rem;
+}
+
+.registrationActions.withBack .signUpBtn,
+.backBtn {
+    flex: 1;
+}
+
+.backBtn {
+    margin-top: 0.25rem;
+    border: 1px solid #dbe4f0;
+    border-radius: 12px;
+    padding: 0.95rem 1rem;
+    background: #fff;
+    color: #334155;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.backBtn:hover {
+    border-color: #2563eb;
+    color: #2563eb;
+    background: #f8fafc;
 }
 
 .otherOption {
