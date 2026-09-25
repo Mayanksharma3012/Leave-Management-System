@@ -1,12 +1,13 @@
 import './applyLeave.employee.css'
 import Sidebar from '../../components/sidebar'
 import Navbar from '../../components/header'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import axios from 'axios'
 
 
 
 
-function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
+function ApplyLeaveEmployee({submitedFormData ,}) {
 
     const [formData, setFormData] = useState({
         leaveType: '',
@@ -17,6 +18,7 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
     })
     const [formDataErr, setFormDataErr] = useState('')
     const [totalDays, setTotalDays] = useState(0)
+    const formRef = useRef(null)
 
     useEffect(() => {
         const start = new Date(formData.startDate)
@@ -34,7 +36,7 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
     }, [formData.startDate, formData.endDate]
     )
 
-    function checkFormData(e) {
+    async function checkFormData(e) {
         e.preventDefault()
 
         if (formData.leaveType === '') {
@@ -66,25 +68,37 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
 
         const newEnd = end.setDate(end.getDate() + 1)
         const newStrEnd = new Date(newEnd).toISOString().split('T')[0];
-        // console.log(newStrEnd)
-
-        setSubmitedFormData([...submitedFormData, {
+        const leavePayload = {
             title: formData.leaveType,
             start: formData.startDate,
             end: newStrEnd,
             endReal: formData.endDate,
-            classNames: ["pending-leave"],
+            classNames: ['pending-leave'],
             reason: formData.reason,
             document: formData.document,
             days: totalDays
-        }])
-        setFormData({
-        leaveType: '',
-        startDate: '',
-        endDate: '',
-        reason: '',
-        document: null
-    })
+        }
+
+        try {
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/user/applyleave`,
+                leavePayload,
+                { withCredentials: true }
+            )
+            formRef.current?.reset()
+            setFormData({
+                leaveType: '',
+                startDate: '',
+                endDate: '',
+                reason: '',
+                document: null
+            })
+            setFormDataErr('')
+            alert('Leave applied successfully')
+        } catch (error) {
+            console.log('error submitting the form', error)
+            alert(error.response?.data?.message ?? 'Error submitting the form')
+        }
 
     }
 
@@ -108,10 +122,10 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
                     <Navbar />
                     <section className='leaveMain'>
 
-                        <form className="applyLeave" onSubmit={checkFormData}>
+                        <form ref={formRef} className="applyLeave" onSubmit={checkFormData}>
                             <h2>Leave Request</h2>
                             <span>Leave Type</span>
-                            <select name="Leave Type" id="LeaveTypes" value={formData.leaveType}
+                            <select name="LeaveType" id="LeaveTypes" value={formData.leaveType}
                                 onChange={(e) => {
                                     setFormData({
                                         ...formData,
@@ -136,7 +150,7 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
 
                             <div className="selectDates">
                                 <div className="startDate">
-                                    <input id='sDate' type="date" value={formData.startDate}
+                                    <input id='sDate' type="date" value={formData.startDate} name='startDate'
                                         onChange={(e) => {
                                             setFormData({
                                                 ...formData,
@@ -147,7 +161,7 @@ function ApplyLeaveEmployee({submitedFormData ,setSubmitedFormData}) {
                                     {formDataErr === 'startDate' && <span className="errorMsg">Please select a start date for your leave.</span>}
                                 </div>
                                 <div className="endDate">
-                                    <input type="date" id='eDate' value={formData.endDate}
+                                    <input type="date" id='eDate' value={formData.endDate} name='endDate'
                                         onChange={(e) => {
                                             setFormData({
                                                 ...formData,

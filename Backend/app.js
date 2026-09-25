@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import connectDB from './DB/index.js';
 import cookieParser from 'cookie-parser';
-import { userRouter } from './routes/userAuthentication.route.js';
+import { userRouter } from './routes/user.route.js';
 // import { authenticateToken } from './middleware/userAuthentication.middleware.js';
 
 const app = express()

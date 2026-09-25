@@ -32,6 +32,10 @@ const leaveSchema = new mongoose.Schema({
     document:{
         type: String,
         // Todo
+    },
+    status:{
+        type: String,
+        default: "pending-leave"
     }
 },{timestamps: true});
 

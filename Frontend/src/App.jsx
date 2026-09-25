@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from 'axios'
 import ProtectedRoute from './components/authenticate.jsx';
 import { userContext } from './context/userContext.js'
 import './App.css'
@@ -30,38 +31,39 @@ function getInitialTheme() {
 function App() {
   // const [active, setActive] = useState('Dashboard')
   const [theme, setTheme] = useState(getInitialTheme)
-  const [submitedFormData, setSubmitedFormData] = useState([{
-    title: 'casual Leave',
-    start: '2026-08-20',
-    end: '2026-08-23',
-    endReal: '2026-08-22',
-    reason: 'enjoy time with family',
-    document: null,
-    classNames: ["approved-leave"],
-    days: 3
-  },{
-    title: 'casual Leave',
-    start: '2026-08-03',
-    end: '2026-08-04',
-    endReal: '2026-08-03',
-    reason: 'enjoy time with family',
-    document: null,
-    classNames: ["rejected-leave"],
-    days: 1
-  },{
-    title: 'Independence Day',
-    start: '2026-08-15',
-    end: '2026-08-15',
-    reason: 'Company holiday',
-    document: null,
-    classNames: ["holiday-leave"],
-    days: 1
-  }])
+  const [submitedFormData, setSubmitedFormData] = useState([])
+  const [userData, setUserData] = useState(null)
 
-  // useEffect(() => {
-  //   console.log(submitedFormData)
-  // },[submitedFormData]
-  // )
+
+  useEffect(() => {
+    if (!userData) return
+
+    const fetchLeaves = async () => {
+      try {
+        const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/getleaves`, {
+          withCredentials: true
+        });
+        const calendarEvents = (res.data.leaves ?? []).map((leave) => ({
+          id: leave._id,
+          title: leave.leaveType,
+          start: leave.startDate,
+          end: leave.endDate,
+          endReal: leave.endDateReal,
+          reason: leave.reason,
+          document: leave.document,
+          status: leave.status,
+          classNames: [leave.status || 'pending-leave'],
+          days: leave.days
+        }))
+
+        setSubmitedFormData(calendarEvents)
+      } catch (err) {
+        console.error('Failed to fetch leaves', err.response?.data?.message ?? err.message);
+      }
+    };
+
+    fetchLeaves();
+  }, [userData]);
 
   useEffect(() => {
     const root = document.documentElement
@@ -88,10 +90,6 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleSystemThemeChange)
   }, [theme])
 
-  
-  
-  const [userData, setUserData] = useState(null)
-
   return (
     <>
     <BrowserRouter>
@@ -103,7 +101,7 @@ function App() {
 
         <Route element={<ProtectedRoute setUserData={setUserData}/> }>
           <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
-          <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  setSubmitedFormData={setSubmitedFormData} submitedFormData={submitedFormData}/>} />
+          <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  submitedFormData={submitedFormData}/>} />
           <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
           <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
           <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
