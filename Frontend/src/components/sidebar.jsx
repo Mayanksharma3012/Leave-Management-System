@@ -1,7 +1,21 @@
 import './sidebar.css'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import axios from 'axios'
 
 function Sidebar() {
+
+    const navigate = useNavigate()
+    const handleLogout = async () => {
+        try {
+            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/logout`, {}, {
+                withCredentials: true,  // ← equivalent to credentials: 'include'
+            });
+    
+            navigate('/')
+        } catch (error) {
+            console.log('unable to logout, error:', error)
+        }
+    }
 
     return (
         <div className="sidebar">
@@ -72,7 +86,7 @@ function Sidebar() {
             </nav>
 
 
-            <div className="sidebarLogOut">
+            <div className="sidebarLogOut" onClick={handleLogout}>
                 <button>Logout</button>
             </div>
 

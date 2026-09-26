@@ -128,7 +128,7 @@ function Login() {
 
                     <footer>
                         <span>Don't have an account?</span>
-                        <a href="">Create an account</a>
+                        <a href="/register">Create an account</a>
                     </footer>
 
                 </form>

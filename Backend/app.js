@@ -16,7 +16,7 @@ async function startServer(){
     credentials: true
   }    
 ))   
-  app.use(express.json())
+  app.use(express.json()) 
   app.use(express.urlencoded({ extended: true }))  // ← AND THIS for form data
   app.use(cookieParser());
 

@@ -16,3 +16,15 @@ userRouter.get('/me', authenticateToken, (req, res) => {
 
 userRouter.post('/applyleave', handleUserLeave)
 userRouter.get('/getleaves', getUserLeaves)
+
+// Logout route
+userRouter.post('/logout', (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,    // must match what you set during login
+    path: '/',       // must match 
+    // domain: '.yourdomain.com',  // add if you set domain on login
+  });
+
+  res.status(200).json({ message: 'Logged out' });
+});   
