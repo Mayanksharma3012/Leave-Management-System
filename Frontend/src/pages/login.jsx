@@ -3,6 +3,10 @@ import { useState } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';   
 
+
+import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from '../firebase.config';
+
 function Login() {
 
     const [showpass, setShowPass] = useState(false)
@@ -12,6 +16,27 @@ function Login() {
         })
 
     const navigate = useNavigate();   
+
+    const handleFirebaseSignIn = async (provider) => {
+        try {
+            const result = await signInWithPopup(auth, provider);
+            const idToken = await result.user.getIdToken();
+
+            await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}/user/firebase-exchange`,
+                { idToken },
+                { withCredentials: true }
+            );
+
+            navigate('/employee/dashboard');
+        } catch (error) {
+            console.error('Firebase sign-in failed', error);
+            alert(error.response?.data?.message ?? 'Unable to sign in');
+        }
+    };
+
+    const handleGoogle = () => handleFirebaseSignIn(new GoogleAuthProvider());
+    const handleGitHub = () => handleFirebaseSignIn(new GithubAuthProvider());
 
 
     const handleSubmit = async (e) => {
@@ -113,12 +138,12 @@ function Login() {
 
                         <span>or sign in with</span>
 
-                        <button type="button">
+                        <button type="button" onClick={handleGoogle}>
                             <i className="fa-brands fa-google"></i>
                             Google
                         </button>
 
-                        <button type="button">
+                        <button type="button" onClick={handleGitHub}>
                             <i className="fa-brands fa-github"></i>
                             GitHub
                         </button>

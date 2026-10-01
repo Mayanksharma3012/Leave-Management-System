@@ -1,4 +1,6 @@
 import { User } from '../models/user.model.js'
+import { getAuth } from 'firebase-admin/auth'
+import firebaseApp from '../firebase-admin.js'
 import jwt from 'jsonwebtoken'
 
 
@@ -69,5 +71,56 @@ export async function handleUserSignUp(req, res) {
 
         console.error('Error registering user:', error);
         return res.status(500).json({ message: 'Unable to register user' });
+    }
+}
+
+export async function FireBaseAuthenticaton(req, res) {
+    const { idToken } = req.body ?? {};
+
+    if (!idToken) {
+        return res.status(400).json({ message: 'Firebase ID token is required' });
+    }
+
+    try {
+        const decoded = await getAuth(firebaseApp).verifyIdToken(idToken);
+        const email = decoded.email;
+
+        if (!email) {
+            return res.status(401).json({ message: 'Firebase account has no email address' });
+        }
+
+        let user = await User.findOne({ firebaseUid: decoded.uid });
+        if (!user) {
+            user = await User.findOne({ email });
+        }
+        if (!user) {
+            user = await User.create({
+                firebaseUid: decoded.uid,
+                email,
+                userName: decoded.name || email.split('@')[0]
+            });
+        } else if (!user.firebaseUid) {
+            user.firebaseUid = decoded.uid;
+            await user.save();
+        }
+
+        const token = jwt.sign(
+            { email: user.email, userName: user.userName },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: process.env.JWT_EXPIREIN }
+        );
+        const isProduction = process.env.NODE_ENV === 'production';
+
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: isProduction,
+            sameSite: isProduction ? 'none' : 'lax',
+            maxAge: 1296000000
+        });
+
+        return res.status(200).json({ message: 'success' });
+    } catch (error) {
+        console.error('Firebase authentication failed:', error.message);
+        return res.status(401).json({ message: 'Invalid or expired Firebase token' });
     }
 }

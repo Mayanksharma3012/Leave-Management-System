@@ -2,6 +2,8 @@ import './register.css'
 import { useState } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
+import { GoogleAuthProvider, GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from '../firebase.config'
 
 function Register() {
     const [showpass, setShowPass] = useState(false)
@@ -21,6 +23,28 @@ function Register() {
         { value: "Human Resources", label: "Human Resources" },
         { value: "Information Technology", label: "Information Technology" },
     ];
+
+     const handleFirebaseSignIn = async (provider) => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const idToken = await result.user.getIdToken();
+    
+                await axios.post(
+                    `${import.meta.env.VITE_BACKEND_URL}/user/firebase-exchange`,
+                    { idToken },
+                    { withCredentials: true }
+                );
+    
+                navigate('/employee/dashboard');
+            } catch (error) {
+                console.error('Firebase sign-in failed', error);
+                alert(error.response?.data?.message ?? 'Unable to sign in');
+            }
+        };
+    
+        const handleGoogle = () => handleFirebaseSignIn(new GoogleAuthProvider());
+        const handleGitHub = () => handleFirebaseSignIn(new GithubAuthProvider());
+    
     const handleSubmit = async (e) => {
       e.preventDefault();
 
@@ -134,8 +158,8 @@ function Register() {
 
                     {!showDepartment && <div className="otherOption">
                         <span>or sign up with</span>
-                        <button type="button"><i className="fa-brands fa-google"></i> Google</button>
-                        <button type="button"><i className="fa-brands fa-github"></i> GitHub</button>
+                        <button type="button" onClick={handleGoogle} ><i className="fa-brands fa-google"></i> Google</button>
+                        <button type="button" onClick={handleGitHub} ><i className="fa-brands fa-github"></i> GitHub</button>
                     </div>}
 
                     <footer>

@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleUserSignUp, handleUserLogin } from '../controller/userAuthentication.controller.js';
+import { handleUserSignUp, handleUserLogin, FireBaseAuthenticaton } from '../controller/userAuthentication.controller.js';
 import { authenticateToken } from '../middlewares/userAuthentication.middleware.js';
 import { handleUserLeave, getUserLeaves } from '../controller/userLeave.controller.js';
 
@@ -28,3 +28,5 @@ userRouter.post('/logout', (req, res) => {
 
   res.status(200).json({ message: 'Logged out' });
 });   
+
+userRouter.post('/firebase-exchange', FireBaseAuthenticaton)
