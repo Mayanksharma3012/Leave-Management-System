@@ -3,6 +3,7 @@ import Sidebar from './../../components/sidebar.jsx'
 import fakeProfile from './../../assets/fakeProfile.png'
 import { useState, useContext } from 'react'
 import { userContext } from '../../context/userContext.js'
+import axios from 'axios'
 
 const settingsTabs = [
     { id: 'Profile', label: '👤 Profile' },
@@ -43,6 +44,39 @@ function EmployeeSettings({ theme, setTheme }) {
     const userEmail =  user?.email || 'example.com'
     const department = user?.department || 'none'
 
+    const [newPassword, setNewPassword] = useState({
+        currentPassword:'',
+        newPassword:'',
+        confirmPassword:''
+    })
+    const [passwordError, setPasswordError] = useState('')
+
+    const handlePasswordChange = async(e) => {
+        e.preventDefault();
+        if (newPassword.newPassword !== newPassword.confirmPassword) {
+            setPasswordError('New password and confirmation do not match.')
+            return
+        }
+        if (newPassword.newPassword === newPassword.currentPassword){
+            setPasswordError('New password and current password cannot be same.')
+            return
+        }
+        setPasswordError('')
+        try {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/change-password`, newPassword, { withCredentials: true })
+            alert('Password Changed')
+        } catch (error) {
+            alert('Password cannot be change because', error)
+        }
+
+
+        setNewPassword({
+            currentPassword:'',
+            newPassword:'',
+            confirmPassword:''
+        })
+        setChangePassword(false)
+    }
     return (
         <div className="employeeSettingsPage">
             <Sidebar  />
@@ -153,13 +187,16 @@ function EmployeeSettings({ theme, setTheme }) {
                                                             type={showCurrentPassword ? 'text' : 'password'}
                                                             id="currentpassword"
                                                             placeholder="Enter current password"
-                                                        />
+                                                            value={newPassword.currentPassword}
+                                                            onChange={(e)=>setNewPassword({...newPassword,currentPassword:e.target.value})}
+                                                            
+                                                            />
                                                         <button
                                                             type="button"
                                                             className={showCurrentPassword ? 'showBtn show' : 'showBtn hide'}
                                                             onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                                                             aria-label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
-                                                        >
+                                                            >
                                                             <i className={showCurrentPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'} />
                                                         </button>
                                                     </div>
@@ -172,13 +209,15 @@ function EmployeeSettings({ theme, setTheme }) {
                                                             type={showNewPassword ? 'text' : 'password'}
                                                             id="newpassword"
                                                             placeholder="Enter new password"
-                                                        />
+                                                            value={newPassword.newPassword}
+                                                            onChange={(e)=>setNewPassword({...newPassword,newPassword:e.target.value})}
+                                                            />
                                                         <button
                                                             type="button"
                                                             className={showNewPassword ? 'showBtn show' : 'showBtn hide'}
                                                             onClick={() => setShowNewPassword(!showNewPassword)}
                                                             aria-label={showNewPassword ? 'Hide new password' : 'Show new password'}
-                                                        >
+                                                            >
                                                             <i className={showNewPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'} />
                                                         </button>
                                                     </div>
@@ -191,6 +230,8 @@ function EmployeeSettings({ theme, setTheme }) {
                                                             type={showConfirmPassword ? 'text' : 'password'}
                                                             id="confirmnewpassword"
                                                             placeholder="Confirm new password"
+                                                            value={newPassword.confirmPassword}
+                                                            onChange={(e)=>setNewPassword({...newPassword,confirmPassword:e.target.value})}
                                                         />
                                                         <button
                                                             type="button"
@@ -204,8 +245,12 @@ function EmployeeSettings({ theme, setTheme }) {
                                                 </div>
                                             </div>
 
+                                            {passwordError && (
+                                                <p className="passwordError" role="alert">{passwordError}</p>
+                                            )}
+
                                             <div className="settingsActions securityAction">
-                                                <button type="button" className="primaryBtn" onClick={() => setChangePassword(false)}>
+                                                <button type="button" className="primaryBtn" onClick={handlePasswordChange}>
                                                     [ Update Password ]
                                                 </button>
                                             </div>

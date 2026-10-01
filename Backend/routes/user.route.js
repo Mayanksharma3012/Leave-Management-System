@@ -1,5 +1,5 @@
 import express from 'express';
-import { handleUserSignUp, handleUserLogin, FireBaseAuthenticaton } from '../controller/userAuthentication.controller.js';
+import { handleUserSignUp, handleUserLogin, FireBaseAuthenticaton, handlePasswordChange } from '../controller/userAuthentication.controller.js';
 import { authenticateToken } from '../middlewares/userAuthentication.middleware.js';
 import { handleUserLeave, getUserLeaves } from '../controller/userLeave.controller.js';
 
@@ -30,3 +30,5 @@ userRouter.post('/logout', (req, res) => {
 });   
 
 userRouter.post('/firebase-exchange', FireBaseAuthenticaton)
+
+userRouter.post('/change-password', handlePasswordChange)

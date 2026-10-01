@@ -124,3 +124,36 @@ export async function FireBaseAuthenticaton(req, res) {
         return res.status(401).json({ message: 'Invalid or expired Firebase token' });
     }
 }
+
+export async function handlePasswordChange(req, res){
+    const { currentPassword, newPassword, confirmPassword } = req.body ?? {}
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ error: 'Current password, new password, and confirmation are required' })
+    }
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ error: 'New passwords do not match' })
+    }
+    const token = req.cookies?.token
+    if (!token) {
+        return res.status(401).json({ error: 'You must be signed in to change your password' })
+    }
+
+    try {
+        const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
+        const user = await User.findOne({ email: verified.email }) 
+        if (!user) return res.status(401).json({ error: 'User not found' });
+
+        const isMatch = await user.matchPassword(currentPassword)
+        if (!isMatch) return res.status(400).json({ error: 'Current password is incorrect' })
+
+        user.password = newPassword
+        await user.save()
+        return res.status(200).json({ message: 'Password changed successfully' })
+
+
+    } catch (error) {
+        console.error('Error changing password:', error)
+        return res.status(500).json({ error: 'Unable to change password' })
+    }
+}
