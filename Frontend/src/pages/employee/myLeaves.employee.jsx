@@ -1,6 +1,7 @@
 import Navbar from '../../components/header'
 import Sidebar from '../../components/sidebar'
 import SummaryGrid from '../../components/summaryGrid'
+import EditLeaveForm from '../../components/editLeaveForm'
 import './myLeaves.employee.css'
 import { useState } from 'react'
 
@@ -44,6 +45,8 @@ function getLeaveStatus(leave) {
 
 function MyLeaves({ submitedFormData }) {
   const [selectedLeave, setSelectedLeave] = useState(null)
+  const [editLeave, setEditLeave] = useState(false)
+  const [leaveToEdit, setLeaveToEdit] = useState(null)
 
   return (
     <div className="employeeMyLeavesPage">
@@ -54,7 +57,17 @@ function MyLeaves({ submitedFormData }) {
         <section className="myLeavesMain">
           <SummaryGrid />
 
-          <div className="leaveHistoryPanel">
+          {editLeave ? (
+            leaveToEdit && (
+              <EditLeaveForm
+                leave={leaveToEdit}
+                onCancel={() => {
+                  setEditLeave(false)
+                  setLeaveToEdit(null)
+                }}
+              />
+            )
+          ) : (<div className="leaveHistoryPanel">
             <div className="historyHeadingRow">
               <h2>Leave History</h2>
             </div>
@@ -91,12 +104,11 @@ function MyLeaves({ submitedFormData }) {
                     <th>Duration</th>
                     <th>Days</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <th className="leaveActionsHeading">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {submitedFormData.map((leave, index) => {
-
                     const status = getLeaveStatus(leave)
                     if( status === null ) return [];
 
@@ -115,13 +127,26 @@ function MyLeaves({ submitedFormData }) {
                           <span className={`statusBadge ${status}`}>{status}</span>
                         </td>
                         <td>
-                          <button
-                            type="button"
-                            className="tableAction"
-                            onClick={() => setSelectedLeave(leave)}
-                          >
-                            View
-                          </button>
+                          <div className="leaveActions">
+                            <button
+                              type="button"
+                              className="tableAction"
+                              onClick={() => setSelectedLeave(leave)}
+                            >
+                              View
+                            </button>
+                            <button
+                              type="button"
+                              className="tableAction"
+                              onClick={() => {
+                                setSelectedLeave(null)
+                                setLeaveToEdit(leave)
+                                setEditLeave(true)
+                              }}
+                            >
+                              Edit
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     )
@@ -129,7 +154,7 @@ function MyLeaves({ submitedFormData }) {
                 </tbody>
               </table>
             </div>
-          </div>
+          </div>)}
         </section>
       </main>
       {selectedLeave && (

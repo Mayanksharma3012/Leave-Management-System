@@ -218,6 +218,142 @@
     border-color: rgba(37, 99, 235, 0.25);
 }
 
+.leaveActionsHeading {
+  text-align: center !important;
+}
+
+.leaveActions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.editLeavePanel {
+  display: grid;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 26px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.editLeaveHeading,
+.editLeaveActions,
+.editLeaveActions > div {
+  display: flex;
+  align-items: center;
+}
+
+.editLeaveHeading,
+.editLeaveActions {
+  justify-content: space-between;
+}
+
+.editLeaveHeading h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.35rem;
+}
+
+.editLeaveHeading .detailsLabel {
+  margin: 0 0 0.35rem;
+}
+
+.editLeaveFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+.editLeaveFields label {
+  display: grid;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.editLeaveFields input,
+.editLeaveFields select,
+.editLeaveFields textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+  background: var(--card-soft);
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.editLeaveFields textarea {
+  resize: vertical;
+}
+
+.editLeaveDateFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+}
+
+.editLeaveFields > label:has(textarea),
+.editLeaveAttachment {
+  grid-column: 1 / -1;
+}
+
+.editLeaveAttachment {
+  display: grid;
+  gap: 0.4rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.editLeaveAttachment strong {
+  overflow-wrap: anywhere;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.editLeaveActions {
+  gap: 0.75rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--border);
+}
+
+.editLeaveActions > div {
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.editLeaveActions button {
+  min-height: 42px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.editLeaveDelete {
+  border-color: #dc2626 !important;
+  background: #dc2626;
+  color: #fff;
+}
+
+.editLeaveCancel {
+  background: var(--card-soft);
+  color: var(--text-primary);
+}
+
+.editLeaveSave {
+  border-color: var(--primary) !important;
+  background: var(--primary);
+  color: #fff;
+}
+
 .leaveDetailsBackdrop {
   position: fixed;
   inset: 0;
@@ -226,6 +362,40 @@
   padding: 1rem;
   background: rgba(15, 23, 42, 0.58);
   z-index: 20;
+}
+
+.deleteConfirmDialog {
+  position: relative;
+  width: min(100%, 420px);
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+}
+
+.deleteConfirmDialog h3 {
+  margin: 0.25rem 0 1.5rem;
+  font-size: 1.2rem;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.deleteConfirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.deleteConfirmActions button {
+  min-width: 120px;
+  min-height: 46px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  font-size: 0.96rem;
+  font-weight: 700;
 }
 
 .leaveDetailsDialog {
@@ -386,6 +556,15 @@
 
   .leaveHistoryPanel {
     padding: 1rem;
+  }
+
+  .editLeavePanel {
+    padding: 1rem;
+  }
+
+  .editLeaveFields,
+  .editLeaveDateFields {
+    grid-template-columns: 1fr;
   }
 }
 

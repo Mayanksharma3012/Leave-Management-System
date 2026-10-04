@@ -62,3 +62,59 @@ export async function getUserLeaves(req, res) {
         res.status(500).json({ message: error.message });
     }
 }
+
+export async function editLeave(req, res) {
+  const { id, title, start, end, endReal, status, days, reason } = req.body ?? {};
+
+  try {
+    if (!id) {
+      return res.status(400).json({ message: "Leave id is required" });
+    }
+    
+    const updatedLeave = await Leave.findByIdAndUpdate(
+      id,
+      {
+        leaveType: title,
+        startDate: start,
+        endDate: end,
+        endDateReal: endReal,
+        days,
+        reason,
+        status: status || "pending-leave"
+    },
+      { new: true }
+    );
+
+    if (!updatedLeave) {
+        return res.status(404).json({ message: "Leave not found" });
+    }
+
+    return res.status(200).json({
+      message: "Leave updated successfully",
+      leave: updatedLeave
+    });
+} catch (error) {
+    return res.status(500).json({ message: error.message });
+}
+}
+
+export async function deleteLeave(req, res) {
+    const {id} = req.body ?? {}
+    
+    try {
+        if (!id) {
+            return res.status(400).json({ message: "Leave id is required" });
+        }
+        const delete_leave = await Leave.findByIdAndDelete(id)
+        if (!delete_leave) {
+            return res.status(404).json({ message: "Leave not found" });
+        }
+        
+        return res.status(200).json({
+          message: "Leave Deleted successfully",
+        });
+        
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
