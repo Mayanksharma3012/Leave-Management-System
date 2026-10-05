@@ -8,6 +8,40 @@ function LeaveCalendar({ submitedFormData }) {
   const [selectedDate, setSelectedDate] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
 
+  const shiftDate = (dateStr, days) => {
+    const date = new Date(`${dateStr.slice(0, 10)}T00:00:00Z`);
+    date.setUTCDate(date.getUTCDate() + days);
+    return date.toISOString().slice(0, 10);
+  };
+
+  const calendarEvents = (submitedFormData || []).map((event) => ({
+    ...event,
+    allDay: true,
+    end: event.endReal ? shiftDate(event.endReal, 1) : event.end,
+  }));
+
+  const getDayCellClassNames = ({ date }) => {
+    const dateStr = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    return calendarEvents
+      .filter((event) => {
+        const start = event.start?.slice(0, 10);
+        const end = event.endReal?.slice(0, 10) || (
+          event.end && event.end.slice(0, 10) !== start
+            ? shiftDate(event.end, -1)
+            : start
+        );
+
+        return start && end && dateStr >= start && dateStr <= end;
+      })
+      .flatMap((event) => event.classNames || [])
+      .map((className) => `leave-day-${className.replace(/-leave$/, "")}`);
+  };
+
   const closePopover = () => {
     setIsClosing(true);
     window.setTimeout(() => setSelectedDate(null), 180);
@@ -15,15 +49,18 @@ function LeaveCalendar({ submitedFormData }) {
 
   const getPopoverPosition = (element) => {
     const bounds = element.getBoundingClientRect();
+    const calendarBounds = element.closest(".leave-calendar")?.getBoundingClientRect();
     const popoverWidth = 260;
     const gap = 10;
     const top = bounds.bottom + gap;
     const shouldOpenAbove = top + 260 > window.innerHeight && bounds.top > 270;
+    const calendarLeft = calendarBounds?.left ?? 0;
+    const calendarWidth = calendarBounds?.width ?? window.innerWidth;
 
     return {
       top: shouldOpenAbove ? bounds.top - gap : top,
       left: Math.min(
-        Math.max(12, bounds.left + (bounds.width - popoverWidth) / 2),
+        Math.max(12, calendarLeft + (calendarWidth - popoverWidth) / 2),
         window.innerWidth - popoverWidth - 12
       ),
       placement: shouldOpenAbove ? "above" : "below",
@@ -48,15 +85,10 @@ function LeaveCalendar({ submitedFormData }) {
 
   const handleEventClick = (info) => {
     const event = info.event;
-    console.log(event)
     const dayElement = info.el.closest(".fc-daygrid-day");
-    const ends = event.endStr
-    let newStrEnd = null
-    if(ends){
-      const end = new Date(ends)
-      const newEnd = end.setDate(end.getDate() - 1)
-      newStrEnd = new Date(newEnd).toISOString().split('T')[0];
-    }
+    const endDate = event.extendedProps.endReal || (
+      event.endStr ? shiftDate(event.endStr, -1) : event.startStr
+    );
 
     setIsClosing(false);
     setSelectedDate({
@@ -68,7 +100,7 @@ function LeaveCalendar({ submitedFormData }) {
       eventDetails: {
         leaveType: event.title,
         startDate: event.extendedProps.start || event.startStr,
-        endDate: newStrEnd || ends || "Not provided",
+        endDate: endDate || "Not provided",
         reason: event.extendedProps.reason || "No reason provided",
         document: event.extendedProps.document,
       },
@@ -77,12 +109,14 @@ function LeaveCalendar({ submitedFormData }) {
 
   const getEventsForDate = (dateStr) => (submitedFormData || []).filter((event) => {
     const start = event.start?.slice(0, 10);
-    const end = (event.endReal || event.end || event.start)?.slice(0, 10);
+    const inclusiveEnd = event.endReal?.slice(0, 10);
+    const exclusiveEnd = event.end?.slice(0, 10);
 
-    if (!start || !end) return false;
-    if (start === end) return dateStr === start;
+    if (!start) return false;
+    if (inclusiveEnd) return dateStr >= start && dateStr <= inclusiveEnd;
+    if (!exclusiveEnd || exclusiveEnd === start) return dateStr === start;
 
-    return dateStr >= start && dateStr < end;
+    return dateStr >= start && dateStr < exclusiveEnd;
   });
 
   useEffect(() => {
@@ -101,12 +135,16 @@ function LeaveCalendar({ submitedFormData }) {
       if (event.key === "Escape") setSelectedDate(null);
     };
 
+    const handleScroll = () => closePopover();
+
     document.addEventListener("pointerdown", handleOutsideClick);
     document.addEventListener("keydown", handleEscape);
+    document.addEventListener("scroll", handleScroll, true);
 
     return () => {
       document.removeEventListener("pointerdown", handleOutsideClick);
       document.removeEventListener("keydown", handleEscape);
+      document.removeEventListener("scroll", handleScroll, true);
     };
   }, [selectedDate]);
 
@@ -117,7 +155,8 @@ function LeaveCalendar({ submitedFormData }) {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={submitedFormData}
+        events={calendarEvents}
+        dayCellClassNames={getDayCellClassNames}
 
         headerToolbar={{
           left: "prev,next",
