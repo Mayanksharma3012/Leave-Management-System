@@ -133,6 +133,43 @@
         ); */
 }
 
+/* =========================================
+   ACCOUNT TYPE SWITCHER
+========================================= */
+
+.loginPage .loginRoleSwitch {
+    display: flex;
+    width: min(100%, 440px);
+    margin-bottom: 1.25rem;
+    padding: 0.3rem;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.2);
+}
+
+.loginPage .loginRoleSwitch button {
+    flex: 1;
+    border: 0;
+    border-radius: 10px;
+    padding: 0.7rem 1rem;
+    background: transparent;
+    color: #ffffff;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.loginPage .loginRoleSwitch button.active {
+    background: #ffffff;
+    color: #1d4ed8;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.loginPage .loginRoleSwitch button:focus-visible {
+    outline: 3px solid #bfdbfe;
+    outline-offset: 2px;
+}
 
 /* =========================================
    TITLE
