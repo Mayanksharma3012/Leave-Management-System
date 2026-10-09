@@ -22,16 +22,15 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: 'engineering'
     },
-    leaveBalance:{
-        type: Number,
-        required: true,
-        default: 10
-    },
     firebaseUid: { 
         type: String,
         unique: true,
         sparse: true 
     },
+    manager:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Manager',
+    }
 
 },{timestamps: true})
 
