@@ -1,4 +1,6 @@
 import jwt from 'jsonwebtoken'
+import { getAuth } from 'firebase-admin/auth'
+import firebaseApp from '../firebase-admin.js'
 import { Manager } from '../models/manager.model.js';
 
 function createManagerToken(manager) {
@@ -63,5 +65,49 @@ export async function handleManagerSignUp(req, res) {
 
         console.error('Error registering manager:', error);
         return res.status(500).json({ message: 'Unable to register manager' });
+    }
+}
+
+export async function ManagerFireBaseAuthenticaton(req, res) {
+    const { idToken } = req.body ?? {};
+
+    if (!idToken) {
+        return res.status(400).json({ message: 'Firebase ID token is required' });
+    }
+
+    try {
+        const decoded = await getAuth(firebaseApp).verifyIdToken(idToken);
+        const email = decoded.email;
+
+        if (!email) {
+            return res.status(401).json({ message: 'Firebase account has no email address' });
+        }
+
+        let user = await Manager.findOne({ firebaseUid: decoded.uid });
+        if (!user) {
+            user = await Manager.findOne({ email });
+        }
+        if (!user) {
+            user = await Manager.create({
+                firebaseUid: decoded.uid,
+                email,
+                userName: decoded.name || email.split('@')[0]
+            });
+        } else if (!user.firebaseUid) {
+            user.firebaseUid = decoded.uid;
+            await user.save();
+        }
+
+        const token = jwt.sign(
+            { email: user.email, userName: user.userName },
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: process.env.JWT_EXPIREIN }
+        );
+        setManagerCookie(res, token)
+
+        return res.status(200).json({ message: 'success' });
+    } catch (error) {
+        console.error('Firebase authentication failed:', error.message);
+        return res.status(401).json({ message: 'Invalid or expired Firebase token' });
     }
 }
