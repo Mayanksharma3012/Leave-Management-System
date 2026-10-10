@@ -24,14 +24,15 @@ function setManagerCookie(res, token) {
 
 export async function handleManagerSignUp(req, res) {
     const { userName, email, password, department} = req.body ?? {};
-
+    
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
     }
-
+    
     try {
         const token = createManagerToken({ email, userName })
-
+        setManagerCookie(res, token)
+        
         await Manager.create({
             userName, email, password, department
         });
@@ -43,8 +44,8 @@ export async function handleManagerSignUp(req, res) {
             try {
                 const existingManager = await Manager.findOne({ email })
                 const isSamePassword = existingManager?.password
-                    && await existingManager.matchPassword(password)
-
+                && await existingManager.matchPassword(password)
+                
                 if (isSamePassword) {
                     const token = createManagerToken(existingManager)
                     setManagerCookie(res, token)
@@ -109,5 +110,25 @@ export async function ManagerFireBaseAuthenticaton(req, res) {
     } catch (error) {
         console.error('Firebase authentication failed:', error.message);
         return res.status(401).json({ message: 'Invalid or expired Firebase token' });
+    }
+}
+
+export async function handleManagerLogin(req, res) {
+    const { email, password, userName } = req.body ?? {}
+
+    const manager = await Manager.findOne({email}) 
+    
+    if(!manager) return res.status(401).json({message: 'Invalid email or password'});
+    
+    const isMatch = await manager.matchPassword(password)
+    if (!isMatch) {
+        return res.status(401).json({message: 'Invalid email or password'});
+    }
+    else{
+        
+        const token = createManagerToken({ email, userName })
+        setManagerCookie(res, token)
+        
+        return res.status(201).json({message: 'success',  ema: email, name: userName, jwtToken: token})   
     }
 }
