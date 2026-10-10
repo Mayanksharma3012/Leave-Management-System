@@ -4,6 +4,7 @@ import cors from 'cors';
 import connectDB from './DB/index.js';
 import cookieParser from 'cookie-parser';
 import { userRouter } from './routes/user.route.js';
+import { managerRouter } from './routes/manager.route.js';
 // import { authenticateToken } from './middleware/userAuthentication.middleware.js';
 
 const app = express()
@@ -26,6 +27,7 @@ async function startServer(){
     await connectDB() 
     //todo create Authentation controller
     app.use('/user', userRouter)
+    app.use('/manager', managerRouter)
 
     
     app.listen(port, () => {

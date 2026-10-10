@@ -21,11 +21,6 @@ const managerSchema = new mongoose.Schema({
         required: true,
         default: 'engineering'
     },
-    leaveBalance:{
-        type: Number,
-        required: true,
-        default: 10
-    },
     firebaseUid: { 
         type: String,
         unique: true,
@@ -38,7 +33,7 @@ const managerSchema = new mongoose.Schema({
 
 },{timestamps: true})
 
-userSchema.pre("save", async function(){ // this will run just before saving to db.
+managerSchema.pre("save", async function(){ // this will run just before saving to db.
     if(!this.isModified("password")) return; // this checks if password is modified or not. if not it will return. no need to change
 
     try {
@@ -50,7 +45,7 @@ userSchema.pre("save", async function(){ // this will run just before saving to 
     }
 })
 
-userSchema.methods.matchPassword = async function(enteredPassword){
+managerSchema.methods.matchPassword = async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password)
 }
 
