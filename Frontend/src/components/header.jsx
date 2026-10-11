@@ -41,7 +41,7 @@ function Navbar() {
         },
         '/manager/leave-requests': {
             title: 'Leave Requests',
-            subtitle: "Review and respond to your team's pending leave requests."
+            subtitle: "Review and manage your team's leave applications."
         }
     }
 

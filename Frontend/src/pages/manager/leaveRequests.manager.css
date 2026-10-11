@@ -1,0 +1,804 @@
+.leaveRequestsPage {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+.leaveRequestsSummary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.leaveRequestsSummary .managerSummaryCard {
+  min-height: 108px;
+}
+
+.leaveRequestsSummary .managerSummaryCard h3 {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.leaveRequestsSummary .managerSummaryCard.rejected::before {
+  background: linear-gradient(90deg, var(--rejected), color-mix(in srgb, var(--rejected) 35%, var(--card)));
+}
+
+.leaveRequestsPanel {
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: linear-gradient(180deg, var(--card) 0%, var(--card-soft) 100%);
+  box-shadow: var(--shadow);
+}
+
+.leaveRequestsFilters {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.leaveRequestSearch,
+.leaveTypeFilter select {
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text-primary);
+}
+
+.leaveRequestSearch {
+  display: flex;
+  flex: 1 1 280px;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0 0.8rem;
+  color: var(--text-secondary);
+  font-size: 1.25rem;
+}
+
+.leaveRequestSearch input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.leaveRequestSearch:focus-within,
+.leaveTypeFilter select:focus-visible,
+.leaveRequestsReset:focus-visible,
+.leaveRequestTabs button:focus-visible,
+.leaveRequestsPagination button:focus-visible,
+.leaveRequestActions button:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.leaveRequestSearch input::placeholder {
+  color: var(--text-secondary);
+}
+
+.leaveTypeFilter select {
+  min-width: 160px;
+  padding: 0 0.8rem;
+  font: inherit;
+  font-size: 0.88rem;
+}
+
+.leaveRequestsReset {
+  min-height: 42px;
+  padding: 0.55rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--card-soft);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.leaveRequestsReset:hover,
+.leaveRequestsPagination button:not(:disabled):hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.leaveRequestTabs {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.8rem 1.15rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.leaveRequestTabs button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.leaveRequestTabs button span {
+  color: inherit;
+  opacity: 0.75;
+}
+
+.leaveRequestTabs button.active {
+  border-color: color-mix(in srgb, var(--primary) 20%, var(--border));
+  background: color-mix(in srgb, var(--primary) 9%, var(--card));
+  color: var(--primary-strong);
+}
+
+.leaveRequestsTableWrap {
+  overflow-x: auto;
+}
+
+.leaveRequestsTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.leaveRequestsTable th {
+  padding: 0.95rem 0.85rem;
+  background: var(--card-soft);
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+.leaveRequestsTable td {
+  padding: 0.9rem 0.85rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-primary);
+  font-size: 0.94rem;
+}
+
+.leaveRequestRow {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.leaveRequestRow:hover,
+.leaveRequestRow:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--primary) 6%, var(--card));
+}
+
+.leaveRequestRow:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--primary);
+}
+
+.leaveRequestsTable th:first-child,
+.leaveRequestsTable td:first-child {
+  padding-left: 1.15rem;
+}
+
+.leaveRequestsTable th:last-child,
+.leaveRequestsTable td:last-child {
+  padding-right: 1.15rem;
+}
+
+.leaveRequestEmployee {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.leaveRequestAvatar {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, var(--border));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--primary) 10%, var(--card));
+  color: var(--primary-strong);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.leaveRequestEmployee strong,
+.leaveRequestEmployee small {
+  display: block;
+}
+
+.leaveRequestEmployee strong {
+  color: var(--text-primary);
+  font-size: 0.94rem;
+  font-weight: 700;
+}
+
+.leaveRequestEmployee small {
+  margin-top: 0.2rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.leaveTypeBadge,
+.leaveStatusBadge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.38rem 0.68rem;
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.leaveTypeBadge {
+  background: color-mix(in srgb, var(--primary) 10%, var(--card));
+  color: var(--primary-strong);
+}
+
+.leaveStatusBadge.pending {
+  background: color-mix(in srgb, var(--pending) 15%, var(--card));
+  color: color-mix(in srgb, var(--pending) 78%, var(--text-primary));
+}
+
+.leaveStatusBadge.approved {
+  background: color-mix(in srgb, var(--approved) 15%, var(--card));
+  color: color-mix(in srgb, var(--approved) 78%, var(--text-primary));
+}
+
+.leaveStatusBadge.rejected {
+  background: color-mix(in srgb, var(--rejected) 13%, var(--card));
+  color: color-mix(in srgb, var(--rejected) 78%, var(--text-primary));
+}
+
+.leaveRequestActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.leaveRequestActions button {
+  min-height: 40px;
+  padding: 0.55rem 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.leaveRequestActions button:hover {
+  transform: translateY(-1px);
+}
+
+.approveRequestButton {
+  border-color: color-mix(in srgb, var(--approved) 35%, var(--border)) !important;
+  background: color-mix(in srgb, var(--approved) 9%, var(--card)) !important;
+  color: var(--approved);
+}
+
+.approveRequestButton:hover {
+  background: color-mix(in srgb, var(--approved) 16%, var(--card)) !important;
+}
+
+.rejectRequestButton {
+  border-color: color-mix(in srgb, var(--rejected) 30%, var(--border)) !important;
+  background: color-mix(in srgb, var(--rejected) 7%, var(--card)) !important;
+  color: var(--rejected);
+}
+
+.rejectRequestButton:hover {
+  background: color-mix(in srgb, var(--rejected) 14%, var(--card)) !important;
+}
+
+.leaveRequestNoAction {
+  color: var(--text-secondary);
+}
+
+.leaveRequestsEmpty {
+  padding: 2.5rem 1rem !important;
+  color: var(--text-secondary) !important;
+  text-align: center;
+}
+
+.leaveRequestsFooter {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.15rem;
+  border-top: 1px solid var(--border);
+}
+
+.leaveRequestsFooter p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.leaveRequestsPagination {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.leaveRequestsPagination button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.leaveRequestsPagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.leaveRequestDialogBackdrop {
+  position: fixed;
+  z-index: 1000;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  background: rgba(15, 23, 42, 0.48);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+.leaveRequestDialog {
+  width: min(100%, 620px);
+  max-height: min(88vh, 820px);
+  overflow-y: auto;
+  padding: 1.6rem;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: linear-gradient(180deg, var(--card) 0%, var(--card-soft) 100%);
+  box-shadow: 0 28px 80px rgba(2, 6, 23, 0.28);
+  color: var(--text-primary);
+  animation: leaveRequestDialogEnter 0.18s ease-out;
+}
+
+@keyframes leaveRequestDialogEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.leaveRequestDialogHeader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-bottom: 1.2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.leaveRequestDialogEyebrow {
+  margin: 0 0 0.35rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.leaveRequestDialogHeader h2 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.45rem;
+  font-weight: 750;
+}
+
+.leaveRequestDialogClose {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  background: var(--card-soft);
+  color: var(--text-secondary);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.leaveRequestDialogClose:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.leaveRequestProfile {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.35rem 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.leaveRequestProfileImage {
+  display: grid;
+  flex: 0 0 68px;
+  width: 68px;
+  height: 68px;
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--primary) 20%, var(--border));
+  border-radius: 20px;
+  background:
+    radial-gradient(circle at 70% 28%, color-mix(in srgb, var(--primary) 28%, var(--card)) 0 14%, transparent 15%),
+    linear-gradient(145deg, color-mix(in srgb, var(--primary) 20%, var(--card)), color-mix(in srgb, var(--primary) 7%, var(--card-soft)));
+}
+
+.leaveRequestProfileImage svg {
+  width: 100%;
+  height: 100%;
+}
+
+.leaveRequestProfileInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.leaveRequestProfileInfo h3 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 1.12rem;
+  font-weight: 750;
+}
+
+.leaveRequestProfileInfo p {
+  margin: 0.3rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.leaveRequestDetailsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+  padding: 1.2rem 0;
+}
+
+.leaveRequestDetail {
+  min-width: 0;
+  padding: 0.95rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.leaveRequestDetail > span {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.leaveRequestDetail > strong {
+  color: var(--text-primary);
+  font-size: 0.96rem;
+  font-weight: 700;
+}
+
+.leaveRequestDetail.leaveRequestReason {
+  grid-column: 1 / -1;
+}
+
+.leaveRequestReason p {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
+.leaveRequestAttachment {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+}
+
+.leaveRequestAttachmentIcon {
+  display: grid;
+  flex: 0 0 38px;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--primary) 18%, var(--border));
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  color: var(--primary-strong);
+  font-size: 1.1rem;
+  font-weight: 750;
+}
+
+.leaveRequestAttachmentInfo {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.leaveRequestAttachmentInfo > span {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.leaveRequestAttachmentInfo > strong {
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+}
+
+.leaveRequestAttachmentInfo > strong.leaveRequestNoAttachment {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.leaveRequestAttachmentLink {
+  flex: 0 0 auto;
+  padding: 0.45rem 0.7rem;
+  border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border));
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--primary) 8%, var(--card));
+  color: var(--primary-strong);
+  font-size: 0.84rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.leaveRequestAttachmentLink:hover {
+  background: color-mix(in srgb, var(--primary) 15%, var(--card));
+}
+
+.leaveRequestDialogActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.7rem;
+  padding-top: 1.15rem;
+  border-top: 1px solid var(--border);
+}
+
+.leaveRequestDialogActions button {
+  min-height: 44px;
+  padding: 0.65rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.leaveRequestDialogActions button:hover {
+  transform: translateY(-1px);
+}
+
+.leaveRequestAttachmentLink:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.leaveRequestEditButton {
+  border-color: color-mix(in srgb, var(--primary) 32%, var(--border)) !important;
+  background: color-mix(in srgb, var(--primary) 9%, var(--card)) !important;
+  color: var(--primary-strong);
+}
+
+.leaveRequestEditButton:hover {
+  background: color-mix(in srgb, var(--primary) 16%, var(--card)) !important;
+}
+
+.leaveRequestDialogReject {
+  border-color: color-mix(in srgb, var(--rejected) 30%, var(--border)) !important;
+  background: color-mix(in srgb, var(--rejected) 8%, var(--card)) !important;
+  color: var(--rejected);
+}
+
+.leaveRequestDialogReject:hover {
+  background: color-mix(in srgb, var(--rejected) 15%, var(--card)) !important;
+}
+
+.leaveRequestDialogCancel {
+  color: var(--text-secondary);
+}
+
+.leaveRequestEditForm {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+  padding-top: 0.4rem;
+}
+
+.leaveRequestEditProfile,
+.leaveRequestEditReason,
+.leaveRequestEditForm .leaveRequestDialogActions {
+  grid-column: 1 / -1;
+}
+
+.leaveRequestEditForm label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  color: var(--text-secondary);
+  font-size: 0.84rem;
+  font-weight: 650;
+}
+
+.leaveRequestEditForm input,
+.leaveRequestEditForm select,
+.leaveRequestEditForm textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  outline: none;
+  background: var(--card);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.92rem;
+}
+
+.leaveRequestEditForm textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+.leaveRequestEditForm input:focus,
+.leaveRequestEditForm select:focus,
+.leaveRequestEditForm textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.leaveRequestEditForm .leaveRequestDialogActions {
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 900px) {
+  .leaveRequestsSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .leaveRequestDialogBackdrop {
+    padding: 0.7rem;
+  }
+
+  .leaveRequestDialog {
+    max-height: 92vh;
+    padding: 1.1rem;
+    border-radius: 20px;
+  }
+
+  .leaveRequestDetailsGrid,
+  .leaveRequestEditForm {
+    grid-template-columns: 1fr;
+  }
+
+  .leaveRequestDetail.leaveRequestReason,
+  .leaveRequestEditProfile,
+  .leaveRequestEditReason,
+  .leaveRequestEditForm .leaveRequestDialogActions {
+    grid-column: auto;
+  }
+
+  .leaveRequestProfile {
+    gap: 0.7rem;
+  }
+
+  .leaveRequestProfileImage {
+    flex-basis: 56px;
+    width: 56px;
+    height: 56px;
+    border-radius: 17px;
+  }
+
+  .leaveRequestProfileInfo h3 {
+    font-size: 1rem;
+  }
+
+  .leaveRequestProfileInfo p {
+    font-size: 0.82rem;
+  }
+
+  .leaveRequestDialogActions {
+    flex-wrap: wrap;
+  }
+
+  .leaveRequestDialogActions button {
+    flex: 1 1 auto;
+  }
+
+  .leaveRequestsFilters {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .leaveRequestSearch {
+    flex-basis: 100%;
+  }
+
+  .leaveTypeFilter {
+    flex: 1;
+  }
+
+  .leaveTypeFilter select {
+    width: 100%;
+  }
+
+  .leaveRequestTabs {
+    overflow-x: auto;
+  }
+
+  .leaveRequestTabs button {
+    flex: 0 0 auto;
+  }
+
+  .leaveRequestsFooter {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .leaveRequestsSummary {
+    gap: 0.65rem;
+  }
+
+  .leaveRequestsSummary .managerSummaryCard {
+    min-height: 92px;
+    padding: 1rem;
+  }
+
+  .leaveRequestsSummary .managerSummaryCard span {
+    font-size: 1.8rem;
+  }
+
+  .leaveRequestsReset {
+    flex: 0 0 auto;
+  }
+}
