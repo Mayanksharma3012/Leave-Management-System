@@ -1,13 +1,33 @@
 import './sidebar.css'
 import { NavLink, useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useLocation } from 'react-router-dom'
+
 
 function Sidebar() {
-
+    
+    const location = useLocation()
     const navigate = useNavigate()
+    const isManager = location.pathname.startsWith('/manager')
+    const links = isManager
+        ? [
+            { label: 'Dashboard', to: '/manager/dashboard' },
+            { label: 'Leave Requests', to: '/manager/leave-requests' },
+            { label: 'My Team', to: '/manager/team' },
+            { label: 'Calendar', to: '/manager/calendar' },
+            { label: 'Settings', to: '/manager/settings' },
+        ]
+        : [
+            { label: 'Dashboard', to: '/employee/dashboard' },
+            { label: 'Apply Leave', to: '/employee/apply-leave' },
+            { label: 'My Leaves', to: '/employee/my-leaves' },
+            { label: 'Calendar', to: '/employee/calendar' },
+            { label: 'Settings', to: '/employee/settings' },
+        ]
+
     const handleLogout = async () => {
         try {
-            const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/logout`, {}, {
+            await axios.post(`${import.meta.env.VITE_BACKEND_URL}/user/logout`, {}, {
                 withCredentials: true,  // ← equivalent to credentials: 'include'
             });
     
@@ -33,63 +53,22 @@ function Sidebar() {
 
 
             <nav className="sidebarLinks" aria-label="Main navigation">
-
-                <NavLink
-                    to="/employee/dashboard"
-                    className={({ isActive }) =>
-                        isActive ? 'active' : ''
-                    }
-                >
-                    Dashboard
-                </NavLink>
-
-
-                <NavLink
-                    to="/employee/apply-leave"
-                    className={({ isActive }) =>
-                        isActive ? 'active' : ''
-                    }
-                >
-                    Apply Leave
-                </NavLink>
-
-
-                <NavLink
-                    to="/employee/my-leaves"
-                    className={({ isActive }) =>
-                        isActive ? 'active' : ''
-                    }
-                >
-                    My Leaves
-                </NavLink>
-
-
-                <NavLink
-                    to="/employee/calendar"
-                    className={({ isActive }) =>
-                        isActive ? 'active' : ''
-                    }
-                >
-                    Calendar
-                </NavLink>
-
-
-                <NavLink
-                    to="/employee/settings"
-                    className={({ isActive }) =>
-                        isActive ? 'active' : ''
-                    }
-                >
-                    Settings
-                </NavLink>
-
+                {links.map(({ label, to }) => (
+                    <NavLink
+                        key={to}
+                        to={to}
+                        end={label === 'Dashboard'}
+                        className={({ isActive }) => isActive ? 'active' : ''}
+                    >
+                        {label}
+                    </NavLink>
+                ))}
             </nav>
 
 
-            <div className="sidebarLogOut" onClick={handleLogout}>
-                <button>Logout</button>
+            <div className="sidebarLogOut">
+                <button onClick={handleLogout}>Logout</button>
             </div>
-
         </div>
     )
 }

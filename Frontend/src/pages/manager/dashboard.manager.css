@@ -1,0 +1,34 @@
+.managerDashboardPage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  overflow-x: hidden;
+}
+
+.managerDashboardMain {
+      display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem 0;
+    width: 90%;
+    max-width: 1240px;
+    min-width: 0;
+    margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  .managerDashboardPage {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .managerDashboardPage .sidebar {
+    min-height: auto;
+  }
+
+  .managerDashboardMain {
+    padding: 0 1rem 1rem;
+  }
+}

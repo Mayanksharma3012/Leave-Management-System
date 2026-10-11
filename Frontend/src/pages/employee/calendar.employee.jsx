@@ -1,7 +1,7 @@
 import LeaveCalendar from '../../components/calendar'
 import Navbar from '../../components/header'
 import Sidebar from '../../components/sidebar'
-import SummaryGrid from '../../components/summaryGrid'
+import SummaryGrid from '../../components/employee-components/summaryGrid'
 import './calendar.employee.css'
 
 

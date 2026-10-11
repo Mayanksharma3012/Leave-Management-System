@@ -19,7 +19,7 @@ function Navbar() {
             title: 'Apply for leave',
             subtitle: 'Complete your request and submit it quickly for approval.'
         },
-
+        
         '/employee/my-leaves': {
             title: 'My Leaves',
             subtitle: 'View and manage your leave requests.'
@@ -29,10 +29,19 @@ function Navbar() {
             title: 'Leave Calendar',
             subtitle: 'Track your leaves, holidays and upcoming time off.'
         },
-
+        
         '/employee/settings': {
             title: 'Settings',
             subtitle: 'Manage your account and application preferences.'
+        },
+        '/manager/dashboard': {
+            title: `Welcome back, ${userName || 'manager'}`,
+            subtitle:"Here's your team's leave overview."
+            
+        },
+        '/manager/leave-requests': {
+            title: 'Leave Requests',
+            subtitle: "Review and respond to your team's pending leave requests."
         }
     }
 

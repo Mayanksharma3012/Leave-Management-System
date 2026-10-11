@@ -14,6 +14,8 @@ import ApplyLeaveEmployee from './pages/employee/applyLeave.employee'
 import MyLeaves from './pages/employee/myLeaves.employee'
 import CalendarEmployee from './pages/employee/calendar.employee'
 import EmployeeSettings from './pages/employee/settings.employee'
+import ManagerDashboardPage from './pages/manager/dashboard.manager.jsx';
+import ManagerLeaveRequestsPage from './pages/manager/leaveRequests.manager.jsx';
 
 const THEME_STORAGE_KEY = 'leave-manager-theme'
 
@@ -105,7 +107,10 @@ function App() {
           <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
           <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
           <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
-        </Route>
+        </Route >
+
+        <Route path='/manager/dashboard' element={<ManagerDashboardPage/>} /> 
+        <Route path='/manager/leave-requests' element={<ManagerLeaveRequestsPage/>} />
         </Routes>
       </userContext.Provider>
     </BrowserRouter>
