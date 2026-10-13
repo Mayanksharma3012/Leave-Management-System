@@ -42,7 +42,11 @@ function Navbar() {
         '/manager/leave-requests': {
             title: 'Leave Requests',
             subtitle: "Review and manage your team's leave applications."
-        }
+        },
+        '/manager/team': {
+            title: 'My Team',
+            subtitle: "Manage your team members and view their leave information."
+        },
     }
 
     const currentPage = pageInfo[location.pathname] || {

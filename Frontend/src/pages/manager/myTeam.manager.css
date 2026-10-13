@@ -1,0 +1,35 @@
+.managerTeamPage {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  overflow-x: hidden;
+}
+
+.managerTeamMain {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 2rem 0;
+  width: 90%;
+  max-width: 1240px;
+  min-width: 0;
+  margin: 0 auto;
+}
+
+@media (max-width: 700px) {
+  .managerTeamPage {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .managerTeamPage .sidebar {
+    min-height: auto;
+  }
+
+  .managerTeamMain {
+    width: 90%;
+    padding: 1rem;
+  }
+}

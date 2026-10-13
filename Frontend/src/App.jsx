@@ -16,6 +16,7 @@ import CalendarEmployee from './pages/employee/calendar.employee'
 import EmployeeSettings from './pages/employee/settings.employee'
 import ManagerDashboardPage from './pages/manager/dashboard.manager.jsx';
 import ManagerLeaveRequestsPage from './pages/manager/leaveRequests.manager.jsx';
+import ManagerTeamPage from './pages/manager/myTeam.manager.jsx';
 
 const THEME_STORAGE_KEY = 'leave-manager-theme'
 
@@ -111,6 +112,8 @@ function App() {
 
         <Route path='/manager/dashboard' element={<ManagerDashboardPage/>} /> 
         <Route path='/manager/leave-requests' element={<ManagerLeaveRequestsPage/>} />
+        <Route path='/manager/team' element={<ManagerTeamPage/>} />
+
         </Routes>
       </userContext.Provider>
     </BrowserRouter>
