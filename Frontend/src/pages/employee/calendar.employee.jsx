@@ -1,4 +1,4 @@
-import LeaveCalendar from '../../components/calendar'
+import LeaveCalendar from '../../components/employee-components/calendar'
 import Navbar from '../../components/header'
 import Sidebar from '../../components/sidebar'
 import SummaryGrid from '../../components/employee-components/summaryGrid'

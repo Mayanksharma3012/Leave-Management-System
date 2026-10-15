@@ -2,7 +2,7 @@ import './calendar.employee.css'
 import './dashboard.employee.css'
 import Sidebar from '../../components/sidebar'
 import Navbar from '../../components/header'
-import LeaveCalendar from '../../components/calendar'
+import LeaveCalendar from '../../components/employee-components/calendar'
 
 function StatusBadge({status}){
 

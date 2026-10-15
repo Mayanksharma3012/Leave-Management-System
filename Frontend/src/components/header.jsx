@@ -47,6 +47,10 @@ function Navbar() {
             title: 'My Team',
             subtitle: "Manage your team members and view their leave information."
         },
+        '/manager/calendar': {
+            title: 'Team Calendar',
+            subtitle: "View your team's leave schedule and plan work accordingly."
+        },
     }
 
     const currentPage = pageInfo[location.pathname] || {
