@@ -21,6 +21,7 @@ import ManagerCalendarPage from './pages/manager/calendar.manager.jsx';
 import ManagerSettingPage from './pages/manager/settings.manager.jsx';
 
 const THEME_STORAGE_KEY = 'leave-manager-theme'
+const USER_ROLE_STORAGE_KEY = 'leave-manager-role'
 
 function getInitialTheme() {
   if (typeof window === 'undefined') return 'light'
@@ -31,6 +32,11 @@ function getInitialTheme() {
   }
 
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+}
+
+function getInitialLoginRole() {
+  const storedRole = localStorage.getItem(USER_ROLE_STORAGE_KEY)
+  return storedRole === 'employee' || storedRole === 'manager' ? storedRole : ''
 }
 
 function App() {
@@ -95,29 +101,40 @@ function App() {
     return () => mediaQuery.removeEventListener('change', handleSystemThemeChange)
   }, [theme])
 
+  const [loginRole, setLoginRoleState] = useState(getInitialLoginRole)
+  const setLoginRole = (role) => {
+    if (role === 'employee' || role === 'manager') {
+      localStorage.setItem(USER_ROLE_STORAGE_KEY, role)
+    } else {
+      localStorage.removeItem(USER_ROLE_STORAGE_KEY)
+    }
+    setLoginRoleState(role)
+  }
+
   return (
     <>
     <BrowserRouter>
-      <userContext.Provider value={userData}>
+      <userContext.Provider value={{ userData, setLoginRole }}>
         <Routes>
-        <Route path='/' element={<LandingPage />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register/>} />
+          <Route path='/' element={<LandingPage />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register/>} />
 
-        <Route element={<ProtectedRoute setUserData={setUserData}/> }>
-          <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
-          <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  submitedFormData={submitedFormData}/>} />
-          <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
-          <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
-          <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
-        </Route >
+          <Route element={<ProtectedRoute setUserData={setUserData} loginRole={loginRole} requiredRole="employee" />}>
+            <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />
+            <Route path='/employee/apply-leave' element={<ApplyLeaveEmployee  submitedFormData={submitedFormData}/>} />
+            <Route path='/employee/my-leaves' element={<MyLeaves submitedFormData={submitedFormData} /> } />
+            <Route path='/employee/calendar' element={<CalendarEmployee submitedFormData={submitedFormData} />} />
+            <Route path='/employee/settings' element={<EmployeeSettings  theme={theme} setTheme={setTheme} />} />
+          </Route>
 
-        <Route path='/manager/dashboard' element={<ManagerDashboardPage/>} /> 
-        <Route path='/manager/leave-requests' element={<ManagerLeaveRequestsPage/>} />
-        <Route path='/manager/team' element={<ManagerTeamPage/>} />
-        <Route path='/manager/calendar' element={<ManagerCalendarPage/>} />
-        <Route path='/manager/settings' element={<ManagerSettingPage theme={theme} setTheme={setTheme} />} />
-
+          <Route element={<ProtectedRoute setUserData={setUserData} loginRole={loginRole} requiredRole="manager" />}>
+            <Route path='/manager/dashboard' element={<ManagerDashboardPage/>} /> 
+            <Route path='/manager/leave-requests' element={<ManagerLeaveRequestsPage/>} />
+            <Route path='/manager/team' element={<ManagerTeamPage/>} />
+            <Route path='/manager/calendar' element={<ManagerCalendarPage/>} />
+            <Route path='/manager/settings' element={<ManagerSettingPage theme={theme} setTheme={setTheme} />} />
+          </Route>
         </Routes>
       </userContext.Provider>
     </BrowserRouter>

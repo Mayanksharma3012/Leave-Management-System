@@ -3,7 +3,8 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../firebase.config'
-
+import { useContext } from 'react'
+import { userContext } from '../../context/userContext'
 const departments = [
     { value: 'Finance', label: 'Finance' },
     { value: 'Marketing', label: 'Marketing' },
@@ -22,39 +23,42 @@ export default function ManagerRegister({ roleSwitcher }) {
         department: ''
     })
     const navigate = useNavigate()
-
+    const { setLoginRole } = useContext(userContext)
+    
     const handleFirebaseSignIn = async (provider) => {
         try {
             const result = await signInWithPopup(auth, provider)
             const idToken = await result.user.getIdToken()
-
+            
             await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/manager/firebase-exchange`,
                 { idToken },
                 { withCredentials: true }
             )
-
+            setLoginRole('manager')
+            
             navigate('/manager/dashboard')
         } catch (error) {
             console.error('Manager Firebase sign-in failed', error)
             alert(error.response?.data?.message ?? 'Unable to sign in')
         }
     }
-
+    
     const handleSubmit = async (event) => {
         event.preventDefault()
-
+        
         if (!showDepartment) {
             setShowDepartment(true)
             return
         }
-
+        
         try {
             await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/manager/register`,
                 signup,
                 { withCredentials: true }
             )
+            setLoginRole('manager')
             navigate('/manager/dashboard')
         } catch (error) {
             console.error('Error submitting the manager registration form', error)

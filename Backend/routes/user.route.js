@@ -1,6 +1,6 @@
 import express from 'express';
 import { handleUserSignUp, handleUserLogin, FireBaseAuthenticaton, handlePasswordChange } from '../controller/userAuthentication.controller.js';
-import { authenticateToken } from '../middlewares/userAuthentication.middleware.js';
+import { userAuthenticateToken } from '../middlewares/userAuthentication.middleware.js';
 import { handleUserLeave, getUserLeaves , editLeave, deleteLeave} from '../controller/userLeave.controller.js';
 
 
@@ -9,7 +9,7 @@ export const userRouter = express.Router()
 userRouter.post('/register', handleUserSignUp)
 userRouter.post('/login', handleUserLogin)
 
-userRouter.get('/me', authenticateToken, (req, res) => {
+userRouter.get('/me', userAuthenticateToken, (req, res) => {
   res.json({ user: req.user });
 });
 

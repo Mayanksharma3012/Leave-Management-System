@@ -1,7 +1,7 @@
 import './login.css'
 import { useState } from 'react'
-import EmployeeLogin from '../components/employee-components/login.component'
-import ManagerLogin from '../components/manager-components/login.component'
+import EmployeeLogin from '../components/employee-components/employeeLogin.component'
+import ManagerLogin from '../components/manager-components/managerLogin.component'
 
 function Login() {
     const [activeRole, setActiveRole] = useState('employee')

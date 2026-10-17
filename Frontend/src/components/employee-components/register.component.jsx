@@ -3,6 +3,8 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { auth } from '../../firebase.config'
+import { userContext } from '../../context/userContext'
+import { useContext } from 'react'
 
 const departments = [
     { value: 'Finance', label: 'Finance' },
@@ -22,6 +24,9 @@ export default function EmployeeRegister({ roleSwitcher }) {
         department: ''
     })
     const navigate = useNavigate()
+    
+    const { setLoginRole } = useContext(userContext)
+    
 
     const handleFirebaseSignIn = async (provider) => {
         try {
@@ -34,6 +39,8 @@ export default function EmployeeRegister({ roleSwitcher }) {
                 { withCredentials: true }
             )
 
+            setLoginRole('employee')
+            
             navigate('/employee/dashboard')
         } catch (error) {
             console.error('Firebase sign-in failed', error)
@@ -43,18 +50,19 @@ export default function EmployeeRegister({ roleSwitcher }) {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-
+        
         if (!showDepartment) {
             setShowDepartment(true)
             return
         }
-
+        
         try {
             await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/user/register`,
                 signup,
                 { withCredentials: true }
             )
+            setLoginRole('employee')
             navigate('/employee/dashboard')
         } catch (error) {
             console.error('Error submitting the employee registration form', error)
