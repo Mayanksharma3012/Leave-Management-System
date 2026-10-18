@@ -27,8 +27,9 @@ const managerSchema = new mongoose.Schema({
         sparse: true 
     },
     employees:{
-        type: mongoose.Schema.Types.ObjectId,
+        type: [mongoose.Schema.Types.ObjectId],
         ref: 'User',
+        default: []
     }
 
 },{timestamps: true})

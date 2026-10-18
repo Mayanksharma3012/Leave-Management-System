@@ -117,6 +117,13 @@
   font-size: 0.92rem;
 }
 
+.teamTableActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.teamAddButton,
 .teamExportButton {
   display: inline-flex;
   align-items: center;
@@ -133,6 +140,17 @@
   font-weight: 700;
   white-space: nowrap;
   cursor: pointer;
+}
+
+.teamAddButton {
+  border-color: var(--border);
+  background: var(--card);
+  color: var(--text-primary);
+}
+
+.teamAddButton:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .teamExportButton:hover {
@@ -220,6 +238,41 @@
   border: 1px solid var(--border);
   border-radius: 11px;
   background: var(--card);
+}
+
+.teamTableScroll,
+.teamDetailsDialog,
+.teamAddDialog {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--primary) 55%, var(--border)) var(--card-soft);
+}
+
+.teamTableScroll::-webkit-scrollbar,
+.teamDetailsDialog::-webkit-scrollbar,
+.teamAddDialog::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+.teamTableScroll::-webkit-scrollbar-track,
+.teamDetailsDialog::-webkit-scrollbar-track,
+.teamAddDialog::-webkit-scrollbar-track {
+  border-radius: 99px;
+  background: var(--card-soft);
+}
+
+.teamTableScroll::-webkit-scrollbar-thumb,
+.teamDetailsDialog::-webkit-scrollbar-thumb,
+.teamAddDialog::-webkit-scrollbar-thumb {
+  border: 2px solid var(--card-soft);
+  border-radius: 99px;
+  background: color-mix(in srgb, var(--primary) 55%, var(--border));
+}
+
+.teamTableScroll::-webkit-scrollbar-thumb:hover,
+.teamDetailsDialog::-webkit-scrollbar-thumb:hover,
+.teamAddDialog::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
 }
 
 .teamTable {
@@ -466,6 +519,142 @@
   background: var(--card);
   box-shadow: 0 24px 80px rgba(2, 6, 23, 0.3);
   animation: teamDialogEnter 0.18s ease-out;
+}
+
+.teamAddDialog {
+  position: relative;
+  width: min(100%, 520px);
+  max-height: min(90vh, 680px);
+  overflow-y: auto;
+  padding: 1.35rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--card);
+  color: var(--text-primary);
+  box-shadow: 0 24px 80px rgba(2, 6, 23, 0.3);
+  animation: teamDialogEnter 0.18s ease-out;
+}
+
+.teamAddDialog h2 {
+  margin: 0;
+  padding-right: 2rem;
+  font-size: 1.35rem;
+}
+
+.teamAddDescription {
+  margin: 0.35rem 0 1rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.teamAddSearch {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--card);
+  color: var(--text-secondary);
+}
+
+.teamAddSearch:focus-within {
+  outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 1px;
+}
+
+.teamAddSearch > span {
+  font-size: 1.2rem;
+}
+
+.teamAddSearch input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+}
+
+.teamAddSearch input::placeholder {
+  color: var(--text-secondary);
+}
+
+.teamAddResults {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.teamAddResult {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+}
+
+.teamAddResultInfo {
+  display: grid;
+  flex: 1;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.teamAddResultInfo strong {
+  font-size: 0.88rem;
+}
+
+.teamAddResultInfo small {
+  overflow: hidden;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teamAddResultButton {
+  min-height: 32px;
+  padding: 0.35rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: var(--primary);
+  color: #fff;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.teamAddResultButton:hover {
+  filter: brightness(1.08);
+}
+
+.teamAddResultButton:focus-visible,
+.teamAddFooter button:focus-visible,
+.teamAddButton:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.teamAddEmpty {
+  margin: 0;
+  padding: 1.25rem 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+.teamAddFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 0.9rem;
 }
 
 @keyframes teamDialogEnter {
@@ -755,10 +944,16 @@
     line-height: 1.4;
   }
 
+  .teamAddButton,
   .teamExportButton {
     min-height: 34px;
     padding: 0.45rem 0.55rem;
     font-size: 0.76rem;
+  }
+
+  .teamTableActions {
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .teamFilters {
@@ -776,6 +971,11 @@
   }
 
   .teamDetailsDialog {
+    max-height: 94vh;
+    padding: 1rem;
+  }
+
+  .teamAddDialog {
     max-height: 94vh;
     padding: 1rem;
   }

@@ -1,7 +1,7 @@
 import express from 'express'
 import { handleManagerLogin, handleManagerSignUp, ManagerFireBaseAuthenticaton } from '../controller/managerAuthentication.controller.js'
 import { managerAuthenticateToken } from '../middlewares/userAuthentication.middleware.js'
-
+import { AvailableEmployees, ManagerEmployees, AddEmployee } from '../controller/manager.controller.js'
 
 
 export const managerRouter = express.Router()
@@ -15,3 +15,10 @@ managerRouter.get('/me', managerAuthenticateToken, (req, res) => {
 });
 
 managerRouter.post('/firebase-exchange', ManagerFireBaseAuthenticaton)
+
+
+managerRouter.get('/availableemployee', AvailableEmployees)
+
+managerRouter.get('/employees', managerAuthenticateToken, ManagerEmployees)
+
+managerRouter.post('/addemployee', managerAuthenticateToken, AddEmployee)
