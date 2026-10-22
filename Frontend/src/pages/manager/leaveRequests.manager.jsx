@@ -4,21 +4,54 @@ import { useEffect, useMemo, useState } from 'react'
 import '../../components/manager-components/summaryGrid.manager.css'
 import Navbar from '../../components/header'
 import Sidebar from '../../components/sidebar'
-
-const demoRequests = [
-    { id: 1, name: 'Rahul Sharma', initials: 'RS', team: 'Engineering', leaveType: 'Casual Leave', dates: 'Oct 12 – Oct 13', duration: '2 days', appliedOn: 'Oct 8, 10:30 AM', reason: 'Personal work that requires my attention.', document: 'travel_tickets.pdf', status: 'Pending' },
-    { id: 2, name: 'Priya Patel', initials: 'PP', team: 'Design', leaveType: 'Sick Leave', dates: 'Oct 14', duration: '1 day', appliedOn: 'Oct 10, 9:15 AM', reason: 'I need a day to recover from an illness.', status: 'Pending' },
-    { id: 3, name: 'Amit Verma', initials: 'AV', team: 'Marketing', leaveType: 'Earned Leave', dates: 'Oct 20 – Oct 22', duration: '3 days', appliedOn: 'Oct 9, 2:45 PM', reason: 'Planning a short family trip.', status: 'Pending' },
-    { id: 4, name: 'Sneha Choudhary', initials: 'SC', team: 'Human Resources', leaveType: 'Casual Leave', dates: 'Oct 28', duration: '1 day', appliedOn: 'Oct 8, 11:20 AM', reason: 'Personal appointment.', status: 'Approved' },
-    { id: 5, name: 'Deepak Kumar', initials: 'DK', team: 'Engineering', leaveType: 'Sick Leave', dates: 'Oct 5 – Oct 7', duration: '3 days', appliedOn: 'Oct 1, 8:40 AM', reason: 'Medical rest advised by my doctor.', status: 'Approved' },
-    { id: 6, name: 'Neha Tiwari', initials: 'NT', team: 'Product', leaveType: 'Work From Home', dates: 'Oct 16', duration: '1 day', appliedOn: 'Oct 10, 1:05 PM', reason: 'Home maintenance appointment.', status: 'Rejected' },
-    { id: 7, name: 'Vikram Singh', initials: 'VK', team: 'Design', leaveType: 'Casual Leave', dates: 'Oct 25 – Oct 26', duration: '2 days', appliedOn: 'Oct 7, 3:10 PM', reason: 'Attending a family event.', status: 'Approved' },
-    { id: 8, name: 'Isha Agarwal', initials: 'IA', team: 'Quality Assurance', leaveType: 'Earned Leave', dates: 'Oct 30 – Nov 1', duration: '3 days', appliedOn: 'Oct 10, 10:00 AM', reason: 'Using planned annual leave.', status: 'Approved' },
-]
+import axios from 'axios'
 
 const statusFilters = ['All', 'Pending', 'Approved', 'Rejected']
-const leaveTypes = ['Casual Leave', 'Sick Leave', 'Earned Leave', 'Work From Home']
 const pageSize = 6
+
+function formatDate(value) {
+    if (!value) return '—'
+    const dateValue = String(value).slice(0, 10)
+    const date = new Date(`${dateValue}T12:00:00`)
+    return Number.isNaN(date.getTime())
+        ? dateValue
+        : new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(date)
+}
+
+function formatAppliedOn(value) {
+    if (!value) return '—'
+    const date = new Date(value)
+    return Number.isNaN(date.getTime())
+        ? '—'
+        : new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }).format(date)
+}
+
+function normalizeStatus(value) {
+    const status = String(value || '').toLowerCase().replace(/-leave$/, '')
+    return status.charAt(0).toUpperCase() + status.slice(1)
+}
+
+function mapLeaveRequest(leave) {
+    const name = leave.employee?.userName || 'Unknown employee'
+    const startDate = leave.startDate
+    const endDate = leave.endDateReal || leave.endDate || startDate
+    const startLabel = formatDate(startDate)
+    const endLabel = formatDate(endDate)
+
+    return {
+        id: String(leave._id),
+        name,
+        initials: name.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase(),
+        team: leave.employee?.department || '—',
+        leaveType: leave.leaveType || 'Leave',
+        dates: startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`,
+        duration: `${leave.days ?? 0} ${leave.days === 1 ? 'day' : 'days'}`,
+        appliedOn: formatAppliedOn(leave.createdAt),
+        reason: leave.reason || '',
+        document: leave.document || null,
+        status: normalizeStatus(leave.status),
+    }
+}
 
 function getAttachmentName(document) {
     if (typeof document === 'string') {
@@ -35,12 +68,15 @@ function getAttachmentUrl(document) {
 }
 
 export default function ManagerLeaveRequestsPage() {
-    const [requests, setRequests] = useState(demoRequests)
+    const [requests, setRequests] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [loadError, setLoadError] = useState('')
     const [activeStatus, setActiveStatus] = useState('All')
     const [search, setSearch] = useState('')
     const [leaveType, setLeaveType] = useState('All')
     const [page, setPage] = useState(1)
     const [reviewMessage, setReviewMessage] = useState('')
+    const [reviewError, setReviewError] = useState('')
     const [selectedRequestId, setSelectedRequestId] = useState(null)
     const [isEditingRequest, setIsEditingRequest] = useState(false)
     const [requestDraft, setRequestDraft] = useState(null)
@@ -60,6 +96,32 @@ export default function ManagerLeaveRequestsPage() {
         return () => document.removeEventListener('keydown', closeOnEscape)
     }, [selectedRequestId])
 
+
+    useEffect(() => {
+        let isActive = true
+
+        const fetchLeaveRequests = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/manager/leaverequests`, { withCredentials: true })
+                if (!Array.isArray(response.data?.leaves)) {
+                    throw new Error('The server returned an unexpected leave requests response.')
+                }
+                if (isActive) setRequests(response.data.leaves.map(mapLeaveRequest))
+            } catch (error) {
+                if (isActive) {
+                    setLoadError(error.response?.data?.message || error.message || 'Unable to load leave requests.')
+                }
+            } finally {
+                if (isActive) setIsLoading(false)
+            }
+        }
+
+        fetchLeaveRequests()
+        return () => {
+            isActive = false
+        }
+    }, [])
+
     const counts = useMemo(() => ({
         All: requests.length,
         Pending: requests.filter((request) => request.status === 'Pending').length,
@@ -78,10 +140,11 @@ export default function ManagerLeaveRequestsPage() {
                 request.leaveType,
                 request.dates,
                 request.status,
-            ].some((value) => value.toLowerCase().includes(normalizedSearch))
+            ].some((value) => String(value || '').toLowerCase().includes(normalizedSearch))
             return matchesStatus && matchesType && matchesSearch
         })
     }, [activeStatus, leaveType, requests, search])
+    const leaveTypes = [...new Set(requests.map((request) => request.leaveType).filter(Boolean))]
 
     const pageCount = Math.max(1, Math.ceil(filteredRequests.length / pageSize))
     const currentPage = Math.min(page, pageCount)
@@ -98,11 +161,22 @@ export default function ManagerLeaveRequestsPage() {
         setPage(1)
     }
 
-    const handleReview = (request, status) => {
-        setRequests((currentRequests) => currentRequests.map((item) => (
-            item.id === request.id ? { ...item, status } : item
-        )))
-        setReviewMessage(`${request.name}'s request was ${status.toLowerCase()}.`)
+    const handleReview = async (request, status) => {
+        const normalizedStatus = status.toLowerCase()
+        setReviewError('')
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}/manager/leaverequests/${request.id}/review`,
+                { status: normalizedStatus },
+                { withCredentials: true }
+            )
+            setRequests((currentRequests) => currentRequests.map((item) => (
+                item.id === request.id ? { ...item, status: normalizeStatus(normalizedStatus) } : item
+            )))
+            setReviewMessage(`${request.name}'s request was ${normalizedStatus}.`)
+        } catch (error) {
+            setReviewError(error.response?.data?.message || error.message || 'Unable to review leave request.')
+        }
     }
 
     const openRequest = (request) => {
@@ -199,6 +273,12 @@ export default function ManagerLeaveRequestsPage() {
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    {isLoading && (
+                                        <tr><td className="leaveRequestsEmpty" colSpan="7">Loading leave requests…</td></tr>
+                                    )}
+                                    {!isLoading && loadError && (
+                                        <tr><td className="leaveRequestsEmpty" colSpan="7">Unable to load leave requests: {loadError}</td></tr>
+                                    )}
                                     {visibleRequests.map((request) => (
                                         <tr
                                             key={request.id}
@@ -259,7 +339,7 @@ export default function ManagerLeaveRequestsPage() {
                                             </td>
                                         </tr>
                                     ))}
-                                    {visibleRequests.length === 0 && (
+                                    {!isLoading && !loadError && visibleRequests.length === 0 && (
                                         <tr>
                                             <td className="leaveRequestsEmpty" colSpan="7">No requests match these filters.</td>
                                         </tr>
@@ -292,6 +372,7 @@ export default function ManagerLeaveRequestsPage() {
                         </footer>
                     </section>
                     <p className="sr-only" aria-live="polite">{reviewMessage}</p>
+                    {reviewError && <p role="alert">{reviewError}</p>}
                 </section>
             </main>
             {selectedRequest && (

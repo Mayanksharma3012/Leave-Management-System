@@ -1,6 +1,8 @@
 import { Leave } from "../models/leave.model.js";
 import { User } from "../models/user.model.js"
+import { Manager } from "../models/manager.model.js";
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 
 export async function handleUserLeave(req, res){
     const token = req.cookies.token;
@@ -116,5 +118,61 @@ export async function deleteLeave(req, res) {
         
     } catch (error) {
         return res.status(500).json({ message: error.message });
+    }
+}
+
+
+export async function EmployeesLeavesRequests(req, res){
+    try {
+        const manager = await Manager.findById(req.user._id).select('employees');
+        if (!manager) {
+            return res.status(404).json({ message: 'Manager not found' });
+        }
+
+        const leaves = await Leave.find({ employee: { $in: manager.employees } })
+            .populate('employee', 'userName department')
+            .sort({ createdAt: -1 });
+
+        return res.status(200).json({ leaves });
+    } catch (error) {
+        console.error('Error retrieving manager leave requests:', error);
+        return res.status(500).json({ message: 'Unable to retrieve leave requests' });
+    }
+}
+
+export async function reviewLeaveRequest(req, res) {
+    const { leaveId } = req.params;
+    const { status } = req.body ?? {};
+
+    if (!mongoose.isValidObjectId(leaveId)) {
+        return res.status(400).json({ message: 'A valid leave request id is required' });
+    }
+    if (!['approved', 'rejected'].includes(status)) {
+        return res.status(400).json({ message: 'Status must be approved or rejected' });
+    }
+
+    try {
+        const manager = await Manager.findById(req.user._id).select('employees');
+        if (!manager) {
+            return res.status(404).json({ message: 'Manager not found' });
+        }
+
+        const leave = await Leave.findOneAndUpdate(
+            {
+                _id: leaveId,
+                employee: { $in: manager.employees },
+                status: { $in: ['pending-leave', 'pending'] }
+            },
+            { status: `${status}-leave` },
+            { new: true }
+        );
+        if (!leave) {
+            return res.status(404).json({ message: 'Pending leave request not found' });
+        }
+
+        return res.status(200).json({ message: 'Leave request reviewed successfully', leave });
+    } catch (error) {
+        console.error('Error reviewing manager leave request:', error);
+        return res.status(500).json({ message: 'Unable to review leave request' });
     }
 }
