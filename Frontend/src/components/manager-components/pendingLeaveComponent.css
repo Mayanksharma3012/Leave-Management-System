@@ -129,6 +129,15 @@
   transform: translateY(-2px);
 }
 
+.pendingLeaveAction:disabled {
+  cursor: wait;
+  opacity: 0.55;
+}
+
+.pendingLeaveAction:disabled:hover {
+  transform: none;
+}
+
 .pendingLeaveAction:focus-visible,
 .pendingLeavesViewAll:focus-visible,
 .pendingLeavesReviewAll:focus-visible {
@@ -162,6 +171,13 @@
   border-top: 1px solid var(--border);
   color: var(--text-secondary);
   text-align: center;
+}
+
+.pendingLeavesFeedback {
+  margin: 0;
+  padding-top: 0.75rem;
+  color: var(--rejected);
+  font-size: 0.9rem;
 }
 
 .pendingLeavesFooter {

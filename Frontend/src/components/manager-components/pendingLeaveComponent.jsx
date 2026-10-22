@@ -1,43 +1,92 @@
 import './pendingLeaveComponent.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import axios from 'axios'
+
+function formatDate(value) {
+    if (!value) return '—'
+    const dateValue = String(value).slice(0, 10)
+    const date = new Date(`${dateValue}T12:00:00`)
+    return Number.isNaN(date.getTime())
+        ? dateValue
+        : new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' }).format(date)
+}
+
+function normalizeStatus(value) {
+    const status = String(value || '').toLowerCase().replace(/-leave$/, '')
+    return status.charAt(0).toUpperCase() + status.slice(1)
+}
+
+function mapLeaveRequest(leave) {
+    const name = leave.employee?.userName || 'Unknown employee'
+    const startLabel = formatDate(leave.startDate)
+    const endLabel = formatDate(leave.endDateReal || leave.endDate || leave.startDate)
+
+    return {
+        id: String(leave._id),
+        name,
+        initials: name.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase(),
+        leaveType: leave.leaveType || 'Leave',
+        dates: startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`,
+        status: normalizeStatus(leave.status),
+    }
+}
 
 export default function ManagerPendingLeave() {
-    const [pendingLeaves, setPendingLeaves] = useState([
-        {
-            id: 1,
-            name: 'Olivia Martinez',
-            initials: 'OM',
-            leaveType: 'Annual leave',
-            startDate: 'Oct 12',
-            endDate: 'Oct 14',
-        },
-        {
-            id: 2,
-            name: 'Ethan Johnson',
-            initials: 'EJ',
-            leaveType: 'Sick leave',
-            startDate: 'Oct 13',
-            endDate: 'Oct 13',
-        },
-        {
-            id: 3,
-            name: 'Sophia Williams',
-            initials: 'SW',
-            leaveType: 'Personal leave',
-            startDate: 'Oct 15',
-            endDate: 'Oct 16',
-        },
-    ])
+    const [pendingLeaves, setPendingLeaves] = useState([])
+    const [isLoading, setIsLoading] = useState(true)
+    const [loadError, setLoadError] = useState('')
+    const [reviewingId, setReviewingId] = useState(null)
     const [reviewMessage, setReviewMessage] = useState('')
+    const [reviewError, setReviewError] = useState('')
 
-    const handleReview = (leaveId, decision) => {
-        const leave = pendingLeaves.find((item) => item.id === leaveId)
-        if (leave) {
-            setReviewMessage(`${leave.name}'s request ${decision}.`)
+    useEffect(() => {
+        let isActive = true
+
+        const fetchLeaveRequests = async () => {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/manager/leaverequests`, { withCredentials: true })
+                if (!Array.isArray(response.data?.leaves)) {
+                    throw new Error('The server returned an unexpected leave requests response.')
+                }
+                if (isActive) {
+                    setPendingLeaves(response.data.leaves.map(mapLeaveRequest).filter((leave) => leave.status === 'Pending'))
+                }
+            } catch (error) {
+                if (isActive) {
+                    setLoadError(error.response?.data?.message || error.message || 'Unable to load leave requests.')
+                }
+            } finally {
+                if (isActive) setIsLoading(false)
+            }
         }
-        setPendingLeaves((leaves) => leaves.filter((leave) => leave.id !== leaveId))
+
+        fetchLeaveRequests()
+        return () => {
+            isActive = false
+        }
+    }, [])
+
+    const handleReview = async (leave, status) => {
+        setReviewingId(leave.id)
+        setReviewMessage('')
+        setReviewError('')
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}/manager/leaverequests/${leave.id}/review`,
+                { status },
+                { withCredentials: true }
+            )
+            setPendingLeaves((leaves) => leaves.filter((item) => item.id !== leave.id))
+            setReviewMessage(`${leave.name}'s request was ${status}.`)
+        } catch (error) {
+            setReviewError(error.response?.data?.message || error.message || 'Unable to review leave request.')
+        } finally {
+            setReviewingId(null)
+        }
     }
+
+    const visibleLeaves = pendingLeaves.slice(0, 3)
 
     return (
         <section className="pendingLeavesPanel" aria-labelledby="pending-leaves-heading">
@@ -51,9 +100,13 @@ export default function ManagerPendingLeave() {
                 </Link>
             </header>
 
-            {pendingLeaves.length > 0 ? (
+            {isLoading ? (
+                <p className="pendingLeavesEmpty">Loading leave requests…</p>
+            ) : loadError ? (
+                <p className="pendingLeavesEmpty" role="alert">Unable to load leave requests: {loadError}</p>
+            ) : visibleLeaves.length > 0 ? (
                 <ul className="pendingLeavesList">
-                    {pendingLeaves.map((leave) => (
+                    {visibleLeaves.map((leave) => (
                         <li className="pendingLeaveItem" key={leave.id}>
                             <div className="pendingLeaveEmployee">
                                 <div className="pendingLeaveAvatar" aria-hidden="true">
@@ -64,7 +117,7 @@ export default function ManagerPendingLeave() {
                                     <p>
                                         {leave.leaveType}
                                         <span aria-hidden="true"> · </span>
-                                        {leave.startDate} – {leave.endDate}
+                                        {leave.dates}
                                     </p>
                                 </div>
                             </div>
@@ -72,9 +125,10 @@ export default function ManagerPendingLeave() {
                                 <button
                                     className="pendingLeaveAction accept"
                                     type="button"
-                                    aria-label={`Accept ${leave.name}'s leave request`}
-                                    title="Accept request"
-                                    onClick={() => handleReview(leave.id, 'accepted')}
+                                    aria-label={`Approve ${leave.name}'s leave request`}
+                                    title="Approve request"
+                                    disabled={reviewingId !== null}
+                                    onClick={() => handleReview(leave, 'approved')}
                                 >
                                     <span aria-hidden="true">✓</span>
                                 </button>
@@ -83,7 +137,8 @@ export default function ManagerPendingLeave() {
                                     type="button"
                                     aria-label={`Reject ${leave.name}'s leave request`}
                                     title="Reject request"
-                                    onClick={() => handleReview(leave.id, 'rejected')}
+                                    disabled={reviewingId !== null}
+                                    onClick={() => handleReview(leave, 'rejected')}
                                 >
                                     <span aria-hidden="true">×</span>
                                 </button>
@@ -95,6 +150,7 @@ export default function ManagerPendingLeave() {
                 <p className="pendingLeavesEmpty">No pending leave requests.</p>
             )}
             <p className="sr-only" aria-live="polite">{reviewMessage}</p>
+            {reviewError && <p className="pendingLeavesFeedback" role="alert">{reviewError}</p>}
 
             <footer className="pendingLeavesFooter">
                 <Link className="pendingLeavesReviewAll" to="/manager/leave-requests">
