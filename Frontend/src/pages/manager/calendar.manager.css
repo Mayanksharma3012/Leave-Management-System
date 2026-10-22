@@ -25,6 +25,37 @@
   min-width: 0;
 }
 
+.managerCalendarNotice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.managerCalendarNotice[role='alert'] {
+  border-color: rgba(220, 38, 38, 0.25);
+  color: var(--rejected);
+}
+
+.managerCalendarNotice button {
+  flex: 0 0 auto;
+  padding: 0.4rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: var(--card);
+  color: var(--primary);
+  cursor: pointer;
+  font: inherit;
+  font-weight: 700;
+}
+
 .managerCalendarHeading {
   display: flex;
   align-items: center;
@@ -271,6 +302,8 @@
   max-width: 95px;
   padding: 0.3rem 0.4rem;
   border-radius: 5px;
+  background: var(--card-soft);
+  color: var(--text-secondary);
   font-size: 0.58rem;
   line-height: 1.2;
   text-align: center;
@@ -358,6 +391,24 @@
 .managerCalendarAvailabilityKey .available-dot { background: #16a34a; }
 .managerCalendarAvailabilityKey .leave-dot { background: #2563eb; }
 .managerCalendarAvailabilityKey .other-dot { background: #cbd5e1; }
+
+.managerCalendarLeaveTypes {
+  display: grid;
+  width: 100%;
+  gap: 0.55rem;
+}
+
+.managerCalendarLeaveTypeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.managerCalendarLeaveTypeRow strong {
+  color: var(--text-primary);
+  font-size: 0.75rem;
+}
 
 .managerCalendarDateTile {
   display: grid;
@@ -582,10 +633,23 @@
   content: '';
 }
 
-.managerCalendarLegend .casual::before { background: #3b82f6; }
-.managerCalendarLegend .sick::before { background: #ec4899; }
-.managerCalendarLegend .earned::before { background: #8b5cf6; }
-.managerCalendarLegend .work-home::before { background: #22c55e; }
+.managerCalendarLegend .casual-leave::before,
+.managerCalendarLegend .annual-leave::before { background: #3b82f6; }
+.managerCalendarLegend .sick-leave::before { background: #ec4899; }
+.managerCalendarLegend .earned-leave::before { background: #8b5cf6; }
+.managerCalendarLegend .work-from-home::before { background: #22c55e; }
+.managerCalendarLegend .leave::before { background: var(--primary); }
+
+.managerCalendarPanel .fc .manager-annual-leave,
+.managerCalendarPanel .fc .manager-leave {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.managerCalendarPanel .fc .manager-annual-leave .fc-event-main,
+.managerCalendarPanel .fc .manager-leave .fc-event-main {
+  color: #1d4ed8;
+}
 
 .managerCalendarDialogBackdrop {
   position: fixed;
@@ -890,7 +954,7 @@
 
   .managerCalendarContent {
     flex: 1 1 auto;
-    grid-template-rows: auto auto minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr);
     min-height: 0;
   }
 
@@ -1208,4 +1272,300 @@
   .managerCalendarEvent {
     font-size: 0.58rem;
   }
+}
+
+.managerCalendarAsideHeading h2 {
+  font-size: 1.08rem;
+}
+
+.managerCalendarAsideHeading > span {
+  min-width: 26px;
+  height: 26px;
+  font-size: 0.88rem;
+}
+
+.managerCalendarSidebar .managerCalendarAsideSection {
+  padding: 1rem 1.05rem;
+}
+
+.managerCalendarMember,
+.managerCalendarUpcomingItem {
+  gap: 0.7rem;
+  padding: 0.75rem 0;
+}
+
+.managerCalendarAvatar {
+  flex-basis: 40px;
+  width: 40px;
+  height: 40px;
+  font-size: 0.78rem;
+}
+
+.managerCalendarMemberInfo strong,
+.managerCalendarUpcomingInfo strong {
+  font-size: 0.94rem;
+}
+
+.managerCalendarMemberInfo small,
+.managerCalendarUpcomingInfo small {
+  font-size: 0.82rem;
+}
+
+.managerCalendarTypeBadge {
+  max-width: 115px;
+  padding: 0.36rem 0.48rem;
+  font-size: 0.74rem;
+}
+
+.managerCalendarEmpty {
+  font-size: 0.86rem;
+}
+
+.managerCalendarLeaveTypeRow strong {
+  font-size: 0.9rem;
+}
+
+.managerCalendarDateTile {
+  flex-basis: 44px;
+  width: 44px;
+  height: 48px;
+}
+
+.managerCalendarDateTile strong {
+  font-size: 1rem;
+}
+
+.managerCalendarDateTile small {
+  font-size: 0.72rem;
+}
+
+.managerCalendarTypeBadge.annual-leave,
+.managerCalendarPanel .fc .manager-annual-leave,
+.managerCalendarLegend .annual-leave {
+  --leave-bg: #dbeafe;
+  --leave-fg: #1d4ed8;
+}
+
+.managerCalendarTypeBadge.sick-leave,
+.managerCalendarPanel .fc .manager-sick-leave,
+.managerCalendarLegend .sick-leave {
+  --leave-bg: #fce7f3;
+  --leave-fg: #be185d;
+}
+
+.managerCalendarTypeBadge.casual-leave,
+.managerCalendarPanel .fc .manager-casual-leave,
+.managerCalendarLegend .casual-leave {
+  --leave-bg: #ccfbf1;
+  --leave-fg: #0f766e;
+}
+
+.managerCalendarTypeBadge.maternity-leave,
+.managerCalendarPanel .fc .manager-maternity-leave,
+.managerCalendarLegend .maternity-leave {
+  --leave-bg: #ede9fe;
+  --leave-fg: #6d28d9;
+}
+
+.managerCalendarTypeBadge.study-leave,
+.managerCalendarPanel .fc .manager-study-leave,
+.managerCalendarLegend .study-leave {
+  --leave-bg: #cffafe;
+  --leave-fg: #0e7490;
+}
+
+.managerCalendarTypeBadge.unpaid-leave,
+.managerCalendarPanel .fc .manager-unpaid-leave,
+.managerCalendarLegend .unpaid-leave {
+  --leave-bg: #e2e8f0;
+  --leave-fg: #334155;
+}
+
+.managerCalendarTypeBadge.volunteer-leave,
+.managerCalendarPanel .fc .manager-volunteer-leave,
+.managerCalendarLegend .volunteer-leave {
+  --leave-bg: #dcfce7;
+  --leave-fg: #15803d;
+}
+
+.managerCalendarTypeBadge.medical-leave,
+.managerCalendarPanel .fc .manager-medical-leave,
+.managerCalendarLegend .medical-leave {
+  --leave-bg: #fee2e2;
+  --leave-fg: #b91c1c;
+}
+
+.managerCalendarTypeBadge.halfday-leave,
+.managerCalendarPanel .fc .manager-halfday-leave,
+.managerCalendarLegend .halfday-leave {
+  --leave-bg: #fef3c7;
+  --leave-fg: #b45309;
+}
+
+.managerCalendarTypeBadge.earned-leave,
+.managerCalendarPanel .fc .manager-earned-leave,
+.managerCalendarLegend .earned-leave {
+  --leave-bg: #ede9fe;
+  --leave-fg: #6d28d9;
+}
+
+.managerCalendarTypeBadge.work-from-home,
+.managerCalendarPanel .fc .manager-work-from-home,
+.managerCalendarLegend .work-from-home {
+  --leave-bg: #dcfce7;
+  --leave-fg: #15803d;
+}
+
+.managerCalendarTypeBadge[class*='-leave'],
+.managerCalendarTypeBadge.work-from-home {
+  background: var(--leave-bg, var(--card-soft));
+  color: var(--leave-fg, var(--text-secondary));
+}
+
+.managerCalendarPanel .fc .fc-event[class*='manager-'] {
+  border: 0;
+  background: var(--leave-bg, var(--primary));
+  color: var(--leave-fg, #fff);
+}
+
+.managerCalendarPanel .fc .fc-event[class*='manager-'] .fc-event-main,
+.managerCalendarPanel .fc .fc-event[class*='manager-'] .fc-event-title {
+  color: var(--leave-fg, #fff);
+}
+
+.managerCalendarPanel .fc .fc-event[class*='manager-'] .managerCalendarEventInitials {
+  color: var(--leave-fg, var(--primary));
+}
+
+.managerCalendarLegend span[class]::before {
+  background: var(--leave-fg, var(--primary));
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.annual-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-annual-leave,
+:root[data-theme='dark'] .managerCalendarLegend .annual-leave {
+  --leave-bg: #1e3a8a;
+  --leave-fg: #dbeafe;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.sick-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-sick-leave,
+:root[data-theme='dark'] .managerCalendarLegend .sick-leave {
+  --leave-bg: #831843;
+  --leave-fg: #fce7f3;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.casual-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-casual-leave,
+:root[data-theme='dark'] .managerCalendarLegend .casual-leave {
+  --leave-bg: #134e4a;
+  --leave-fg: #ccfbf1;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.maternity-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-maternity-leave,
+:root[data-theme='dark'] .managerCalendarLegend .maternity-leave {
+  --leave-bg: #4c1d95;
+  --leave-fg: #ede9fe;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.study-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-study-leave,
+:root[data-theme='dark'] .managerCalendarLegend .study-leave {
+  --leave-bg: #164e63;
+  --leave-fg: #cffafe;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.unpaid-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-unpaid-leave,
+:root[data-theme='dark'] .managerCalendarLegend .unpaid-leave {
+  --leave-bg: #334155;
+  --leave-fg: #e2e8f0;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.volunteer-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-volunteer-leave,
+:root[data-theme='dark'] .managerCalendarLegend .volunteer-leave {
+  --leave-bg: #14532d;
+  --leave-fg: #dcfce7;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.medical-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-medical-leave,
+:root[data-theme='dark'] .managerCalendarLegend .medical-leave {
+  --leave-bg: #7f1d1d;
+  --leave-fg: #fee2e2;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.halfday-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-halfday-leave,
+:root[data-theme='dark'] .managerCalendarLegend .halfday-leave {
+  --leave-bg: #78350f;
+  --leave-fg: #fef3c7;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.earned-leave,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-earned-leave,
+:root[data-theme='dark'] .managerCalendarLegend .earned-leave {
+  --leave-bg: #5b21b6;
+  --leave-fg: #ede9fe;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge.work-from-home,
+:root[data-theme='dark'] .managerCalendarPanel .fc .manager-work-from-home,
+:root[data-theme='dark'] .managerCalendarLegend .work-from-home {
+  --leave-bg: #166534;
+  --leave-fg: #dcfce7;
+}
+
+:root[data-theme='dark'] .managerCalendarTypeBadge[class*='-leave'],
+:root[data-theme='dark'] .managerCalendarTypeBadge.work-from-home {
+  background: var(--leave-bg, var(--card-soft));
+  color: var(--leave-fg, var(--text-primary));
+}
+
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarMemberInfo strong,
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarUpcomingInfo strong,
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarAsideHeading h2,
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarLeaveTypeRow strong {
+  color: #f8fafc;
+}
+
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarMemberInfo small,
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarUpcomingInfo small,
+:root[data-theme='dark'] .managerCalendarSidebar .managerCalendarEmpty {
+  color: #cbd5e1;
+}
+
+@media (max-width: 560px) {
+  .managerCalendarSidebar .managerCalendarAsideSection {
+    padding: 0.9rem;
+  }
+
+  .managerCalendarTypeBadge {
+    max-width: 105px;
+    font-size: 0.68rem;
+  }
+}
+
+.managerCalendarLegend span[class] {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--leave-bg, var(--card-soft));
+  color: var(--leave-fg, var(--text-secondary));
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.managerCalendarLegend span[class]::before {
+  flex: 0 0 0.55rem;
+  width: 0.55rem;
+  height: 0.55rem;
+  background: var(--leave-fg, var(--primary));
+}
+
+:root[data-theme='dark'] .managerCalendarLegend span[class] {
+  background: var(--leave-bg, var(--card-soft));
+  color: var(--leave-fg, var(--text-primary));
 }

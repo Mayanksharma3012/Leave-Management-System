@@ -32,7 +32,7 @@ function mapLeaveRequest(leave) {
     }
 }
 
-export default function ManagerPendingLeave() {
+export default function ManagerPendingLeave({ onRequestReviewed }) {
     const [pendingLeaves, setPendingLeaves] = useState([])
     const [isLoading, setIsLoading] = useState(true)
     const [loadError, setLoadError] = useState('')
@@ -78,6 +78,7 @@ export default function ManagerPendingLeave() {
                 { withCredentials: true }
             )
             setPendingLeaves((leaves) => leaves.filter((item) => item.id !== leave.id))
+            onRequestReviewed?.(leave.id, status)
             setReviewMessage(`${leave.name}'s request was ${status}.`)
         } catch (error) {
             setReviewError(error.response?.data?.message || error.message || 'Unable to review leave request.')
