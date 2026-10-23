@@ -34,3 +34,5 @@ userRouter.post('/logout', (req, res) => {
 userRouter.post('/firebase-exchange', FireBaseAuthenticaton)
 
 userRouter.post('/change-password', handlePasswordChange)
+
+userRouter.get('/allleaverequests', getUserLeaves)

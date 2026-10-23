@@ -3,7 +3,8 @@ import './dashboard.employee.css'
 import Sidebar from '../../components/sidebar'
 import Navbar from '../../components/header'
 import LeaveCalendar from '../../components/employee-components/calendar'
-
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 function StatusBadge({status}){
 
   const validStatuses = ['pending', 'approved', 'rejected']
@@ -33,11 +34,44 @@ function checkleave(leave) {
 
 function EmployeeDashboard({ submitedFormData }){
 
+  const [leaves, setLeaves] = useState([])
+  
+      useEffect(() => {
+          const fetchLeaves = async () => {
+              try {
+                  const response = await axios.get(
+                      `${import.meta.env.VITE_BACKEND_URL}/user/getleaves`,
+                      { withCredentials: true }
+                  )
+                  if (!Array.isArray(response.data?.leaves)) {
+                      throw new Error('The leave response did not contain a leaves array')
+                  }
+                  setLeaves(response.data.leaves)
+              } catch (error) {
+                  console.error('Failed to fetch leaves:', error)
+              }
+          }
+  
+          fetchLeaves()
+      }, [])
+  
+      const counts = leaves.reduce(
+          (summary, leave) => {
+              const status = leave.status?.replace(/-leave$/, '').toLowerCase()
+              if (status === 'approved' || status === 'pending' || status === 'rejected') {
+                  summary[status] += 1
+              }
+              return summary
+          },
+          { approved: 0, pending: 0, rejected: 0 }
+      )
+  
+
     const stats = [
-      {label: 'Total Leaves', value: 18, icon: '📅'},
-      {label: 'Approved', value: 12, icon: '✅'},
-      {label: 'Pending', value: 4, icon: '⏳'},
-      {label: 'Rejected', value: 2, icon: '✖️'},
+      {label: 'Total Leaves', value: leaves.length, icon: '📅', tone: 'total' },
+      {label: 'Approved', value: counts.approved, icon: '✅', tone: 'approved'},
+      {label: 'Pending', value: counts.pending, icon: '⏳', tone: 'pending'},
+      {label: 'Rejected', value: counts.rejected, icon: '✖️', tone: 'rejected'},
     ]
 
     const recent = [
