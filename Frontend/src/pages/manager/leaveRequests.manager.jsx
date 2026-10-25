@@ -55,16 +55,46 @@ function mapLeaveRequest(leave) {
 
 function getAttachmentName(document) {
     if (typeof document === 'string') {
-        return document.split(/[\\/]/).pop().split(/[?#]/)[0]
+        const path = document.split(/[?#]/)[0]
+        const name = path.split(/[\\/]/).pop()
+        try {
+            return decodeURIComponent(name)
+        } catch {
+            return name
+        }
     }
     return document?.name || 'Attached document'
 }
 
 function getAttachmentUrl(document) {
-    if (typeof document === 'string' && /^(https?:|blob:|data:)/i.test(document)) {
-        return document
+    const value = typeof document === 'string'
+        ? document
+        : document?.url || document?.downloadURL
+    if (!value) return null
+
+    if (/^https?:/i.test(value)) {
+        try {
+            const url = new URL(value)
+            if (url.hostname.endsWith('cloudinary.com')) {
+                url.pathname = url.pathname.replace(
+                    /(\/(?:image|raw|video)\/upload)(\/)/,
+                    '$1/fl_attachment$2'
+                )
+            }
+            return url.href
+        } catch {
+            return null
+        }
     }
-    return document?.url || document?.downloadURL || null
+
+    if (/^(blob:|data:)/i.test(value)) return value
+
+    const encodedPath = value
+        .split(/[\\/]/)
+        .filter(Boolean)
+        .map(encodeURIComponent)
+        .join('/')
+    return `${import.meta.env.VITE_BACKEND_URL}/uploads/${encodedPath}`
 }
 
 export default function ManagerLeaveRequestsPage() {
@@ -456,7 +486,18 @@ export default function ManagerLeaveRequestsPage() {
                                         <div className="leaveRequestAttachmentInfo">
                                             <span>Supporting document</span>
                                             {selectedRequest.document ? (
-                                                <strong>{getAttachmentName(selectedRequest.document)}</strong>
+                                                getAttachmentUrl(selectedRequest.document) ? (
+                                                    <a
+                                                        className="leaveRequestAttachmentFilename"
+                                                        href={getAttachmentUrl(selectedRequest.document)}
+                                                        download={getAttachmentName(selectedRequest.document)}
+                                                        aria-label={`Download ${getAttachmentName(selectedRequest.document)}`}
+                                                    >
+                                                        {getAttachmentName(selectedRequest.document)}
+                                                    </a>
+                                                ) : (
+                                                    <strong>{getAttachmentName(selectedRequest.document)}</strong>
+                                                )
                                             ) : (
                                                 <strong className="leaveRequestNoAttachment">No document attached</strong>
                                             )}
@@ -465,10 +506,9 @@ export default function ManagerLeaveRequestsPage() {
                                             <a
                                                 className="leaveRequestAttachmentLink"
                                                 href={getAttachmentUrl(selectedRequest.document)}
-                                                target="_blank"
-                                                rel="noreferrer"
+                                                download={getAttachmentName(selectedRequest.document)}
                                             >
-                                                View
+                                                Download
                                             </a>
                                         )}
                                     </div>

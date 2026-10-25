@@ -569,6 +569,24 @@
   text-overflow: ellipsis;
 }
 
+.leaveRequestAttachmentFilename {
+  overflow: hidden;
+  color: var(--primary-strong);
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.leaveRequestAttachmentFilename:hover {
+  text-decoration: underline;
+}
+
+.leaveRequestAttachmentFilename:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--primary) 45%, transparent);
+  outline-offset: 2px;
+}
+
 .leaveRequestAttachmentInfo > strong.leaveRequestNoAttachment {
   color: var(--text-secondary);
   font-weight: 500;

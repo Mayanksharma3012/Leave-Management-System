@@ -18,7 +18,9 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
     })
     const [formDataErr, setFormDataErr] = useState('')
     const [totalDays, setTotalDays] = useState(0)
+    const [isSubmitting, setIsSubmitting] = useState(false)
     const formRef = useRef(null)
+    const isSubmittingRef = useRef(false)
 
     useEffect(() => {
         const start = new Date(formData.startDate)
@@ -38,6 +40,7 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
 
     async function checkFormData(e) {
         e.preventDefault()
+        if (isSubmittingRef.current) return
 
         if (formData.leaveType === '') {
             setFormDataErr('leaveType')
@@ -68,17 +71,22 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
 
         const newEnd = end.setDate(end.getDate() + 1)
         const newStrEnd = new Date(newEnd).toISOString().split('T')[0];
-        const leavePayload = {
-            title: formData.leaveType,
-            start: formData.startDate,
-            end: newStrEnd,
-            endReal: formData.endDate,
-            classNames: ['pending-leave'],
-            reason: formData.reason,
-            document: formData.document,
-            days: totalDays
+
+        const leavePayload = new FormData()
+        leavePayload.append('title', formData.leaveType)
+        leavePayload.append('start', formData.startDate)
+        leavePayload.append('end', newStrEnd)
+        leavePayload.append('endReal', formData.endDate)
+        leavePayload.append('classNames', JSON.stringify(['pending-leave']))
+        leavePayload.append('reason', formData.reason)
+        leavePayload.append('days', String(totalDays))
+
+        if (formData.document) {
+            leavePayload.append('document', formData.document, formData.document.name)
         }
 
+        isSubmittingRef.current = true
+        setIsSubmitting(true)
         try {
             await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/user/applyleave`,
@@ -98,6 +106,9 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
         } catch (error) {
             console.log('error submitting the form', error)
             alert(error.response?.data?.message ?? 'Error submitting the form')
+        } finally {
+            isSubmittingRef.current = false
+            setIsSubmitting(false)
         }
 
     }
@@ -122,7 +133,7 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
                     <Navbar />
                     <section className='leaveMain'>
 
-                        <form ref={formRef} className="applyLeave" onSubmit={checkFormData}>
+                        <form ref={formRef} className="applyLeave" onSubmit={checkFormData} encType='multipart/form-data'>
                             <h2>Leave Request</h2>
                             <span>Leave Type</span>
                             <select name="LeaveType" id="LeaveTypes" value={formData.leaveType}
@@ -175,7 +186,6 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
                             </div>
 
                             <div className="daysOff">
-                                {/*  //todo */}
                                 <span> {totalDays} days off</span>
                             </div>
 
@@ -193,7 +203,7 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
                             <div className="attachDocument">
                                 <h3>Attach Document</h3>
                                 <span>(optional)</span>
-                                <input type="file"
+                                <input type="file" name='document' accept="image/*,.pdf"
                                     onChange={(e) => {
                                         setFormData({
                                             ...formData,
@@ -202,8 +212,10 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
                                     }} />
                             </div>
                             <div className="actionButton">
-                                <button className="cancel">Cancel</button>
-                                <button className="Submit" type='submit' >Submit</button>
+                                <button className="cancel" type="button" disabled={isSubmitting}>Cancel</button>
+                                <button className="Submit" type="submit" disabled={isSubmitting}>
+                                    {isSubmitting ? 'Uploading...' : 'Submit'}
+                                </button>
                             </div>
                         </form>
                         <div className="leaveBalance">

@@ -3,35 +3,71 @@ import { User } from "../models/user.model.js"
 import { Manager } from "../models/manager.model.js";
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
+import { Readable } from 'stream'
+import { v2 as cloudinary } from 'cloudinary'
+
+function uploadDocumentToCloudinary(file) {
+    return new Promise((resolve, reject) => {
+        const uploadStream = cloudinary.uploader.upload_stream(
+            {
+                folder: 'leave-management/documents',
+                resource_type: 'auto',
+                use_filename: true,
+                unique_filename: true,
+            },
+            (error, result) => {
+                if (error) {
+                    reject(error);
+                    return;
+                }
+                if (!result?.secure_url) {
+                    reject(new Error('Cloudinary did not return a document URL.'));
+                    return;
+                }
+                resolve(result.secure_url);
+            }
+        );
+
+        Readable.from(file.buffer).pipe(uploadStream);
+    });
+}
 
 export async function handleUserLeave(req, res){
     const token = req.cookies.token;
-    // const { title, start, end, endReal, classNames, reason, document, days } = req.body ?? {};
 
     try {
-        // const leave = await Leave.create()
         const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        // const employee = verified.email;
-        
-        // 1. Find the user by email
         const user = await User.findOne({ email: verified.email });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
 
-        const { title, start, end, endReal, classNames, reason, document, days } = req.body;
+        const { title, start, end, endReal, classNames, reason, days } = req.body ?? {};
+        const documentFile = req.file ? await uploadDocumentToCloudinary(req.file) : null;
 
-        // 3. Create leave with the user's _id as employee
+        let parsedClassNames = classNames;
+        if (typeof parsedClassNames === 'string') {
+            try {
+                parsedClassNames = JSON.parse(parsedClassNames);
+            } catch (_error) {
+                parsedClassNames = [parsedClassNames];
+            }
+        }
+
+        const leaveStatus = Array.isArray(parsedClassNames)
+            ? parsedClassNames[0]
+            : parsedClassNames || 'pending-leave';
+
         const leave = await Leave.create({
-            employee: user._id,          // <-- this links the leave to the logged-in user
+            employee: user._id,
             leaveType: title,
             startDate: start,
             endDate: end,
             endDateReal: endReal,
-            days: days,
+            days: Number(days) || 0,
             reason: reason,
-            document: document,
-            status: classNames?.[0] || "pending-leave"
+            document: documentFile,
+            status: leaveStatus || 'pending-leave'
         });
 
         res.status(201).json({ message: "Leave submitted", leave });

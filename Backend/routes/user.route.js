@@ -1,8 +1,20 @@
 import express from 'express';
+import multer from 'multer';
 import { handleUserSignUp, handleUserLogin, FireBaseAuthenticaton, handlePasswordChange } from '../controller/userAuthentication.controller.js';
 import { userAuthenticateToken } from '../middlewares/userAuthentication.middleware.js';
 import { handleUserLeave, getUserLeaves , editLeave, deleteLeave} from '../controller/userLeave.controller.js';
 
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype.startsWith('image/') || file.mimetype === 'application/pdf') {
+      cb(null, true);
+      return;
+    }
+    cb(new Error('Only image files and PDFs are allowed.'));
+  },
+});
 
 export const userRouter = express.Router()
 
@@ -14,7 +26,7 @@ userRouter.get('/me', userAuthenticateToken, (req, res) => {
 });
 
 
-userRouter.post('/applyleave', handleUserLeave)
+userRouter.post('/applyleave', upload.single('document'), handleUserLeave)
 userRouter.get('/getleaves', getUserLeaves)
 userRouter.post('/edit-leave', editLeave)
 userRouter.post('/delete-leave', deleteLeave)
