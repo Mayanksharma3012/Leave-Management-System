@@ -32,7 +32,7 @@ export default function ManagerRegister({ roleSwitcher }) {
             
             await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/manager/firebase-exchange`,
-                { idToken },
+                { idToken, photoURL: result.user.photoURL },
                 { withCredentials: true }
             )
             setLoginRole('manager')
@@ -182,7 +182,12 @@ export default function ManagerRegister({ roleSwitcher }) {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => handleFirebaseSignIn(new GithubAuthProvider())}
+                                onClick={() => {
+                                    const githubProvider = new GithubAuthProvider()
+                                    githubProvider.addScope('read:user')
+                                    githubProvider.addScope('user:email')
+                                    handleFirebaseSignIn(githubProvider)
+                                }}
                             >
                                 <i className="fa-brands fa-github"></i> GitHub
                             </button>

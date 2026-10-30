@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
-import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import {
+    GithubAuthProvider,
+    GoogleAuthProvider,
+    fetchSignInMethodsForEmail,
+    linkWithCredential,
+    signInWithPopup
+} from 'firebase/auth'
 import { auth } from '../../firebase.config'
 import { userContext } from '../../context/userContext'
 import { useContext } from 'react'
@@ -28,23 +34,63 @@ export default function EmployeeRegister({ roleSwitcher }) {
     const { setLoginRole } = useContext(userContext)
     
 
+    const completeFirebaseSignIn = async (firebaseUser) => {
+        const idToken = await firebaseUser.getIdToken()
+
+        await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/user/firebase-exchange`,
+            { idToken, photoURL: firebaseUser.photoURL },
+            { withCredentials: true }
+        )
+
+        setLoginRole('employee')
+        navigate('/employee/dashboard')
+    }
+
     const handleFirebaseSignIn = async (provider) => {
         try {
-            const result = await signInWithPopup(auth, provider)
-            const idToken = await result.user.getIdToken()
-
-            await axios.post(
-                `${import.meta.env.VITE_BACKEND_URL}/user/firebase-exchange`,
-                { idToken },
-                { withCredentials: true }
-            )
-
-            setLoginRole('employee')
-            
-            navigate('/employee/dashboard')
+            let result = await signInWithPopup(auth, provider)
+            await completeFirebaseSignIn(result.user)
         } catch (error) {
+            if (error.code === 'auth/account-exists-with-different-credential') {
+                try {
+                    const email = error.customData?.email
+                    const pendingCredential = GithubAuthProvider.credentialFromError(error)
+                    const signInMethods = email
+                        ? await fetchSignInMethodsForEmail(auth, email)
+                        : []
+
+                    if (!pendingCredential || signInMethods.length === 0) {
+                        throw error
+                    }
+
+                    let existingProvider
+                    if (signInMethods.includes('google.com')) {
+                        existingProvider = new GoogleAuthProvider()
+                    } else if (signInMethods.includes('github.com')) {
+                        existingProvider = new GithubAuthProvider()
+                    } else {
+                        throw new Error('Please sign in with your existing provider, then try GitHub again.')
+                    }
+
+                    const existingResult = await signInWithPopup(auth, existingProvider)
+                    const linkedResult = await linkWithCredential(existingResult.user, pendingCredential)
+                    await completeFirebaseSignIn(linkedResult.user)
+                    return
+                } catch (linkError) {
+                    console.error('Unable to link Firebase credential:', linkError)
+                    alert(linkError.message || 'Unable to link your existing provider with GitHub.')
+                    return
+                }
+            }
+
             console.error('Firebase sign-in failed', error)
-            alert(error.response?.data?.message ?? 'Unable to sign in')
+            const messages = {
+                'auth/popup-blocked': 'Allow popups and try sign-in again.',
+                'auth/popup-closed-by-user': 'Sign-in was cancelled.',
+                'auth/operation-not-allowed': 'This sign-in provider is not enabled in Firebase Authentication.'
+            }
+            alert(error.response?.data?.message ?? messages[error.code] ?? error.message ?? 'Unable to sign in')
         }
     }
 
@@ -186,7 +232,12 @@ export default function EmployeeRegister({ roleSwitcher }) {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => handleFirebaseSignIn(new GithubAuthProvider())}
+                                onClick={() => {
+                                    const githubProvider = new GithubAuthProvider()
+                                    githubProvider.addScope('read:user')
+                                    githubProvider.addScope('user:email')
+                                    handleFirebaseSignIn(githubProvider)
+                                }}
                             >
                                 <i className="fa-brands fa-github"></i> GitHub
                             </button>

@@ -23,7 +23,7 @@ export default function EmployeeLogin({ roleSwitcher }){
 
             await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}/user/firebase-exchange`,
-                { idToken },
+                { idToken, photoURL: result.user.photoURL },
                 { withCredentials: true }
             );
 
@@ -32,12 +32,23 @@ export default function EmployeeLogin({ roleSwitcher }){
             navigate('/employee/dashboard');
         } catch (error) {
             console.error('Firebase sign-in failed', error);
-            alert(error.response?.data?.message ?? 'Unable to sign in');
+            const messages = {
+                'auth/popup-blocked': 'Allow popups and try GitHub sign-in again.',
+                'auth/popup-closed-by-user': 'GitHub sign-in was cancelled.',
+                'auth/account-exists-with-different-credential': 'This email is already used with another sign-in provider. Sign in with that provider first.',
+                'auth/operation-not-allowed': 'GitHub sign-in is not enabled in Firebase Authentication.',
+            }
+            alert(error.response?.data?.message ?? messages[error.code] ?? error.message ?? 'Unable to sign in');
         }
     };
 
     const handleGoogle = () => handleFirebaseSignIn(new GoogleAuthProvider());
-    const handleGitHub = () => handleFirebaseSignIn(new GithubAuthProvider());
+    const handleGitHub = () => {
+        const githubProvider = new GithubAuthProvider();
+        githubProvider.addScope('read:user');
+        githubProvider.addScope('user:email');
+        handleFirebaseSignIn(githubProvider);
+    };
 
 
     const handleSubmit = async (e) => {

@@ -42,6 +42,7 @@ function mapLeaveRequest(leave) {
         id: String(leave._id),
         name,
         initials: name.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase(),
+        avatarUrl: leave.employee?.avatar_url || '',
         team: leave.employee?.department || '—',
         leaveType: leave.leaveType || 'Leave',
         dates: startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`,
@@ -327,7 +328,11 @@ export default function ManagerLeaveRequestsPage() {
                                         >
                                             <td>
                                                 <div className="leaveRequestEmployee">
-                                                    <span className="leaveRequestAvatar" aria-hidden="true">{request.initials}</span>
+                                                    <span className="leaveRequestAvatar" aria-hidden="true">
+                                                        {request.avatarUrl
+                                                            ? <img src={request.avatarUrl} alt="" />
+                                                            : request.initials}
+                                                    </span>
                                                     <span>
                                                         <strong>{request.name}</strong>
                                                         <small>{request.team}</small>

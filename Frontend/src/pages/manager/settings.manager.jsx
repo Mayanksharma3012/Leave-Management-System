@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import axios from 'axios'
 import Sidebar from '../../components/sidebar.jsx'
 import { userContext } from '../../context/userContext.js'
@@ -41,9 +41,18 @@ export default function ManagerSettingPage({ theme, setTheme }) {
         upcomingAbsences: false,
         announcements: true,
     })
+    const [managerDetails, setManagerDetails] = useState({
+        userName: user?.userName || '',
+        email: user?.email || '',
+        avatar_url: user?.avatar_url || '',
+        department: user?.department || ''
+    })
 
-    const managerName = user?.userName || 'Manager'
+    const managerName = managerDetails.userName || user?.userName || 'Manager'
     const initials = managerName.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase()
+    const managerEmail = managerDetails.email || user?.email || ''
+    const managerAvatar = managerDetails.avatar_url || user?.avatar_url || ''
+    const department = managerDetails.department || user?.department
 
     const handlePasswordChange = async (event) => {
         event.preventDefault()
@@ -73,6 +82,30 @@ export default function ManagerSettingPage({ theme, setTheme }) {
         }
     }
 
+    useEffect(() => {
+        let isMounted = true
+
+        const fetchManagerDetails = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/manager/details`,
+                    { withCredentials: true }
+                )
+
+                if (isMounted && response.data?.user) {
+                    setManagerDetails(response.data.user)
+                }
+            } catch (error) {
+                console.error('Unable to load manager profile:', error)
+            }
+        }
+
+        fetchManagerDetails()
+        return () => {
+            isMounted = false
+        }
+    }, [])
+
     const toggleNotification = (id) => {
         setNotifications((current) => ({ ...current, [id]: !current[id] }))
     }
@@ -91,7 +124,11 @@ export default function ManagerSettingPage({ theme, setTheme }) {
                         </div>
                         <div className="settingsHeaderActions">
                             <button type="button" className="iconAction" aria-label="Notifications">🔔</button>
-                            <div className="managerSettingsAvatar" aria-label={`${managerName} profile`}>{initials}</div>
+                            <div className="managerSettingsAvatar" aria-label={`${managerName} profile`} title={managerName}>
+                                {managerAvatar
+                                    ? <img src={managerAvatar} alt="" />
+                                    : initials}
+                            </div>
                         </div>
                     </header>
 
@@ -121,7 +158,11 @@ export default function ManagerSettingPage({ theme, setTheme }) {
                                     </div>
                                     <div className="profileCard">
                                         <div className="profilePhotoBlock">
-                                            <div className="managerProfileAvatar" aria-hidden="true">{initials}</div>
+                                            <div className="managerProfileAvatar" aria-hidden="true">
+                                                {managerAvatar
+                                                    ? <img src={managerAvatar} alt="" />
+                                                    : initials}
+                                            </div>
                                             <strong className="managerProfileRole">Manager</strong>
                                             <span className="managerProfileCaption">Workspace administrator</span>
                                         </div>
@@ -132,11 +173,11 @@ export default function ManagerSettingPage({ theme, setTheme }) {
                                             </div>
                                             <div className="fieldBlock">
                                                 <label htmlFor="manager-email">Email</label>
-                                                <input id="manager-email" type="email" value={user?.email || ''} readOnly />
+                                                <input id="manager-email" type="email" value={managerEmail} readOnly />
                                             </div>
                                             <div className="fieldBlock">
                                                 <label htmlFor="manager-department">Department</label>
-                                                <input id="manager-department" type="text" value={user?.department || 'Not specified'} readOnly />
+                                                <input id="manager-department" type="text" value={department || 'Not specified'} readOnly />
                                             </div>
                                         </div>
                                     </div>

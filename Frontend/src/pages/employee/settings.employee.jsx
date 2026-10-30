@@ -1,7 +1,6 @@
 import './settings.employee.css'
 import Sidebar from './../../components/sidebar.jsx'
-import fakeProfile from './../../assets/fakeProfile.png'
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { userContext } from '../../context/userContext.js'
 import axios from 'axios'
 
@@ -39,10 +38,49 @@ function EmployeeSettings({ theme, setTheme }) {
         }))
     }
 
-    const user = useContext(userContext);
-    const fullName = user?.userName ||  'example'
-    const userEmail =  user?.email || 'example.com'
-    const department = user?.department || 'none'
+    const context = useContext(userContext)
+    const user = context?.userData
+    const [employeeDetails, setEmployeeDetails] = useState({
+        userName: user?.userName || '',
+        email: user?.email || '',
+        department: user?.department || '',
+        avatar_url: user?.avatar_url || '',
+    })
+
+    useEffect(() => {
+        let isMounted = true
+
+        const fetchEmployeeDetails = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/user/me`,
+                    { withCredentials: true }
+                )
+
+                if (isMounted && response.data?.user) {
+                    setEmployeeDetails(response.data.user)
+                }
+            } catch (error) {
+                console.error('Unable to load employee profile:', error)
+            }
+        }
+
+        fetchEmployeeDetails()
+        return () => {
+            isMounted = false
+        }
+    }, [])
+
+    const fullName = employeeDetails.userName || user?.userName || 'Employee'
+    const userEmail = employeeDetails.email || user?.email || ''
+    const department = employeeDetails.department || user?.department || 'Not specified'
+    const avatarUrl = employeeDetails.avatar_url || user?.avatar_url || ''
+    const initials = fullName
+        .split(/\s+/)
+        .map((part) => part[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
 
     const [newPassword, setNewPassword] = useState({
         currentPassword:'',
@@ -91,7 +129,9 @@ function EmployeeSettings({ theme, setTheme }) {
                         </div>
                         <div className="settingsHeaderActions">
                             <button type="button" className="iconAction" aria-label="Notifications">🔔</button>
-                            <button type="button" className="avatarAction" aria-label="Profile">MS</button>
+                            <button type="button" className="avatarAction" aria-label={`${fullName} profile`} title={fullName}>
+                                {avatarUrl ? <img src={avatarUrl} alt="" /> : initials}
+                            </button>
                         </div>
                     </div>
 
@@ -123,9 +163,10 @@ function EmployeeSettings({ theme, setTheme }) {
                                     <div className="profileCard">
                                         <div className="profilePhotoBlock">
                                             <div className="profileImageWrap">
-                                                <img src={fakeProfile} alt="Profile" />
+                                                {avatarUrl
+                                                    ? <img src={avatarUrl} alt={`${fullName} profile`} />
+                                                    : <span className="profileInitials">{initials}</span>}
                                             </div>
-                                            <button type="button" className="secondaryBtn">[ Change photo ]</button>
                                         </div>
 
                                         <div className="fieldGrid">

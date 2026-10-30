@@ -1,7 +1,7 @@
 import express from 'express'
 import { handleManagerLogin, handleManagerSignUp, ManagerFireBaseAuthenticaton } from '../controller/managerAuthentication.controller.js'
 import { managerAuthenticateToken } from '../middlewares/userAuthentication.middleware.js'
-import { AvailableEmployees, ManagerEmployees, AddEmployee} from '../controller/manager.controller.js'
+import { AvailableEmployees, ManagerEmployees, AddEmployee, ManagerDetails} from '../controller/manager.controller.js'
 import { EmployeesLeavesRequests, reviewLeaveRequest } from '../controller/userLeave.controller.js'
 
 
@@ -26,3 +26,6 @@ managerRouter.post('/addemployee', managerAuthenticateToken, AddEmployee)
 
 managerRouter.get('/leaverequests', managerAuthenticateToken, EmployeesLeavesRequests)
 managerRouter.patch('/leaverequests/:leaveId/review', managerAuthenticateToken, reviewLeaveRequest)
+
+
+managerRouter.get('/details', managerAuthenticateToken, ManagerDetails)

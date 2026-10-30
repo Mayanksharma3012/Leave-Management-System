@@ -70,15 +70,18 @@ export async function handleManagerSignUp(req, res) {
 }
 
 export async function ManagerFireBaseAuthenticaton(req, res) {
-    const { idToken } = req.body ?? {};
+    const { idToken, photoURL } = req.body ?? {};
 
     if (!idToken) {
         return res.status(400).json({ message: 'Firebase ID token is required' });
     }
 
     try {
-        const decoded = await getAuth(firebaseApp).verifyIdToken(idToken);
-        const email = decoded.email;
+        const firebaseAuth = getAuth(firebaseApp);
+        const decoded = await firebaseAuth.verifyIdToken(idToken);
+        const firebaseUser = await firebaseAuth.getUser(decoded.uid);
+        const email = decoded.email || firebaseUser.email;
+        const avatarUrl = photoURL || decoded.picture || decoded.photoURL || firebaseUser.photoURL;
 
         if (!email) {
             return res.status(401).json({ message: 'Firebase account has no email address' });
@@ -92,11 +95,20 @@ export async function ManagerFireBaseAuthenticaton(req, res) {
             user = await Manager.create({
                 firebaseUid: decoded.uid,
                 email,
-                userName: decoded.name || email.split('@')[0]
+                userName: decoded.name || email.split('@')[0],
+                avatar_url: avatarUrl
             });
-        } else if (!user.firebaseUid) {
-            user.firebaseUid = decoded.uid;
-            await user.save();
+        } else {
+            let changed = false
+            if (!user.firebaseUid) {
+                user.firebaseUid = decoded.uid;
+                changed = true;
+            }
+            if (avatarUrl && user.avatar_url !== avatarUrl) {
+                user.avatar_url = avatarUrl;
+                changed = true;
+            }
+            if (changed) await user.save();
         }
 
         const token = jwt.sign(

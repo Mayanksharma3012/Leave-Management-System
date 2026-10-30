@@ -26,6 +26,7 @@ function mapLeaveRequest(leave) {
         id: String(leave._id),
         name,
         initials: name.split(/\s+/).filter(Boolean).map((part) => part[0]).join('').slice(0, 2).toUpperCase(),
+        avatarUrl: leave.employee?.avatar_url || '',
         leaveType: leave.leaveType || 'Leave',
         dates: startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`,
         status: normalizeStatus(leave.status),
@@ -111,7 +112,9 @@ export default function ManagerPendingLeave({ onRequestReviewed }) {
                         <li className="pendingLeaveItem" key={leave.id}>
                             <div className="pendingLeaveEmployee">
                                 <div className="pendingLeaveAvatar" aria-hidden="true">
-                                    {leave.initials}
+                                    {leave.avatarUrl
+                                        ? <img src={leave.avatarUrl} alt="" />
+                                        : leave.initials}
                                 </div>
                                 <div className="pendingLeaveDetails">
                                     <h3>{leave.name}</h3>

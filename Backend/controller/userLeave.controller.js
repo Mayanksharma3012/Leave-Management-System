@@ -166,7 +166,7 @@ export async function EmployeesLeavesRequests(req, res){
         }
 
         const leaves = await Leave.find({ employee: { $in: manager.employees } })
-            .populate('employee', 'userName department')
+            .populate('employee', 'userName department avatar_url')
             .sort({ createdAt: -1 });
 
         return res.status(200).json({ leaves });

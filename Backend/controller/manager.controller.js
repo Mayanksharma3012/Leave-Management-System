@@ -6,7 +6,7 @@ export async function AvailableEmployees(req, res) {
     try {
         const users = await User.find({
             manager: null
-        }).select('userName email department');
+        }).select('userName email department avatar_url');
 
         return res.status(200).json({
             message: users.length
@@ -25,7 +25,7 @@ export async function AvailableEmployees(req, res) {
 export async function ManagerEmployees(req, res) {
     try {
         const manager = await Manager.findById(req.user._id)
-            .populate('employees', 'userName email department createdAt')
+            .populate('employees', 'userName email department avatar_url createdAt')
             .select('employees');
 
         if (!manager) {
@@ -106,5 +106,35 @@ export async function AddEmployee(req, res){
         return res.status(500).json({ message: 'Unable to add employee' })
     } finally {
         if (session) await session.endSession()
+    }
+}
+
+export async function ManagerDetails(req, res) {
+    try {
+        const managerId = req.user?._id
+
+        if (!managerId) {
+            return res.status(401).json({ message: 'Manager authentication is required' })
+        }
+
+        const manager = await Manager.findById(managerId)
+            .select('email userName avatar_url department')
+
+        if (!manager) {
+            return res.status(404).json({ message: 'Manager not found' })
+        }
+
+        return res.status(200).json({
+            message: 'success',
+            user: {
+                email: manager.email,
+                userName: manager.userName,
+                avatar_url: manager.avatar_url,
+                department: manager.department
+            }
+        })
+    } catch (error) {
+        console.error('Error retrieving manager details:', error)
+        return res.status(500).json({ message: 'Unable to retrieve manager details' })
     }
 }

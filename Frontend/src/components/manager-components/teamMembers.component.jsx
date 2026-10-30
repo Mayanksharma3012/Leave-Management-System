@@ -23,7 +23,9 @@ function TeamMemberDetails({ member, onClose }) {
         </button>
 
         <header className="teamDetailsHeader">
-          <span className={`teamAvatar teamAvatar-${member.color}`}>{member.initials}</span>
+          <span className={`teamAvatar teamAvatar-${member.color}`}>
+            {member.avatar_url ? <img src={member.avatar_url} alt="" /> : member.initials}
+          </span>
           <div>
             <h2 id="team-member-name">{member.name}</h2>
             <p>{member.id} <span aria-hidden="true">·</span> {member.department}</p>
@@ -216,7 +218,9 @@ function AddTeamMemberDialog({ members, onClose, onAdd }) {
             <p className="teamAddEmpty" role="alert">{loadError}</p>
           ) : availableMembers.length ? availableMembers.map((employee) => (
             <div className="teamAddResult" key={employee.id}>
-              <span className={`teamAvatar teamAvatar-${employee.color}`}>{employee.initials}</span>
+              <span className={`teamAvatar teamAvatar-${employee.color}`}>
+                {employee.avatar_url ? <img src={employee.avatar_url} alt="" /> : employee.initials}
+              </span>
               <span className="teamAddResultInfo">
                 <strong>{employee.name}</strong>
                 <small>{employee.id} <span aria-hidden="true">·</span> {employee.email} <span aria-hidden="true">·</span> {employee.department}</small>
@@ -494,7 +498,9 @@ export default function TeamMembers() {
                 }}>
                   <td>
                     <div className="teamEmployeeCell">
-                      <span className={`teamAvatar teamAvatar-${member.color}`}>{member.initials}</span>
+                      <span className={`teamAvatar teamAvatar-${member.color}`}>
+                        {member.avatar_url ? <img src={member.avatar_url} alt="" /> : member.initials}
+                      </span>
                       <span><strong>{member.name}</strong><small>{member.id}</small></span>
                     </div>
                   </td>
