@@ -1,5 +1,6 @@
 import { User } from "../models/user.model.js";
 import { Manager } from "../models/manager.model.js";
+import { ManagerNotification } from "../models/manager.notification.model.js";
 import mongoose from 'mongoose'
 
 export async function AvailableEmployees(req, res) {
@@ -116,7 +117,7 @@ export async function ManagerDetails(req, res) {
         if (!managerId) {
             return res.status(401).json({ message: 'Manager authentication is required' })
         }
-
+        
         const manager = await Manager.findById(managerId)
             .select('email userName avatar_url department')
 
@@ -136,5 +137,112 @@ export async function ManagerDetails(req, res) {
     } catch (error) {
         console.error('Error retrieving manager details:', error)
         return res.status(500).json({ message: 'Unable to retrieve manager details' })
+    }
+}
+
+export async function MarkNotificationRead(req, res) {
+    try {
+        const managerId = req.user?._id
+        const { notificationId } = req.params
+
+        if (!managerId) {
+            return res.status(401).json({ message: 'Manager authentication is required' })
+        }
+        if (!mongoose.isValidObjectId(notificationId)) {
+            return res.status(400).json({ message: 'A valid notification id is required' })
+        }
+
+        const notification = await ManagerNotification.findOneAndUpdate(
+            { _id: notificationId, managerId },
+            { status: 'Read' },
+            { new: true }
+        )
+
+        if (!notification) {
+            return res.status(404).json({ message: 'Notification not found' })
+        }
+
+        return res.status(200).json({ notification })
+    } catch (error) {
+        console.error('Error marking notification as read:', error)
+        return res.status(500).json({ message: 'Unable to mark notification as read' })
+    }
+}
+
+export async function MarkAllNotificationsRead(req, res) {
+    try {
+        const managerId = req.user?._id
+        if (!managerId) {
+            return res.status(401).json({ message: 'Manager authentication is required' })
+        }
+
+        await ManagerNotification.updateMany(
+            { managerId, status: 'UnRead' },
+            { status: 'Read' }
+        )
+        return res.status(200).json({ message: 'All notifications marked as read' })
+    } catch (error) {
+        console.error('Error marking all notifications as read:', error)
+        return res.status(500).json({ message: 'Unable to mark all notifications as read' })
+    }
+}
+
+export async function DeleteManagerNotification(req, res) {
+    try {
+        const managerId = req.user?._id
+        const { notificationId } = req.params
+
+        if (!managerId) {
+            return res.status(401).json({ message: 'Manager authentication is required' })
+        }
+        if (!mongoose.isValidObjectId(notificationId)) {
+            return res.status(400).json({ message: 'A valid notification id is required' })
+        }
+
+        const notification = await ManagerNotification.findOneAndDelete({ _id: notificationId, managerId })
+        if (!notification) {
+            return res.status(404).json({ message: 'Notification not found' })
+        }
+
+        return res.status(200).json({ message: 'Notification deleted' })
+    } catch (error) {
+        console.error('Error deleting notification:', error)
+        return res.status(500).json({ message: 'Unable to delete notification' })
+    }
+}
+
+export async function DeleteAllManagerNotifications(req, res) {
+    try {
+        const managerId = req.user?._id
+        if (!managerId) {
+            return res.status(401).json({ message: 'Manager authentication is required' })
+        }
+
+        await ManagerNotification.deleteMany({ managerId })
+        return res.status(200).json({ message: 'All notifications deleted' })
+    } catch (error) {
+        console.error('Error deleting all notifications:', error)
+        return res.status(500).json({ message: 'Unable to delete all notifications' })
+    }
+}
+
+export async function ManagerNotifications(req, res){
+    try {
+        const id = req.user?._id
+        
+        if (!id) {
+            return res.status(401).json({ message: 'Manager authentication is required' })
+        }
+
+        // const manager = await ManagerNotification.findOne({managerId: id})
+        const notifications = await ManagerNotification.find({
+            managerId: id
+        }).sort({ createdAt: -1 });
+
+        res.status(200).json({notifications})
+
+    } catch (error) {
+        return res.status(500).json({ message: 'Unable to retrieve manager notifications' })
+        
     }
 }

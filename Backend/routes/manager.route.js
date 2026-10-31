@@ -1,7 +1,17 @@
 import express from 'express'
 import { handleManagerLogin, handleManagerSignUp, ManagerFireBaseAuthenticaton } from '../controller/managerAuthentication.controller.js'
 import { managerAuthenticateToken } from '../middlewares/userAuthentication.middleware.js'
-import { AvailableEmployees, ManagerEmployees, AddEmployee, ManagerDetails} from '../controller/manager.controller.js'
+import {
+  AvailableEmployees,
+  ManagerEmployees,
+  AddEmployee,
+  ManagerDetails,
+  ManagerNotifications,
+  MarkNotificationRead,
+  MarkAllNotificationsRead,
+  DeleteManagerNotification,
+  DeleteAllManagerNotifications
+} from '../controller/manager.controller.js'
 import { EmployeesLeavesRequests, reviewLeaveRequest } from '../controller/userLeave.controller.js'
 
 
@@ -29,3 +39,9 @@ managerRouter.patch('/leaverequests/:leaveId/review', managerAuthenticateToken, 
 
 
 managerRouter.get('/details', managerAuthenticateToken, ManagerDetails)
+
+managerRouter.get('/notifications', managerAuthenticateToken, ManagerNotifications)
+managerRouter.patch('/notifications/read-all', managerAuthenticateToken, MarkAllNotificationsRead)
+managerRouter.delete('/notifications', managerAuthenticateToken, DeleteAllManagerNotifications)
+managerRouter.patch('/notifications/:notificationId/read', managerAuthenticateToken, MarkNotificationRead)
+managerRouter.delete('/notifications/:notificationId', managerAuthenticateToken, DeleteManagerNotification)

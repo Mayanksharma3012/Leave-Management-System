@@ -1,19 +1,52 @@
 import './header.css'
 import axios from 'axios'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useContext, useEffect, useState } from 'react'
 import { userContext } from '../context/userContext.js'
 
-function Navbar() {
+const defaultManagerNotificationPreferences = {
+    newRequests: true,
+    leaveChanges: true,
+    upcomingAbsences: false,
+    announcements: true,
+}
+
+function Navbar({ notificationPreferences }) {
     const location = useLocation()
+    const navigate = useNavigate()
     const context = useContext(userContext)
-    const user = context?.userData
+    const user = context?.userData || context
     const isManager = location.pathname.startsWith('/manager/')
+    const [managerNotificationPreferences, setManagerNotificationPreferences] = useState(
+        notificationPreferences || defaultManagerNotificationPreferences
+    )
     const [profileDetails, setProfileDetails] = useState({
         userName: user?.userName || '',
         email: user?.email || '',
         avatar_url: user?.avatar_url || ''
     })
+    const [notifications, setNotifications] = useState([])
+    const [selectedNotification, setSelectedNotification] = useState(null)
+
+    useEffect(() => {
+        let preferences = notificationPreferences
+
+        if (!preferences && isManager) {
+            const managerId = user?._id || user?.id || user?.email
+            const storageKey = `managerNotificationPreferences:${managerId || 'current'}`
+
+            try {
+                const savedPreferences = JSON.parse(localStorage.getItem(storageKey))
+                preferences = savedPreferences && typeof savedPreferences === 'object'
+                    ? { ...defaultManagerNotificationPreferences, ...savedPreferences }
+                    : defaultManagerNotificationPreferences
+            } catch {
+                preferences = defaultManagerNotificationPreferences
+            }
+        }
+
+        setManagerNotificationPreferences(preferences || defaultManagerNotificationPreferences)
+    }, [isManager, notificationPreferences, user?._id, user?.id, user?.email])
 
     useEffect(() => {
         let isMounted = true
@@ -39,6 +72,88 @@ function Navbar() {
             isMounted = false
         }
     }, [isManager])
+
+    useEffect(() => {
+        if (!isManager) {
+            setNotifications([])
+            return
+        }
+
+        let isMounted = true
+
+        const fetchNotifications = async () => {
+            try {
+                const response = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}/manager/notifications`,
+                    { withCredentials: true }
+                )
+                if (isMounted) {
+                    setNotifications(response.data?.notifications || [])
+                }
+            } catch (error) {
+                console.error('Unable to fetch manager notifications:', error)
+            }
+        }
+
+        fetchNotifications()
+        return () => {
+            isMounted = false
+        }
+    }, [isManager])
+
+    const markNotificationRead = async (notificationId) => {
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications/${notificationId}/read`,
+                {},
+                { withCredentials: true }
+            )
+            setNotifications((current) => current.map((notification) =>
+                notification._id === notificationId ? { ...notification, status: 'Read' } : notification
+            ))
+        } catch (error) {
+            console.error('Unable to mark notification as read:', error)
+        }
+    }
+
+    const markAllNotificationsRead = async () => {
+        try {
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications/read-all`,
+                {},
+                { withCredentials: true }
+            )
+            setNotifications((current) => current.map((notification) => ({ ...notification, status: 'Read' })))
+        } catch (error) {
+            console.error('Unable to mark all notifications as read:', error)
+        }
+    }
+
+    const deleteNotification = async (notificationId) => {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications/${notificationId}`,
+                { withCredentials: true }
+            )
+            setNotifications((current) => current.filter((notification) => notification._id !== notificationId))
+            setSelectedNotification((current) => current?._id === notificationId ? null : current)
+        } catch (error) {
+            console.error('Unable to delete notification:', error)
+        }
+    }
+
+    const deleteAllNotifications = async () => {
+        try {
+            await axios.delete(
+                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications`,
+                { withCredentials: true }
+            )
+            setNotifications([])
+            setSelectedNotification(null)
+        } catch (error) {
+            console.error('Unable to delete all notifications:', error)
+        }
+    }
 
     const displayName = profileDetails.userName || user?.userName || user?.email || 'User'
     const initials = displayName.split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase()
@@ -87,6 +202,10 @@ function Navbar() {
             title: 'Team Calendar',
             subtitle: "View your team's leave schedule and plan work accordingly."
         },
+        '/manager/settings': {
+            title: 'Manager account',
+            subtitle: "Manage your manager profile and workspace preferences."
+        }
     }
 
     const currentPage = pageInfo[location.pathname] || {
@@ -95,6 +214,7 @@ function Navbar() {
     }
 
     return (
+        <>
         <header className="topNavbar card">
 
             <div className="greeting">
@@ -114,17 +234,71 @@ function Navbar() {
 
                 <div className="navActions">
 
-                    <button
-                        className="iconBtn"
-                        aria-label="Notifications"
-                    >
-                        🔔
-                    </button>
+                    <div className="notificationWrapper">
+                        <button
+                            className="iconBtn notificationBell"
+                            aria-label={`${notifications.length} notifications`}
+                            aria-haspopup="true"
+                        >
+                            🔔
+                            {notifications.some((notification) => notification.status === 'UnRead') && (
+                                <span className="notificationBadge">
+                                    {notifications.filter((notification) => notification.status === 'UnRead').length}
+                                </span>
+                            )}
+                        </button>
+
+                        <div className="notificationDropdown" role="region" aria-label="Notifications">
+                            <div className="notificationBulkActions">
+                                <button type="button" onClick={markAllNotificationsRead}>Read all</button>
+                                <button type="button" className="danger" onClick={deleteAllNotifications}>Delete all</button>
+                            </div>
+                            {notifications.length === 0 ? (
+                                <p className="notificationEmpty">No notifications available</p>
+                            ) : notifications.map((notification) => (
+                                        <div
+                                            className={`notificationItem ${notification.status === 'UnRead' ? 'unread' : ''}`}
+                                            key={notification._id}
+                                        >
+                                            <button
+                                                type="button"
+                                                className="notificationContent"
+                                                onClick={() => {
+                                                    setSelectedNotification(notification)
+                                                    markNotificationRead(notification._id)
+                                                }}
+                                            >
+                                                <strong>{notification.titleAndMessage?.title}</strong>
+                                                <span>{notification.titleAndMessage?.message}</span>
+                                                <small>{new Date(notification.createdAt).toLocaleString()}</small>
+                                            </button>
+                                            <div className="notificationActions">
+                                                <button
+                                                    type="button"
+                                                    disabled={notification.status === 'Read'}
+                                                    onClick={() => markNotificationRead(notification._id)}
+                                                >
+                                                    Read
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="danger"
+                                                    onClick={() => deleteNotification(notification._id)}
+                                                >
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
+                        </div>
+                    </div>
 
                     <button
+                        type="button"
                         className="avatarBtn"
                         aria-label={`${displayName} profile`}
                         title={displayName}
+                        onClick={() => navigate(isManager ? '/manager/settings' : '/employee/settings')}
                     >
                         {avatarUrl
                             ? <img src={avatarUrl} alt="" />
@@ -136,6 +310,31 @@ function Navbar() {
             </div>
 
         </header>
+
+        {selectedNotification && (
+            <div className="notificationModalOverlay" role="presentation" onClick={() => setSelectedNotification(null)}>
+                <section
+                    className="notificationModal"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="notification-modal-title"
+                    onClick={(event) => event.stopPropagation()}
+                >
+                    <button
+                        type="button"
+                        className="notificationModalClose"
+                        aria-label="Close notification"
+                        onClick={() => setSelectedNotification(null)}
+                    >
+                        ×
+                    </button>
+                    <h2 id="notification-modal-title">{selectedNotification.titleAndMessage?.title}</h2>
+                    <p>{selectedNotification.titleAndMessage?.message}</p>
+                    <small>{new Date(selectedNotification.createdAt).toLocaleString()}</small>
+                </section>
+            </div>
+        )}
+        </>
     )
 }
 

@@ -1,6 +1,7 @@
 import { Leave } from "../models/leave.model.js";
 import { User } from "../models/user.model.js"
 import { Manager } from "../models/manager.model.js";
+import { ManagerNotification } from "../models/manager.notification.model.js";
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
 import { Readable } from 'stream'
@@ -32,7 +33,7 @@ function uploadDocumentToCloudinary(file) {
     });
 }
 
-export async function handleUserLeave(req, res){
+export async function handleUserLeave(req, res) {
     const token = req.cookies.token;
 
     try {
@@ -70,6 +71,16 @@ export async function handleUserLeave(req, res){
             status: leaveStatus || 'pending-leave'
         });
 
+        if (user.manager) {
+            await ManagerNotification.create({
+                managerId: user.manager,
+                titleAndMessage: {
+                    title: "Leave Request",
+                    message: `${user.userName} requested a leave`
+                },
+                relatedLeaveID: leave._id,
+            });
+        }
         res.status(201).json({ message: "Leave submitted", leave });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -93,72 +104,107 @@ export async function getUserLeaves(req, res) {
         // 2. Fetch ONLY leaves for this user, sorted newest first
         const leaves = await Leave.find({ employee: user._id })
             .sort({ createdAt: -1 });
-            
+
         res.json({ leaves });
-        
+
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 }
 
 export async function editLeave(req, res) {
-  const { id, title, start, end, endReal, status, days, reason } = req.body ?? {};
+    const { id, title, start, end, endReal, status, days, reason } = req.body ?? {};
 
-  try {
-    if (!id) {
-      return res.status(400).json({ message: "Leave id is required" });
-    }
-    
-    const updatedLeave = await Leave.findByIdAndUpdate(
-      id,
-      {
-        leaveType: title,
-        startDate: start,
-        endDate: end,
-        endDateReal: endReal,
-        days,
-        reason,
-        status: status || "pending-leave"
-    },
-      { new: true }
-    );
-
-    if (!updatedLeave) {
-        return res.status(404).json({ message: "Leave not found" });
-    }
-
-    return res.status(200).json({
-      message: "Leave updated successfully",
-      leave: updatedLeave
-    });
-} catch (error) {
-    return res.status(500).json({ message: error.message });
-}
-}
-
-export async function deleteLeave(req, res) {
-    const {id} = req.body ?? {}
-    
     try {
         if (!id) {
             return res.status(400).json({ message: "Leave id is required" });
         }
-        const delete_leave = await Leave.findByIdAndDelete(id)
-        if (!delete_leave) {
+
+        const updatedLeave = await Leave.findByIdAndUpdate(
+            id,
+            {
+                leaveType: title,
+                startDate: start,
+                endDate: end,
+                endDateReal: endReal,
+                days,
+                reason,
+                status: status || "pending-leave"
+            },
+            { new: true }
+        );
+
+        if (!updatedLeave) {
             return res.status(404).json({ message: "Leave not found" });
         }
-        
+
+        const employee = await User.findById(updatedLeave.employee);
+        if (!employee) {
+            return res.status(404).json({ message: "Employee not found" });
+        }
+
+        if (employee.manager) {
+            await ManagerNotification.create({
+                managerId: employee.manager,
+                titleAndMessage: {
+                    title: "Leave Request Updated",
+                    message: `${employee.userName} edited a leave`
+                },
+                relatedLeaveID: updatedLeave._id,
+            });
+        }
+
         return res.status(200).json({
-          message: "Leave Deleted successfully",
+            message: "Leave updated successfully",
+            leave: updatedLeave
         });
-        
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
+
+export async function deleteLeave(req, res) {
+    const { id } = req.body ?? {}
+
+    try {
+        if (!id) {
+            return res.status(400).json({ message: "Leave id is required" });
+        }
+        const leave = await Leave.findById(id);
+        if (!leave) {
+            return res.status(404).json({ message: "Leave not found" });
+        }
+
+        const employee = await User.findById(leave.employee);
+        const deletedLeave = await Leave.findByIdAndDelete(id);
+        if (!deletedLeave) {
+            return res.status(404).json({ message: "Leave not found" });
+        }
+
+        if (employee?.manager) {
+            await ManagerNotification.create({
+                managerId: employee.manager,
+                titleAndMessage: {
+                    title: "Leave Request Deleted",
+                    message: leave.status === 'approved-leave'
+                        ? `${employee.userName} cancelled an approved leave`
+                        : `${employee.userName} cancelled a leave request`
+                },
+                relatedLeaveID: deletedLeave._id,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Leave Deleted successfully",
+        });
+
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 }
 
 
-export async function EmployeesLeavesRequests(req, res){
+export async function EmployeesLeavesRequests(req, res) {
     try {
         const manager = await Manager.findById(req.user._id).select('employees');
         if (!manager) {

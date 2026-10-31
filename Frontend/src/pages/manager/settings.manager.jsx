@@ -3,6 +3,7 @@ import axios from 'axios'
 import Sidebar from '../../components/sidebar.jsx'
 import { userContext } from '../../context/userContext.js'
 import './settings.manager.css'
+import Navbar from '../../components/header.jsx'
 
 const settingsTabs = [
     { id: 'Profile', label: '👤 Profile' },
@@ -18,11 +19,36 @@ const themeOptions = [
 ]
 
 const notificationOptions = [
-    { id: 'newRequests', label: 'New leave requests', description: 'Notify me when an employee submits a leave request.' },
-    { id: 'teamDecisions', label: 'Team leave decisions', description: 'Notify me when a leave request is approved or rejected.' },
-    { id: 'upcomingAbsences', label: 'Upcoming team absences', description: 'Remind me about approved leave in my team.' },
+    { id: 'newRequests', label: 'New leave requests', description: 'Notify me when a team member submits a new leave request for review.' },
+    { id: 'leaveChanges', label: 'Leave cancellations and changes', description: 'Notify me when an employee edits or cancels a pending or approved leave request.' },
+    // { id: 'pendingReviews', label: 'Pending approval reminders', description: 'Remind me about leave requests that are waiting for my review.' },
+    { id: 'upcomingAbsences', label: 'Upcoming team absences', description: 'Notify me before approved leave from my team begins.' },
+    // { id: 'coverageAlerts', label: 'Team coverage alerts', description: 'Notify me when approved leaves may leave my team understaffed.' },
     { id: 'announcements', label: 'Company announcements', description: 'Receive important company-wide updates.' },
 ]
+
+const defaultNotifications = {
+    newRequests: true,
+    leaveChanges: true,
+    upcomingAbsences: true,
+    announcements: true,
+}
+
+const getNotificationStorageKey = (user) => {
+    const managerId = user?._id || user?.id || user?.email
+    return `managerNotificationPreferences:${managerId || 'current'}`
+}
+
+const loadNotificationPreferences = (key) => {
+    try {
+        const savedPreferences = JSON.parse(localStorage.getItem(key))
+        return savedPreferences && typeof savedPreferences === 'object'
+            ? { ...defaultNotifications, ...savedPreferences }
+            : defaultNotifications
+    } catch {
+        return defaultNotifications
+    }
+}
 
 export default function ManagerSettingPage({ theme, setTheme }) {
     const user = useContext(userContext)
@@ -35,12 +61,8 @@ export default function ManagerSettingPage({ theme, setTheme }) {
     })
     const [passwordError, setPasswordError] = useState('')
     const [passwordSuccess, setPasswordSuccess] = useState('')
-    const [notifications, setNotifications] = useState({
-        newRequests: true,
-        teamDecisions: true,
-        upcomingAbsences: false,
-        announcements: true,
-    })
+    const notificationStorageKey = getNotificationStorageKey(user)
+    const [notifications, setNotifications] = useState(() => loadNotificationPreferences(notificationStorageKey))
     const [managerDetails, setManagerDetails] = useState({
         userName: user?.userName || '',
         email: user?.email || '',
@@ -106,8 +128,22 @@ export default function ManagerSettingPage({ theme, setTheme }) {
         }
     }, [])
 
+    useEffect(() => {
+        setNotifications(loadNotificationPreferences(notificationStorageKey))
+    }, [notificationStorageKey])
+
     const toggleNotification = (id) => {
-        setNotifications((current) => ({ ...current, [id]: !current[id] }))
+        setNotifications((current) => {
+            const updatedPreferences = { ...current, [id]: !current[id] }
+
+            try {
+                localStorage.setItem(notificationStorageKey, JSON.stringify(updatedPreferences))
+            } catch (error) {
+                console.error('Unable to save notification preferences:', error)
+            }
+
+            return updatedPreferences
+        })
     }
 
     return (
@@ -116,7 +152,7 @@ export default function ManagerSettingPage({ theme, setTheme }) {
 
             <main className="managerSettingsMain container">
                 <section className="settingsMain">
-                    <header className="settingsHeader">
+                   {/* <header className="settingsHeader">
                         <div>
                             <p className="settingsEyebrow">Manager account</p>
                             <h1>Settings</h1>
@@ -130,7 +166,8 @@ export default function ManagerSettingPage({ theme, setTheme }) {
                                     : initials}
                             </div>
                         </div>
-                    </header>
+                    </header> */}
+                    <Navbar notificationPreferences={notifications} />
 
                     <div className="settingsPanel">
                         <aside className="settingsSidebar">
