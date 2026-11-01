@@ -4,8 +4,11 @@ import Navbar from '../../components/header'
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 
-
-
+const getTodayDate = () => {
+    const today = new Date()
+    const offset = today.getTimezoneOffset() * 60 * 1000
+    return new Date(today.getTime() - offset).toISOString().split('T')[0]
+}
 
 function ApplyLeaveEmployee({submitedFormData ,}) {
 
@@ -21,6 +24,7 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
     const [isSubmitting, setIsSubmitting] = useState(false)
     const formRef = useRef(null)
     const isSubmittingRef = useRef(false)
+    const today = getTodayDate()
 
     useEffect(() => {
         const start = new Date(formData.startDate)
@@ -58,10 +62,14 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
             setFormDataErr('reason')
             return
         }
-        const start = new Date(formData.startDate)
-        const end = new Date(formData.endDate)
+        const start = new Date(`${formData.startDate}T00:00:00`)
+        const end = new Date(`${formData.endDate}T00:00:00`)
+        const todayDate = new Date(`${today}T00:00:00`)
         
-        // console.log(formData)
+        if (start < todayDate) {
+            setFormDataErr('pastDate')
+            return
+        }
 
         if (end < start) {
             // invalid date range
@@ -161,18 +169,21 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
 
                             <div className="selectDates">
                                 <div className="startDate">
-                                    <input id='sDate' type="date" value={formData.startDate} name='startDate'
+                                    <input id='sDate' type="date" min={today} value={formData.startDate} name='startDate'
                                         onChange={(e) => {
-                                            setFormData({
-                                                ...formData,
-                                                startDate: e.target.value
-                                            })
+                                            const startDate = e.target.value
+                                            setFormData((current) => ({
+                                                ...current,
+                                                startDate,
+                                                endDate: current.endDate && current.endDate < startDate ? '' : current.endDate
+                                            }))
                                         }} />
                                     <span>Start Date</span>
                                     {formDataErr === 'startDate' && <span className="errorMsg">Please select a start date for your leave.</span>}
+                                    {formDataErr === 'pastDate' && <span className="errorMsg">Start date cannot be before today.</span>}
                                 </div>
                                 <div className="endDate">
-                                    <input type="date" id='eDate' value={formData.endDate} name='endDate'
+                                    <input type="date" id='eDate' min={formData.startDate || today} value={formData.endDate} name='endDate'
                                         onChange={(e) => {
                                             setFormData({
                                                 ...formData,

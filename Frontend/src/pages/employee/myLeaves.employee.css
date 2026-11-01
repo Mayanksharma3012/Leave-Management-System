@@ -517,6 +517,66 @@
     }
 }
 
+.leaveHistoryFooter {
+  display: flex;
+  min-height: 58px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.7rem 1.15rem;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+
+.leaveHistoryFooter p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.leaveHistoryPagination {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+}
+
+.leaveHistoryPagination button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text-primary);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.leaveHistoryPagination button:not(:disabled):hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.leaveHistoryPagination button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+  .leaveHistoryFooter {
+    flex-direction: column;
+    align-items: stretch;
+    padding-block: 1rem;
+  }
+
+  .leaveHistoryPagination {
+    justify-content: space-between;
+  }
+}
+
 :root[data-theme='dark'] .leaveHistoryPanel,
 :root[data-theme='dark'] .tableWrapper,
 :root[data-theme='dark'] .historyFilters input,

@@ -3,7 +3,7 @@ import Sidebar from '../../components/sidebar'
 import SummaryGrid from '../../components/employee-components/summaryGrid'
 import EditLeaveForm from '../../components/editLeaveForm'
 import './myLeaves.employee.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const leaveIcons = {
   annual: '🌴',
@@ -47,6 +47,46 @@ function MyLeaves({ submitedFormData }) {
   const [selectedLeave, setSelectedLeave] = useState(null)
   const [editLeave, setEditLeave] = useState(false)
   const [leaveToEdit, setLeaveToEdit] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const leavesPerPage = 6
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const sortedLeaves = [...(submitedFormData || [])].sort((firstLeave, secondLeave) => {
+    const getDate = (date) => new Date(`${date}T00:00:00`)
+    const firstStart = getDate(firstLeave.start)
+    const firstEnd = getDate(firstLeave.endReal || firstLeave.end || firstLeave.start)
+    const secondStart = getDate(secondLeave.start)
+    const secondEnd = getDate(secondLeave.endReal || secondLeave.end || secondLeave.start)
+
+    const getCategory = (start, end) => {
+      if (start <= today && end >= today) return 0
+      if (start > today) return 1
+      return 2
+    }
+
+    const firstCategory = getCategory(firstStart, firstEnd)
+    const secondCategory = getCategory(secondStart, secondEnd)
+
+    if (firstCategory !== secondCategory) return firstCategory - secondCategory
+    if (firstCategory === 1) return firstStart - secondStart
+    if (firstCategory === 2) return secondStart - firstStart
+
+    return firstStart - secondStart
+  })
+
+  const validLeaves = sortedLeaves.filter((leave) => getLeaveStatus(leave) !== null)
+  const pageCount = Math.max(1, Math.ceil(validLeaves.length / leavesPerPage))
+  const safeCurrentPage = Math.min(currentPage, pageCount)
+  const visibleLeaves = validLeaves.slice(
+    (safeCurrentPage - 1) * leavesPerPage,
+    safeCurrentPage * leavesPerPage
+  )
+
+  useEffect(() => {
+    setCurrentPage((page) => Math.min(page, pageCount))
+  }, [pageCount])
 
   return (
     <div className="employeeMyLeavesPage">
@@ -108,9 +148,8 @@ function MyLeaves({ submitedFormData }) {
                   </tr>
                 </thead>
                 <tbody>
-                  {submitedFormData.map((leave, index) => {
+                  {visibleLeaves.map((leave, index) => {
                     const status = getLeaveStatus(leave)
-                    if( status === null ) return [];
 
                     const endDate = leave.endReal || leave.end
                     return (
@@ -154,6 +193,28 @@ function MyLeaves({ submitedFormData }) {
                 </tbody>
               </table>
             </div>
+            <footer className="leaveHistoryFooter">
+              <p>
+                {validLeaves.length === 0
+                  ? 'No leaves to display'
+                  : `Showing ${(safeCurrentPage - 1) * leavesPerPage + 1}–${Math.min(safeCurrentPage * leavesPerPage, validLeaves.length)} of ${validLeaves.length} leaves`}
+              </p>
+              <div className="leaveHistoryPagination" aria-label="Leave pages">
+                <button
+                  type="button"
+                  aria-label="Previous page"
+                  disabled={safeCurrentPage === 1}
+                  onClick={() => setCurrentPage(safeCurrentPage - 1)}
+                >‹</button>
+                <span>Page {safeCurrentPage} of {pageCount}</span>
+                <button
+                  type="button"
+                  aria-label="Next page"
+                  disabled={safeCurrentPage === pageCount}
+                  onClick={() => setCurrentPage(safeCurrentPage + 1)}
+                >›</button>
+              </div>
+            </footer>
           </div>)}
         </section>
       </main>

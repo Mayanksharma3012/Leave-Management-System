@@ -44,6 +44,13 @@ export async function handleUserLeave(req, res) {
         }
 
         const { title, start, end, endReal, classNames, reason, days } = req.body ?? {};
+
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        if (typeof start !== 'string' || start < today || (typeof endReal === 'string' && endReal < start)) {
+            return res.status(400).json({ message: 'Leave dates must start today or later and end on or after the start date.' });
+        }
+
         const documentFile = req.file ? await uploadDocumentToCloudinary(req.file) : null;
 
         let parsedClassNames = classNames;

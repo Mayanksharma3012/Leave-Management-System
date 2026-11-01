@@ -74,12 +74,32 @@ function EmployeeDashboard({ submitedFormData }){
       {label: 'Rejected', value: counts.rejected, icon: '✖️', tone: 'rejected'},
     ]
 
-    const recent = [
-      {type: 'Sick Leave', date: '2026-07-30', status: 'Approved'},
-      {type: 'Casual Leave', date: '2026-07-18', status: 'Pending'},
-      {type: 'Work From Home', date: '2026-07-10', status: 'Rejected'},
-      {type: 'Annual Leave', date: '2026-06-25', status: 'Approved'},
-    ]
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+
+    const orderedRecentLeaves = [...(submitedFormData || [])]
+      .filter((leave) => checkleave(leave))
+      .sort((firstLeave, secondLeave) => {
+        const getDate = (date) => new Date(`${date}T00:00:00`)
+        const firstStart = getDate(firstLeave.start)
+        const firstEnd = getDate(firstLeave.endReal || firstLeave.end || firstLeave.start)
+        const secondStart = getDate(secondLeave.start)
+        const secondEnd = getDate(secondLeave.endReal || secondLeave.end || secondLeave.start)
+
+        const getCategory = (start, end) => {
+          if (start <= today && end >= today) return 0
+          if (start > today) return 1
+          return 2
+        }
+
+        const firstCategory = getCategory(firstStart, firstEnd)
+        const secondCategory = getCategory(secondStart, secondEnd)
+        if (firstCategory !== secondCategory) return firstCategory - secondCategory
+        if (firstCategory === 1) return firstStart - secondStart
+        if (firstCategory === 2) return secondStart - firstStart
+        return firstStart - secondStart
+      })
+      .slice(0, 8)
 
     return(
         <div className="dashboardPage">
@@ -140,9 +160,7 @@ function EmployeeDashboard({ submitedFormData }){
                           </tr>
                         </thead>
                         <tbody>
-                          {(submitedFormData || [])
-                            .filter((leave) => checkleave(leave))
-                            .map((leave, idx) => (
+                          {orderedRecentLeaves.map((leave, idx) => (
                             <tr key={idx}>
                               <td>{leave.title}</td>
                               <td>{leave.start}</td>
