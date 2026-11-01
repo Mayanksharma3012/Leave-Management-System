@@ -246,18 +246,27 @@ export async function reviewLeaveRequest(req, res) {
             return res.status(404).json({ message: 'Manager not found' });
         }
 
+        const pendingLeave = await Leave.findOne({
+            _id: leaveId,
+            employee: { $in: manager.employees },
+            status: { $in: ['pending-leave', 'pending'] }
+        });
+
+        if (!pendingLeave) {
+            return res.status(404).json({ message: 'Pending leave request not found' });
+        }
+
+        const now = new Date();
+        const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+        if (String(pendingLeave.endDateReal || pendingLeave.endDate || '').slice(0, 10) < today) {
+            return res.status(400).json({ message: 'Expired leave requests cannot be reviewed' });
+        }
+
         const leave = await Leave.findOneAndUpdate(
-            {
-                _id: leaveId,
-                employee: { $in: manager.employees },
-                status: { $in: ['pending-leave', 'pending'] }
-            },
+            { _id: pendingLeave._id },
             { status: `${status}-leave` },
             { returnDocument: 'after' }
         );
-        if (!leave) {
-            return res.status(404).json({ message: 'Pending leave request not found' });
-        }
 
         await EmployeeNotification.create({
             employeeId: leave.employee,

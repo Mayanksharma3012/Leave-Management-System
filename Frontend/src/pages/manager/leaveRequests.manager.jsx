@@ -9,6 +9,23 @@ import axios from 'axios'
 const statusFilters = ['All', 'Pending', 'Approved', 'Rejected']
 const pageSize = 6
 
+function getTodayValue() {
+    const today = new Date()
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
+}
+
+function hasLeaveEnded(endDate) {
+    if (!endDate) return false
+    return String(endDate).slice(0, 10) < getTodayValue()
+}
+
+function hasStartedButNotEnded(request) {
+    const todayValue = getTodayValue()
+    const startDate = String(request.startDateValue || '').slice(0, 10)
+    const endDate = String(request.endDateValue || '').slice(0, 10)
+    return startDate < todayValue && endDate >= todayValue
+}
+
 function formatDate(value) {
     if (!value) return '—'
     const dateValue = String(value).slice(0, 10)
@@ -46,6 +63,8 @@ function mapLeaveRequest(leave) {
         team: leave.employee?.department || '—',
         leaveType: leave.leaveType || 'Leave',
         dates: startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`,
+        startDateValue: String(startDate || '').slice(0, 10),
+        endDateValue: String(endDate || startDate || '').slice(0, 10),
         duration: `${leave.days ?? 0} ${leave.days === 1 ? 'day' : 'days'}`,
         appliedOn: formatAppliedOn(leave.createdAt),
         reason: leave.reason || '',
@@ -162,7 +181,13 @@ export default function ManagerLeaveRequestsPage() {
 
     const filteredRequests = useMemo(() => {
         const normalizedSearch = search.trim().toLowerCase()
-        return requests.filter((request) => {
+        const statusRank = { Pending: 0, Approved: 1, Rejected: 2 }
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+
+        const parseDate = (value) => new Date(`${String(value || '').slice(0, 10)}T00:00:00`)
+
+        const filtered = requests.filter((request) => {
             const matchesStatus = activeStatus === 'All' || request.status === activeStatus
             const matchesType = leaveType === 'All' || request.leaveType === leaveType
             const matchesSearch = !normalizedSearch || [
@@ -173,6 +198,33 @@ export default function ManagerLeaveRequestsPage() {
                 request.status,
             ].some((value) => String(value || '').toLowerCase().includes(normalizedSearch))
             return matchesStatus && matchesType && matchesSearch
+        })
+
+        return filtered.sort((firstRequest, secondRequest) => {
+            const firstStart = parseDate(firstRequest.startDateValue)
+            const firstEnd = parseDate(firstRequest.endDateValue)
+            const secondStart = parseDate(secondRequest.startDateValue)
+            const secondEnd = parseDate(secondRequest.endDateValue)
+
+            const category = (start, end) => {
+                if (start <= today && end >= today) return 0
+                if (start > today) return 1
+                return 2
+            }
+
+            const firstCategory = category(firstStart, firstEnd)
+            const secondCategory = category(secondStart, secondEnd)
+            if (firstCategory !== secondCategory) return firstCategory - secondCategory
+
+            if (firstCategory === 1) {
+                const dateDifference = firstStart - secondStart
+                if (dateDifference !== 0) return dateDifference
+            } else if (firstCategory === 2) {
+                const dateDifference = secondStart - firstStart
+                if (dateDifference !== 0) return dateDifference
+            }
+
+            return (statusRank[firstRequest.status] ?? 3) - (statusRank[secondRequest.status] ?? 3)
         })
     }, [activeStatus, leaveType, requests, search])
     const leaveTypes = [...new Set(requests.map((request) => request.leaveType).filter(Boolean))]
@@ -193,6 +245,27 @@ export default function ManagerLeaveRequestsPage() {
     }
 
     const handleReview = async (request, status) => {
+        if (hasStartedButNotEnded(request)) {
+            const shouldEditLeave = window.confirm(
+                "This leave's start date has passed, but the leave has not ended. Click OK to edit the leave and move its start date to today."
+            )
+
+            if (shouldEditLeave) {
+                const todayValue = getTodayValue()
+                const startLabel = formatDate(todayValue)
+                const endLabel = formatDate(request.endDateValue)
+                const updatedRequest = {
+                    ...request,
+                    startDateValue: todayValue,
+                    dates: startLabel === endLabel ? startLabel : `${startLabel} – ${endLabel}`,
+                }
+                setSelectedRequestId(request.id)
+                setRequestDraft(updatedRequest)
+                setIsEditingRequest(true)
+                return
+            }
+        }
+
         const normalizedStatus = status.toLowerCase()
         setReviewError('')
         try {
@@ -345,7 +418,7 @@ export default function ManagerLeaveRequestsPage() {
                                             <td>{request.appliedOn}</td>
                                             <td><span className={`leaveStatusBadge ${request.status.toLowerCase()}`}>{request.status}</span></td>
                                             <td>
-                                                {request.status === 'Pending' ? (
+                                                {request.status === 'Pending' && !hasLeaveEnded(request.endDateValue) ? (
                                                     <div className="leaveRequestActions">
                                                         <button
                                                             type="button"
@@ -519,7 +592,7 @@ export default function ManagerLeaveRequestsPage() {
                                     </div>
                                 </div>
 
-                                {selectedRequest.status === 'Pending' && (
+                                {selectedRequest.status === 'Pending' && !hasLeaveEnded(selectedRequest.endDateValue) && (
                                     <footer className="leaveRequestDialogActions">
                                         <button
                                             className="leaveRequestEditButton"
