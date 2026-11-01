@@ -1,7 +1,7 @@
 import { Leave } from "../models/leave.model.js";
 import { User } from "../models/user.model.js"
 import { Manager } from "../models/manager.model.js";
-import { ManagerNotification } from "../models/manager.notification.model.js";
+import { ManagerNotification, EmployeeNotification } from "../models/notification.model.js";
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose'
 import { Readable } from 'stream'
@@ -131,7 +131,7 @@ export async function editLeave(req, res) {
                 reason,
                 status: status || "pending-leave"
             },
-            { new: true }
+            { returnDocument: 'after' }
         );
 
         if (!updatedLeave) {
@@ -246,11 +246,21 @@ export async function reviewLeaveRequest(req, res) {
                 status: { $in: ['pending-leave', 'pending'] }
             },
             { status: `${status}-leave` },
-            { new: true }
+            { returnDocument: 'after' }
         );
         if (!leave) {
             return res.status(404).json({ message: 'Pending leave request not found' });
         }
+
+        await EmployeeNotification.create({
+            employeeId: leave.employee,
+            titleAndMessage: {
+                title: `leave ${status}`,
+                message: `your ${leave.leaveType} was ${status}`
+            },
+            relatedLeaveID: leaveId
+        })
+
 
         return res.status(200).json({ message: 'Leave request reviewed successfully', leave });
     } catch (error) {

@@ -3,6 +3,7 @@ import Sidebar from './../../components/sidebar.jsx'
 import { useState, useContext, useEffect } from 'react'
 import { userContext } from '../../context/userContext.js'
 import axios from 'axios'
+import Navbar from '../../components/header.jsx'
 
 const settingsTabs = [
     { id: 'Profile', label: '👤 Profile' },
@@ -17,29 +18,58 @@ const themeOptions = [
     { id: 'system', label: 'System', caption: 'Match your device preference automatically.', icon: '🖥️' },
 ]
 
+const defaultNotifications = {
+    approvedReq: true,
+    rejectedReq: true,
+    pendingReq: false,
+    companyAnnounce: true,
+    upcomingRemainder: false,
+}
+
+const getNotificationStorageKey = (user) => {
+    const employeeId = user?._id || user?.id || user?.email
+    return `employeeNotificationPreferences:${employeeId || 'current'}`
+}
+
+const loadNotificationPreferences = (key) => {
+    try {
+        const savedPreferences = JSON.parse(localStorage.getItem(key))
+        return savedPreferences && typeof savedPreferences === 'object'
+            ? { ...defaultNotifications, ...savedPreferences }
+            : defaultNotifications
+    } catch {
+        return defaultNotifications
+    }
+}
+
 function EmployeeSettings({ theme, setTheme }) {
     const [settingPage, setSettingPage] = useState('Profile')
     const [changePassword, setChangePassword] = useState(false)
     const [showCurrentPassword, setShowCurrentPassword] = useState(false)
     const [showNewPassword, setShowNewPassword] = useState(false)
     const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [notificationSettings, setNotificationSettings] = useState({
-        approvedReq: true,
-        rejectedReq: true,
-        pendingReq: false,
-        companyAnnounce: true,
-        upcomingRemainder: false,
-    })
 
     const toggleNotification = (key) => {
-        setNotificationSettings((prev) => ({
-            ...prev,
-            [key]: !prev[key],
-        }))
+        setNotificationSettings((prev) => {
+            const updatedPreferences = {
+                ...prev,
+                [key]: !prev[key],
+            }
+
+            try {
+                localStorage.setItem(notificationStorageKey, JSON.stringify(updatedPreferences))
+            } catch (error) {
+                console.error('Unable to save notification preferences:', error)
+            }
+
+            return updatedPreferences
+        })
     }
 
     const context = useContext(userContext)
     const user = context?.userData
+    const notificationStorageKey = getNotificationStorageKey(user)
+    const [notificationSettings, setNotificationSettings] = useState(() => loadNotificationPreferences(notificationStorageKey))
     const [employeeDetails, setEmployeeDetails] = useState({
         userName: user?.userName || '',
         email: user?.email || '',
@@ -70,6 +100,10 @@ function EmployeeSettings({ theme, setTheme }) {
             isMounted = false
         }
     }, [])
+
+    useEffect(() => {
+        setNotificationSettings(loadNotificationPreferences(notificationStorageKey))
+    }, [notificationStorageKey])
 
     const fullName = employeeDetails.userName || user?.userName || 'Employee'
     const userEmail = employeeDetails.email || user?.email || ''
@@ -121,7 +155,7 @@ function EmployeeSettings({ theme, setTheme }) {
 
             <main className="employeeSettingsMain container">
                 <section className="settingsMain">
-                    <div className="settingsHeader">
+                    {/* <div className="settingsHeader">
                         <div>
                             <p className="settingsEyebrow">Account</p>
                             <h1>Settings</h1>
@@ -133,7 +167,8 @@ function EmployeeSettings({ theme, setTheme }) {
                                 {avatarUrl ? <img src={avatarUrl} alt="" /> : initials}
                             </button>
                         </div>
-                    </div>
+                    </div> */}
+                    <Navbar notificationPreferences={notificationSettings}/>
 
                     <div className="settingsPanel">
                         <aside className="settingsSidebar">
@@ -187,9 +222,6 @@ function EmployeeSettings({ theme, setTheme }) {
                                         </div>
                                     </div>
 
-                                    <div className="settingsActions">
-                                        <button type="button" className="primaryBtn">Save Changes</button>
-                                    </div>
                                 </div>
                             )}
 

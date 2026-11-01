@@ -11,6 +11,33 @@ const defaultManagerNotificationPreferences = {
     announcements: true,
 }
 
+const defaultEmployeeNotificationPreferences = {
+    approvedReq: true,
+    rejectedReq: true,
+    pendingReq: false,
+    companyAnnounce: true,
+    upcomingRemainder: false,
+}
+
+const shouldShowNotification = (notification, preferences, isManager) => {
+    const text = `${notification?.titleAndMessage?.title || ''} ${notification?.titleAndMessage?.message || ''}`.toLowerCase()
+
+    if (isManager) {
+        if (text.includes('announce')) return preferences.announcements
+        if (text.includes('upcoming') || text.includes('absence') || text.includes('reminder')) return preferences.upcomingAbsences
+        if (text.includes('request deleted') || text.includes('leave updated') || text.includes('edited') || text.includes('cancelled') || text.includes('canceled')) return preferences.leaveChanges
+        if (text.includes('request') || text.includes('leave')) return preferences.newRequests
+        return true
+    }
+
+    if (text.includes('announce')) return preferences.companyAnnounce
+    if (text.includes('upcoming') || text.includes('reminder')) return preferences.upcomingRemainder
+    if (text.includes('approved')) return preferences.approvedReq
+    if (text.includes('rejected') || text.includes('declined')) return preferences.rejectedReq
+    if (text.includes('pending')) return preferences.pendingReq
+    return true
+}
+
 function Navbar({ notificationPreferences }) {
     const location = useLocation()
     const navigate = useNavigate()
@@ -19,6 +46,9 @@ function Navbar({ notificationPreferences }) {
     const isManager = location.pathname.startsWith('/manager/')
     const [managerNotificationPreferences, setManagerNotificationPreferences] = useState(
         notificationPreferences || defaultManagerNotificationPreferences
+    )
+    const [employeeNotificationPreferences, setEmployeeNotificationPreferences] = useState(
+        notificationPreferences || defaultEmployeeNotificationPreferences
     )
     const [profileDetails, setProfileDetails] = useState({
         userName: user?.userName || '',
@@ -31,21 +61,30 @@ function Navbar({ notificationPreferences }) {
     useEffect(() => {
         let preferences = notificationPreferences
 
-        if (!preferences && isManager) {
-            const managerId = user?._id || user?.id || user?.email
-            const storageKey = `managerNotificationPreferences:${managerId || 'current'}`
+        if (!preferences) {
+            const userId = user?._id || user?.id || user?.email
+            const storageKey = isManager
+                ? `managerNotificationPreferences:${userId || 'current'}`
+                : `employeeNotificationPreferences:${userId || 'current'}`
+            const defaults = isManager
+                ? defaultManagerNotificationPreferences
+                : defaultEmployeeNotificationPreferences
 
             try {
                 const savedPreferences = JSON.parse(localStorage.getItem(storageKey))
                 preferences = savedPreferences && typeof savedPreferences === 'object'
-                    ? { ...defaultManagerNotificationPreferences, ...savedPreferences }
-                    : defaultManagerNotificationPreferences
+                    ? { ...defaults, ...savedPreferences }
+                    : defaults
             } catch {
-                preferences = defaultManagerNotificationPreferences
+                preferences = defaults
             }
         }
 
-        setManagerNotificationPreferences(preferences || defaultManagerNotificationPreferences)
+        if (isManager) {
+            setManagerNotificationPreferences(preferences || defaultManagerNotificationPreferences)
+        } else {
+            setEmployeeNotificationPreferences(preferences || defaultEmployeeNotificationPreferences)
+        }
     }, [isManager, notificationPreferences, user?._id, user?.id, user?.email])
 
     useEffect(() => {
@@ -74,37 +113,40 @@ function Navbar({ notificationPreferences }) {
     }, [isManager])
 
     useEffect(() => {
-        if (!isManager) {
-            setNotifications([])
-            return
-        }
-
         let isMounted = true
+        const endpoint = isManager ? 'manager' : 'user'
 
         const fetchNotifications = async () => {
             try {
                 const response = await axios.get(
-                    `${import.meta.env.VITE_BACKEND_URL}/manager/notifications`,
+                    `${import.meta.env.VITE_BACKEND_URL}/${endpoint}/notifications`,
                     { withCredentials: true }
                 )
                 if (isMounted) {
-                    setNotifications(response.data?.notifications || [])
+                    const preferences = isManager
+                        ? managerNotificationPreferences
+                        : employeeNotificationPreferences
+                    const receivedNotifications = response.data?.notifications || []
+                    setNotifications(receivedNotifications.filter((notification) =>
+                        shouldShowNotification(notification, preferences, isManager)
+                    ))
                 }
             } catch (error) {
-                console.error('Unable to fetch manager notifications:', error)
+                console.error(`Unable to fetch ${isManager ? 'manager' : 'employee'} notifications:`, error)
             }
         }
 
+        setNotifications([])
         fetchNotifications()
         return () => {
             isMounted = false
         }
-    }, [isManager])
-
+    }, [isManager, managerNotificationPreferences, employeeNotificationPreferences])
+    
     const markNotificationRead = async (notificationId) => {
         try {
             await axios.patch(
-                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications/${notificationId}/read`,
+                `${import.meta.env.VITE_BACKEND_URL}/${isManager? 'manager' : 'user'}/notifications/${notificationId}/read`,
                 {},
                 { withCredentials: true }
             )
@@ -119,7 +161,7 @@ function Navbar({ notificationPreferences }) {
     const markAllNotificationsRead = async () => {
         try {
             await axios.patch(
-                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications/read-all`,
+                `${import.meta.env.VITE_BACKEND_URL}/${isManager? 'manager' : 'user'}/notifications/read-all`,
                 {},
                 { withCredentials: true }
             )
@@ -132,7 +174,7 @@ function Navbar({ notificationPreferences }) {
     const deleteNotification = async (notificationId) => {
         try {
             await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications/${notificationId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/${isManager? 'manager' : 'user'}/notifications/${notificationId}`,
                 { withCredentials: true }
             )
             setNotifications((current) => current.filter((notification) => notification._id !== notificationId))
@@ -145,7 +187,7 @@ function Navbar({ notificationPreferences }) {
     const deleteAllNotifications = async () => {
         try {
             await axios.delete(
-                `${import.meta.env.VITE_BACKEND_URL}/manager/notifications`,
+                `${import.meta.env.VITE_BACKEND_URL}/${isManager? 'manager' : 'user'}/notifications`,
                 { withCredentials: true }
             )
             setNotifications([])

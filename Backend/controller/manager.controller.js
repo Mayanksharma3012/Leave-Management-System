@@ -1,6 +1,6 @@
 import { User } from "../models/user.model.js";
 import { Manager } from "../models/manager.model.js";
-import { ManagerNotification } from "../models/manager.notification.model.js";
+import { ManagerNotification } from "../models/notification.model.js";
 import mongoose from 'mongoose'
 
 export async function AvailableEmployees(req, res) {
@@ -155,7 +155,7 @@ export async function MarkNotificationRead(req, res) {
         const notification = await ManagerNotification.findOneAndUpdate(
             { _id: notificationId, managerId },
             { status: 'Read' },
-            { new: true }
+            { returnDocument: 'after' }
         )
 
         if (!notification) {

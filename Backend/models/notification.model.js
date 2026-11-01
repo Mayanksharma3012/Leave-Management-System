@@ -27,5 +27,27 @@ const managerNotificationSchema = new mongoose.Schema({
     }
 },{timestamps: true}
 )
-
 export const ManagerNotification = mongoose.model('ManagerNotification', managerNotificationSchema)
+
+const employeeNotificationSchema = new mongoose.Schema({
+    employeeId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    titleAndMessage:{
+        title: {type: String, required: true},
+        message: {type: String, required: true}
+    },
+    relatedLeaveID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Leave',
+    },
+    status: {
+        type: String,
+        enum: ['Read', 'UnRead', 'deleted'],
+        default: 'UnRead'
+    }
+
+},{timestamps: true})
+export const EmployeeNotification = mongoose.model('EmployeeNotification', employeeNotificationSchema)
