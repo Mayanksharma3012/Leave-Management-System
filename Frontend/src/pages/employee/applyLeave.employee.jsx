@@ -27,20 +27,15 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
     const today = getTodayDate()
 
     useEffect(() => {
-        const start = new Date(formData.startDate)
-        const end = new Date(formData.endDate)
-        if (end >= start) {
-            if (start === end) setTotalDays(1)
-            else {
-                const days = (end - start) / (1000 * 60 * 60 * 24) + 1
-                setTotalDays(days)
-
-            }
+        if (!formData.startDate || !formData.endDate) {
+            setTotalDays(0)
+            return
         }
-        else setTotalDays(0)
 
-    }, [formData.startDate, formData.endDate]
-    )
+        const start = Date.parse(`${formData.startDate}T00:00:00Z`)
+        const end = Date.parse(`${formData.endDate}T00:00:00Z`)
+        setTotalDays(end >= start ? Math.round((end - start) / 86400000) + 1 : 0)
+    }, [formData.startDate, formData.endDate])
 
     async function checkFormData(e) {
         e.preventDefault()
@@ -120,13 +115,34 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
         }
 
     }
-
-
-    const balances = [
+    const [balances, setbalances] = useState([
         { label: 'Casual', days: '12 days' },
         { label: 'Sick', days: '8 days' },
         { label: 'Paid', days: '15 days' },
-    ]
+    ])
+    
+    useEffect(() => {
+        let ignore = false
+
+        async function fetchBalance() {
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/leavebalance`, { withCredentials: true })
+                if (ignore) return
+                const balance = response.data.leaveBalance
+                setbalances([
+                    { label: 'Casual', days: `${balance.casualLeave} days` },
+                    { label: 'Sick', days: `${balance.sickLeave} days` },
+                    { label: 'Earned', days: `${balance.earnedLeave} days` },
+                ])
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        fetchBalance()
+        return () => { ignore = true }
+    }, [])
+
 
     const holidays = [
         { date: 'Aug 15', label: 'Independence Day' },
@@ -157,6 +173,7 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
                                 <option value="annual Leave">Annual Leave</option>
                                 <option value="sick Leave">Sick Leave</option>
                                 <option value="casual Leave">Casual Leave</option>
+                                <option value="earned Leave">Earned Leave</option>
                                 <option value="maternity Leave">Maternity Leave</option>
                                 <option value="study Leave">Study Leave</option>
                                 <option value="unpaid Leave">Unpaid Leave</option>

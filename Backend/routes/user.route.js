@@ -3,7 +3,7 @@ import multer from 'multer';
 import { handleUserSignUp, handleUserLogin, FireBaseAuthenticaton, handlePasswordChange } from '../controller/userAuthentication.controller.js';
 import { userAuthenticateToken } from '../middlewares/userAuthentication.middleware.js';
 import { handleUserLeave, getUserLeaves , editLeave, deleteLeave} from '../controller/userLeave.controller.js';
-import { EmployeeNotifications,MarkNotificationRead, MarkAllNotificationsRead, DeleteEmployeeNotification, DeleteAllEmployeeNotifications } from '../controller/employee.controller.js';
+import { EmployeeNotifications, MarkNotificationRead, MarkAllNotificationsRead, DeleteEmployeeNotification, DeleteAllEmployeeNotifications, GetEmployeeLeaveBalance } from '../controller/employee.controller.js';
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -56,3 +56,6 @@ userRouter.patch('/notifications/read-all', userAuthenticateToken, MarkAllNotifi
 userRouter.delete('/notifications', userAuthenticateToken, DeleteAllEmployeeNotifications)
 userRouter.patch('/notifications/:notificationId/read', userAuthenticateToken, MarkNotificationRead)
 userRouter.delete('/notifications/:notificationId', userAuthenticateToken, DeleteEmployeeNotification)
+
+
+userRouter.get('/leavebalance', userAuthenticateToken, GetEmployeeLeaveBalance)

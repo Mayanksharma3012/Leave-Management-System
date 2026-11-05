@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import axios from 'axios'
-import ProtectedRoute from './components/authenticate.jsx';
+import ProtectedRoute, { PublicOnlyRoute } from './components/authenticate.jsx';
 import { userContext } from './context/userContext.js'
 import './App.css'
 
@@ -102,14 +102,14 @@ function App() {
   }, [theme])
 
   const [loginRole, setLoginRoleState] = useState(getInitialLoginRole)
-  const setLoginRole = (role) => {
+  const setLoginRole = useCallback((role) => {
     if (role === 'employee' || role === 'manager') {
       localStorage.setItem(USER_ROLE_STORAGE_KEY, role)
     } else {
       localStorage.removeItem(USER_ROLE_STORAGE_KEY)
     }
     setLoginRoleState(role)
-  }
+  }, [])
 
   return (
     <>
@@ -117,8 +117,10 @@ function App() {
       <userContext.Provider value={{ userData, setLoginRole }}>
         <Routes>
           <Route path='/' element={<LandingPage />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/register' element={<Register/>} />
+          <Route element={<PublicOnlyRoute loginRole={loginRole} setLoginRole={setLoginRole} />}>
+            <Route path='/login' element={<Login />} />
+            <Route path='/register' element={<Register/>} />
+          </Route>
 
           <Route element={<ProtectedRoute setUserData={setUserData} loginRole={loginRole} requiredRole="employee" />}>
             <Route path='/employee/dashboard' element={<EmployeeDashboard submitedFormData={submitedFormData} />} />

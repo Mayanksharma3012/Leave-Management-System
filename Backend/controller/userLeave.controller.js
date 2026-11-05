@@ -267,6 +267,36 @@ export async function reviewLeaveRequest(req, res) {
             { status: `${status}-leave` },
             { returnDocument: 'after' }
         );
+        if (leave.status === 'approved-leave') {
+            const leaveType = String(leave.leaveType).toLowerCase().replace(/\s+/g, ' ').trim();
+            const balanceFields = {
+                'casual leave': 'leaveBalance.casualLeave',
+                'sick leave': 'leaveBalance.sickLeave',
+                'earned leave': 'leaveBalance.earnedLeave'
+            };
+            const balanceField = balanceFields[leaveType];
+
+            if (balanceField) {
+                const employee = await User.findById(leave.employee).select('leaveBalance');
+                const balanceKey = balanceField.split('.')[1];
+                const available = employee?.leaveBalance?.[balanceKey] ?? 0;
+                const required = Number(leave.days) || 0;
+
+                if (!employee || available < required) {
+                    await Leave.updateOne({ _id: leave._id }, { status: 'pending-leave' });
+                    return res.status(412).json({
+                        balance: available,
+                        requiredLeave: required,
+                        leaveType
+                    });
+                }
+
+                await User.updateOne(
+                    { _id: leave.employee },
+                    { $inc: { [balanceField]: -required } }
+                );
+            }
+        }
 
         await EmployeeNotification.create({
             employeeId: leave.employee,

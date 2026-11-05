@@ -33,6 +33,11 @@ const userSchema = new mongoose.Schema({
     manager:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Manager',
+    },
+    leaveBalance:{
+        casualLeave: {type: Number, required: true, default: 8},
+        sickLeave: {type: Number, required: true, default: 8},
+        earnedLeave: {type: Number, required: true, default: 18}
     }
 
 },{timestamps: true})
