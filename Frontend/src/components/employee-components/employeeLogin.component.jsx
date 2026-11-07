@@ -109,10 +109,7 @@ export default function EmployeeLogin({ roleSwitcher }){
                     <div className="passwordPass">
 
                         <div className="passAndForget">
-                            <span>Password</span>
-                            <a href="#reset">
-                                Forgot your password?
-                            </a>
+                            <span>Password</span> 
                         </div>
 
                         <div className="password">
@@ -133,6 +130,11 @@ export default function EmployeeLogin({ roleSwitcher }){
                                 }
                             </button>
 
+                        </div>
+                        <div className="passAndForget">
+                            <a href="#reset">
+                                Forgot your password?
+                            </a>
                         </div>
 
                     </div>

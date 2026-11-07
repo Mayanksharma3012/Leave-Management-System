@@ -911,6 +911,10 @@
 }
 
 @media (max-width: 600px) {
+  .teamRoster {
+    gap: 0.85rem;
+  }
+
   .teamSummaryGrid {
     gap: 0.55rem;
   }
@@ -945,6 +949,8 @@
 
   .teamTableHeading {
     align-items: flex-start;
+    flex-direction: column;
+    gap: 0.65rem;
   }
 
   .teamTableHeading p {
@@ -960,12 +966,110 @@
   }
 
   .teamTableActions {
-    flex-direction: column;
+    width: 100%;
+    flex-direction: row;
     align-items: stretch;
   }
 
+  .teamTableActions button {
+    flex: 1;
+  }
+
   .teamFilters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.4rem;
+  }
+
+  .teamResetButton {
+    grid-column: 1 / -1;
+  }
+
+  .teamTableScroll {
+    overflow: visible;
+    border: 0;
+    background: transparent;
+  }
+
+  .teamTable {
+    display: block;
+    table-layout: auto;
+  }
+
+  .teamTable thead {
+    display: none;
+  }
+
+  .teamTable tbody {
+    display: grid;
+    gap: 0.75rem;
+  }
+
+  .teamTable tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    padding: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+  }
+
+  .teamTable td {
+    width: auto !important;
+    height: auto;
+    padding: 0;
+    border-bottom: 0;
+  }
+
+  .teamTable td[data-label]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.3rem;
+    color: var(--text-secondary);
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .teamTable td[data-label="Employee"] {
+    grid-column: 1 / -1;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .teamTable td[data-label="Employee"]::before {
+    display: none;
+  }
+
+  .teamTable td[data-label="Leave balance"] {
+    grid-column: 1 / -1;
+  }
+
+  .teamTable td[data-label="Actions"] {
+    display: flex;
+    align-items: end;
+    justify-content: flex-end;
+  }
+
+  .teamLeaveChips {
+    flex-wrap: wrap;
+  }
+
+  .teamTableFooter {
+    gap: 0.65rem;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .teamPagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .teamEmptyState {
+    grid-column: 1 / -1;
   }
 
   .teamSearch,

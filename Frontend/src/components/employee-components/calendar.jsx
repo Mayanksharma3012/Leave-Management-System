@@ -1,13 +1,36 @@
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import holidays from "../../assets/holiday.json";
 
 function LeaveCalendar({ submitedFormData }) {
 
   const [selectedDate, setSelectedDate] = useState(null);
   const [isClosing, setIsClosing] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia("(max-width: 768px)").matches);
+  const calendarRef = useRef(null);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    let frameId;
+
+    const updateCalendarSize = () => {
+      setIsMobile(mediaQuery.matches);
+      window.cancelAnimationFrame(frameId);
+      frameId = window.requestAnimationFrame(() => calendarRef.current?.getApi().updateSize());
+    };
+
+    updateCalendarSize();
+    mediaQuery.addEventListener("change", updateCalendarSize);
+    window.addEventListener("resize", updateCalendarSize);
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+      mediaQuery.removeEventListener("change", updateCalendarSize);
+      window.removeEventListener("resize", updateCalendarSize);
+    };
+  }, []);
 
   const shiftDate = (dateStr, days) => {
     const date = new Date(`${dateStr.slice(0, 10)}T00:00:00Z`);
@@ -197,8 +220,16 @@ function LeaveCalendar({ submitedFormData }) {
     <div className="leave-calendar">
 
       <FullCalendar
+        ref={calendarRef}
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
+        height="auto"
+        contentHeight="auto"
+        expandRows={true}
+        stickyHeaderDates={false}
+        dayMaxEvents={isMobile ? 1 : false}
+        handleWindowResize={true}
+        windowResizeDelay={100}
         events={calendarEvents}
         dayCellClassNames={getDayCellClassNames}
 

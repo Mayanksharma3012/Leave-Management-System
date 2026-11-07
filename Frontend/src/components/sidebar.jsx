@@ -2,11 +2,25 @@ import './sidebar.css'
 import { NavLink, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
 
 
 function Sidebar() {
-    
+    const [isOpen, setIsOpen] = useState(false)
     const location = useLocation()
+
+    useEffect(() => {
+        setIsOpen(false)
+    }, [location.pathname])
+
+    useEffect(() => {
+        if (!isOpen) return undefined
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') setIsOpen(false)
+        }
+        document.addEventListener('keydown', closeOnEscape)
+        return () => document.removeEventListener('keydown', closeOnEscape)
+    }, [isOpen])
     const navigate = useNavigate()
     const isManager = location.pathname.startsWith('/manager')
     const links = isManager
@@ -38,7 +52,20 @@ function Sidebar() {
     }
 
     return (
-        <div className="sidebar">
+        <>
+            <button
+                type="button"
+                className="mobileSidebarToggle"
+                aria-label="Open navigation menu"
+                aria-expanded={isOpen}
+                onClick={() => setIsOpen(true)}
+            >
+                <span></span><span></span><span></span>
+            </button>
+            {isOpen && <button type="button" className="sidebarBackdrop" aria-label="Close navigation menu" onClick={() => setIsOpen(false)} />}
+            <div className={`sidebar${isOpen ? ' sidebarOpen' : ''}`}>
+
+            <button type="button" className="sidebarClose" aria-label="Close navigation menu" onClick={() => setIsOpen(false)}>&times;</button>
 
             <div className="toplogo">
                 <div className="logo" aria-hidden></div>
@@ -69,7 +96,8 @@ function Sidebar() {
             <div className="sidebarLogOut">
                 <button onClick={handleLogout}>Logout</button>
             </div>
-        </div>
+            </div>
+        </>
     )
 }
 

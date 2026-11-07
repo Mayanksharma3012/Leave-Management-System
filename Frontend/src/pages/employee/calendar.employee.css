@@ -343,9 +343,9 @@
   color: #ffffff;
 }
 
-.fc .fc-day-sat,
-.fc .fc-day-sun {
-  background: rgba(148, 163, 184, 0.04);
+.fc .fc-daygrid-day.fc-day-sat,
+.fc .fc-daygrid-day.fc-day-sun {
+  background: rgba(148, 163, 184, 0.16) !important;
 }
 
 .calendar-legend {
@@ -405,9 +405,9 @@
   background: rgba(148, 163, 184, 0.04);
 }
 
-:root[data-theme='dark'] .fc .fc-day-sat,
-:root[data-theme='dark'] .fc .fc-day-sun {
-  background: rgba(148, 163, 184, 0.03);
+:root[data-theme='dark'] .fc .fc-daygrid-day.fc-day-sat,
+:root[data-theme='dark'] .fc .fc-daygrid-day.fc-day-sun {
+  background: rgba(148, 163, 184, 0.12) !important;
 }
 
 :root[data-theme='dark'] .calendar-container {
@@ -415,9 +415,70 @@
 }
 
 @media (max-width: 768px) {
+  .employeeCalendarPage,
+  .employeeCalendarMain,
+  .calendarMain,
+  .calendar-container,
+  .leave-calendar {
+    width: 100%;
+    min-width: 0;
+  }
+
   .calendar-container {
     padding: 16px;
     border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .leave-calendar {
+    overflow: visible;
+  }
+
+  .leave-calendar .fc {
+    display: block !important;
+    width: 100%;
+    min-width: 0;
+    height: auto !important;
+    visibility: visible;
+    overflow: visible;
+  }
+
+  .leave-calendar .fc-view-harness {
+    height: auto !important;
+    min-height: 390px !important;
+    overflow: visible !important;
+  }
+
+  .leave-calendar .fc-scrollgrid-sync-table,
+  .leave-calendar .fc-scrollgrid-section table {
+    height: auto !important;
+  }
+
+  .leave-calendar .fc table {
+    display: table;
+    width: 100% !important;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .leave-calendar .fc-scrollgrid,
+  .leave-calendar .fc-scrollgrid-section,
+  .leave-calendar .fc-daygrid-body,
+  .leave-calendar .fc-daygrid-body table {
+    width: 100% !important;
+  }
+
+  .leave-calendar .fc-scroller {
+    overflow: hidden !important;
+  }
+
+  .leave-calendar .fc-daygrid-day-frame {
+    min-height: 58px;
+    height: 58px;
+  }
+
+  .leave-calendar .fc-daygrid-body tr {
+    height: 58px;
   }
 
   .fc .fc-toolbar {
@@ -456,8 +517,19 @@
     padding: 10px;
   }
 
+
   .fc .fc-toolbar {
     justify-content: center;
+    width: 100%;
+  }
+
+  .fc .fc-toolbar-chunk {
+    justify-content: center;
+  }
+
+  .fc .fc-toolbar-chunk:nth-child(2) {
+    width: 100%;
+    order: -1;
   }
 
   .fc .fc-toolbar-title {

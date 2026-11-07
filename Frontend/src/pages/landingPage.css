@@ -15,6 +15,10 @@ body{
     background: linear-gradient(180deg, #2563EB 0%, #1D4ED8 55%, #0F172A 100%);
 }
 
+.landingMenuButton{
+    display: none;
+}
+
 .landingNavbar{
     width: 100%;
     position: sticky;
@@ -394,36 +398,179 @@ body{
 
 @media (max-width: 680px) {
     .landingNavbar{
+        flex-wrap: nowrap;
+        gap: 0.75rem;
+        padding: 0.8rem 1rem;
+        min-height: 68px;
+    }
+    .landingNavbar .left{
+        min-width: 0;
+        flex: 1;
+        gap: 0.75rem;
+    }
+    .logo{
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+    }
+    .brand-text{
+        min-width: 0;
+    }
+    .landingNavbar .brand-text .tagline{
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 0.78rem;
+    }
+    .landingMenuButton{
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        border: 1px solid rgba(148,163,184,0.35);
+        border-radius: 12px;
+        background: #fff;
+        display: inline-flex;
         flex-direction: column;
-        align-items: stretch;
-        gap: 1rem;
-        padding: 1rem 1.2rem;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+    .landingMenuButton span{
+        width: 19px;
+        height: 2px;
+        border-radius: 2px;
+        background: #1e293b;
     }
     .landingNavbar .right{
-        justify-content: space-between;
-        flex-wrap: wrap;
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0.75rem;
+        right: 0.75rem;
+        display: none;
+        padding: 0.75rem;
+        border: 1px solid rgba(148,163,184,0.35);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.98);
+        box-shadow: 0 20px 50px rgba(15,23,42,0.22);
+    }
+    .landingNavbar .right.mobileOpen{
+        display: flex;
     }
     .landingNavbar .right .links{
-        flex-wrap: wrap;
-        gap: 1rem;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.25rem;
+    }
+    .landingNavbar .right .links a{
+        justify-content: flex-start;
+        padding: 0.75rem;
+        border-radius: 10px;
+    }
+    .landingNavbar .right .sign{
+        width: 100%;
+        gap: 0.6rem;
+    }
+    .landingNavbar .right .sign a{
+        flex: 1;
+        min-width: 0;
+        padding: 0.75rem 0.8rem;
+    }
+    .hero-section{
+        margin: 2.25rem auto 1.5rem;
+        padding: 0 1rem;
+        gap: 1.5rem;
     }
     .hero-copy h1{
-        font-size: clamp(2.4rem, 8vw, 3.4rem);
+        font-size: clamp(2.25rem, 11vw, 3.2rem);
+        line-height: 1.02;
     }
-    .hero-card{
-        padding: 1.75rem;
+    .hero-copy p{
+        margin: 1.25rem 0 1.5rem;
+        line-height: 1.65;
     }
-    .stats-row{
+    .hero-buttons{
+        display: grid;
         grid-template-columns: 1fr;
     }
-    .calendar-section{
-        padding: 0 1.2rem;
+    .btn{
+        width: 100%;
     }
-    .calendar-grid{
+    .hero-card{
+        padding: 1.5rem;
+        border-radius: 24px;
+    }
+    .hero-card h2{
+        font-size: 1.55rem;
+    }
+    .stats-row{
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 0.5rem;
     }
+    .stats-row div{
+        padding: 0.75rem 0.55rem;
+        border-radius: 14px;
+    }
+    .stats-row strong{
+        font-size: 1.1rem;
+    }
+    .stats-row span{
+        font-size: 0.72rem;
+    }
+    .calendar-section{
+        padding: 0 0.75rem;
+    }
+    .calendar-header{
+        align-items: flex-start;
+    }
+    .calendar-legendl{
+        gap: 0.55rem;
+        font-size: 0.78rem;
+    }
+    .calendar-card{
+        border-radius: 18px;
+        padding: 0.4rem;
+        overflow: hidden;
+    }
+    .calendar-grid{
+        gap: 0.2rem;
+    }
     .calendar-day{
-        min-height: 74px;
-        padding: 0.6rem;
+        min-width: 0;
+        min-height: 52px;
+        padding: 0.4rem 0.15rem;
+        border-radius: 9px;
+        align-items: center;
+        text-align: center;
+    }
+    .calendar-day.header{
+        min-height: 30px;
+        font-size: clamp(0.58rem, 2.6vw, 0.75rem);
+        letter-spacing: 0;
+    }
+    .calendar-day span{
+        font-size: 0.82rem;
+    }
+    .calendar-day em{
+        display: none;
+    }
+}
+
+@media (max-width: 380px) {
+    .landingNavbar .brand-text .tagline{
+        display: none;
+    }
+    .landingNavbar .brand-text .name{
+        font-size: 1rem;
+    }
+    .stats-row strong{
+        font-size: 1rem;
+    }
+    .calendar-grid{
+        gap: 0.12rem;
+    }
+    .calendar-day{
+        min-height: 48px;
     }
 }

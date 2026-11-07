@@ -1,7 +1,8 @@
 import './header.css'
 import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { userContext } from '../context/userContext.js'
 
 const defaultManagerNotificationPreferences = {
@@ -57,6 +58,45 @@ function Navbar({ notificationPreferences }) {
     })
     const [notifications, setNotifications] = useState([])
     const [selectedNotification, setSelectedNotification] = useState(null)
+    const [notificationsOpen, setNotificationsOpen] = useState(false)
+    const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 480px)').matches)
+    const [mobileDropdownPosition, setMobileDropdownPosition] = useState({ top: 72, maxHeight: 420 })
+    const notificationBellRef = useRef(null)
+
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(max-width: 480px)')
+        const updateMobile = () => setIsMobile(mediaQuery.matches)
+        mediaQuery.addEventListener('change', updateMobile)
+        return () => mediaQuery.removeEventListener('change', updateMobile)
+    }, [])
+
+    useEffect(() => {
+        if (!notificationsOpen || !isMobile) return undefined
+
+        const updatePosition = () => {
+            const bellRect = notificationBellRef.current?.getBoundingClientRect()
+            const viewportHeight = window.visualViewport?.height || window.innerHeight
+            const viewportOffsetTop = window.visualViewport?.offsetTop || 0
+            const bellBottom = bellRect ? bellRect.bottom - viewportOffsetTop : 68
+            const top = Math.min(Math.max(bellBottom + 8, 8), viewportHeight - 120)
+            setMobileDropdownPosition({
+                top,
+                maxHeight: Math.max(120, viewportHeight - top - 8)
+            })
+        }
+
+        updatePosition()
+        window.addEventListener('resize', updatePosition)
+        window.addEventListener('orientationchange', updatePosition)
+        window.visualViewport?.addEventListener('resize', updatePosition)
+        window.visualViewport?.addEventListener('scroll', updatePosition)
+        return () => {
+            window.removeEventListener('resize', updatePosition)
+            window.removeEventListener('orientationchange', updatePosition)
+            window.visualViewport?.removeEventListener('resize', updatePosition)
+            window.visualViewport?.removeEventListener('scroll', updatePosition)
+        }
+    }, [notificationsOpen, isMobile])
 
     useEffect(() => {
         let preferences = notificationPreferences
@@ -86,6 +126,21 @@ function Navbar({ notificationPreferences }) {
             setEmployeeNotificationPreferences(preferences || defaultEmployeeNotificationPreferences)
         }
     }, [isManager, notificationPreferences, user?._id, user?.id, user?.email])
+
+    useEffect(() => {
+        const closeNotifications = (event) => {
+            if (!event.target.closest('.notificationWrapper, .mobileNotificationDropdown')) setNotificationsOpen(false)
+        }
+        const closeOnEscape = (event) => {
+            if (event.key === 'Escape') setNotificationsOpen(false)
+        }
+        document.addEventListener('pointerdown', closeNotifications)
+        document.addEventListener('keydown', closeOnEscape)
+        return () => {
+            document.removeEventListener('pointerdown', closeNotifications)
+            document.removeEventListener('keydown', closeOnEscape)
+        }
+    }, [])
 
     useEffect(() => {
         let isMounted = true
@@ -255,6 +310,48 @@ function Navbar({ notificationPreferences }) {
         subtitle: 'Use the sidebar to navigate through your dashboard and requests.'
     }
 
+    const notificationDropdown = (
+        <div className={isMobile ? 'notificationDropdown mobileNotificationDropdown' : 'notificationDropdown'} role="region" aria-label="Notifications">
+            <div className="notificationBulkActions">
+                <button type="button" onClick={markAllNotificationsRead}>Read all</button>
+                <button type="button" className="danger" onClick={deleteAllNotifications}>Delete all</button>
+            </div>
+            {notifications.length === 0 ? (
+                <p className="notificationEmpty">No notifications available</p>
+            ) : notifications.map((notification) => (
+                <div
+                    className={`notificationItem ${notification.status === 'UnRead' ? 'unread' : ''}`}
+                    key={notification._id}
+                >
+                    <button
+                        type="button"
+                        className="notificationContent"
+                        onClick={() => {
+                            setSelectedNotification(notification)
+                            markNotificationRead(notification._id)
+                        }}
+                    >
+                        <strong>{notification.titleAndMessage?.title}</strong>
+                        <span>{notification.titleAndMessage?.message}</span>
+                        <small>{new Date(notification.createdAt).toLocaleString()}</small>
+                    </button>
+                    <div className="notificationActions">
+                        <button
+                            type="button"
+                            disabled={notification.status === 'Read'}
+                            onClick={() => markNotificationRead(notification._id)}
+                        >Read</button>
+                        <button
+                            type="button"
+                            className="danger"
+                            onClick={() => deleteNotification(notification._id)}
+                        >Delete</button>
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+
     return (
         <>
         <header className="topNavbar card">
@@ -276,11 +373,15 @@ function Navbar({ notificationPreferences }) {
 
                 <div className="navActions">
 
-                    <div className="notificationWrapper">
+                    <div className={`notificationWrapper${notificationsOpen ? ' notificationsOpen' : ''}`}>
                         <button
+                            ref={notificationBellRef}
+                            type="button"
                             className="iconBtn notificationBell"
                             aria-label={`${notifications.length} notifications`}
                             aria-haspopup="true"
+                            aria-expanded={notificationsOpen}
+                            onClick={() => setNotificationsOpen((open) => !open)}
                         >
                             🔔
                             {notifications.some((notification) => notification.status === 'UnRead') && (
@@ -290,49 +391,7 @@ function Navbar({ notificationPreferences }) {
                             )}
                         </button>
 
-                        <div className="notificationDropdown" role="region" aria-label="Notifications">
-                            <div className="notificationBulkActions">
-                                <button type="button" onClick={markAllNotificationsRead}>Read all</button>
-                                <button type="button" className="danger" onClick={deleteAllNotifications}>Delete all</button>
-                            </div>
-                            {notifications.length === 0 ? (
-                                <p className="notificationEmpty">No notifications available</p>
-                            ) : notifications.map((notification) => (
-                                        <div
-                                            className={`notificationItem ${notification.status === 'UnRead' ? 'unread' : ''}`}
-                                            key={notification._id}
-                                        >
-                                            <button
-                                                type="button"
-                                                className="notificationContent"
-                                                onClick={() => {
-                                                    setSelectedNotification(notification)
-                                                    markNotificationRead(notification._id)
-                                                }}
-                                            >
-                                                <strong>{notification.titleAndMessage?.title}</strong>
-                                                <span>{notification.titleAndMessage?.message}</span>
-                                                <small>{new Date(notification.createdAt).toLocaleString()}</small>
-                                            </button>
-                                            <div className="notificationActions">
-                                                <button
-                                                    type="button"
-                                                    disabled={notification.status === 'Read'}
-                                                    onClick={() => markNotificationRead(notification._id)}
-                                                >
-                                                    Read
-                                                </button>
-                                                <button
-                                                    type="button"
-                                                    className="danger"
-                                                    onClick={() => deleteNotification(notification._id)}
-                                                >
-                                                    Delete
-                                                </button>
-                                            </div>
-                                        </div>
-                                    ))}
-                        </div>
+                        {!isMobile && notificationDropdown}
                     </div>
 
                     <button
@@ -352,6 +411,21 @@ function Navbar({ notificationPreferences }) {
             </div>
 
         </header>
+
+        {isMobile && notificationsOpen && createPortal(
+            <div
+                className="mobileNotificationDropdown notificationDropdown notificationsOpen"
+                role="region"
+                aria-label="Notifications"
+                style={{
+                    top: `${mobileDropdownPosition.top}px`,
+                    maxHeight: `${mobileDropdownPosition.maxHeight}px`
+                }}
+            >
+                {notificationDropdown.props.children}
+            </div>,
+            document.body
+        )}
 
         {selectedNotification && (
             <div className="notificationModalOverlay" role="presentation" onClick={() => setSelectedNotification(null)}>

@@ -399,7 +399,7 @@ export default function ManagerLeaveRequestsPage() {
                                             }}
                                             aria-label={`View ${request.name}'s leave request`}
                                         >
-                                            <td>
+                                            <td data-label="Employee">
                                                 <div className="leaveRequestEmployee">
                                                     <span className="leaveRequestAvatar" aria-hidden="true">
                                                         {request.avatarUrl
@@ -412,12 +412,12 @@ export default function ManagerLeaveRequestsPage() {
                                                     </span>
                                                 </div>
                                             </td>
-                                            <td><span className="leaveTypeBadge">{request.leaveType}</span></td>
-                                            <td>{request.dates}</td>
-                                            <td>{request.duration}</td>
-                                            <td>{request.appliedOn}</td>
-                                            <td><span className={`leaveStatusBadge ${request.status.toLowerCase()}`}>{request.status}</span></td>
-                                            <td>
+                                            <td data-label="Leave type"><span className="leaveTypeBadge">{request.leaveType}</span></td>
+                                            <td data-label="Dates">{request.dates}</td>
+                                            <td data-label="Duration">{request.duration}</td>
+                                            <td data-label="Applied on">{request.appliedOn}</td>
+                                            <td data-label="Status"><span className={`leaveStatusBadge ${request.status.toLowerCase()}`}>{request.status}</span></td>
+                                            <td data-label="Actions">
                                                 {request.status === 'Pending' && !hasLeaveEnded(request.endDateValue) ? (
                                                     <div className="leaveRequestActions">
                                                         <button

@@ -84,7 +84,6 @@ export default function ManagerLogin({ roleSwitcher }) {
                     <div className="passwordPass">
                         <div className="passAndForget">
                             <span>Password</span>
-                            <a href="#reset">Forgot your password?</a>
                         </div>
 
                         <div className="password">
@@ -104,6 +103,9 @@ export default function ManagerLogin({ roleSwitcher }) {
                                     : <i className="fa-solid fa-eye"></i>
                                 }
                             </button>
+                        </div>
+                        <div className="passAndForget">
+                            <a href="#reset">Forgot your password?</a>
                         </div>
                     </div>
 

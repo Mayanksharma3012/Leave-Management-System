@@ -496,7 +496,7 @@ export default function TeamMembers() {
                     setSelectedMember(member)
                   }
                 }}>
-                  <td>
+                  <td data-label="Employee">
                     <div className="teamEmployeeCell">
                       <span className={`teamAvatar teamAvatar-${member.color}`}>
                         {member.avatar_url ? <img src={member.avatar_url} alt="" /> : member.initials}
@@ -504,21 +504,21 @@ export default function TeamMembers() {
                       <span><strong>{member.name}</strong><small>{member.id}</small></span>
                     </div>
                   </td>
-                  <td>{member.department}</td>
-                  <td>{member.position}</td>
-                  <td>
+                  <td data-label="Department">{member.department}</td>
+                  <td data-label="Position">{member.position}</td>
+                  <td data-label="Leave balance">
                     <div className="teamLeaveChips">
                       {leaveTypes.map(({ key, label }) => (
                         <span key={key} title={label}>{key.slice(0, 2).toUpperCase()}<strong>{member.balance[key][1] - member.balance[key][0]}</strong></span>
                       ))}
                     </div>
                   </td>
-                  <td>
+                  <td data-label="Status">
                     <span className={`teamStatusBadge ${member.status === 'Present' ? 'isPresent' : 'isAway'}`}>
                       <span aria-hidden="true" />{member.status}
                     </span>
                   </td>
-                  <td>
+                  <td data-label="Actions">
                     <button
                       className="teamRowAction"
                       type="button"

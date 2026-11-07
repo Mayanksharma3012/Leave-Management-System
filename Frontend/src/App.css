@@ -1,0 +1,133 @@
+/* Shared responsive layouts for authenticated and public pages */
+html, body, #root { overflow-x: hidden; }
+img, video, canvas { max-width: 100%; }
+
+@media (max-width: 900px) {
+  .dashboardPage,
+  .employeeLeavePage,
+  .employeeMyLeavesPage,
+  .employeeCalendarPage,
+  .employeeSettingsPage,
+  .managerDashboardPage,
+  .leaveRequestsPage,
+  .managerTeamPage,
+  .managerCalendarPage,
+  .managerSettingsPage {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 0 !important;
+  }
+
+  .dashboardMain,
+  .employeeLeaveMain,
+  .employeeMyLeavesMain,
+  .employeeCalendarMain,
+  .employeeSettingsMain,
+  .managerDashboardMain,
+  .leaveRequestsMain,
+  .managerTeamMain,
+  .managerCalendarMain,
+  .managerSettingsMain {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 4.75rem 1rem 1.25rem !important;
+  }
+
+  .dashboardMain .topNavbar,
+  .employeeLeaveMain .topNavbar,
+  .employeeMyLeavesMain .topNavbar,
+  .employeeCalendarMain .topNavbar,
+  .employeeSettingsMain .topNavbar,
+  .managerDashboardMain .topNavbar,
+  .leaveRequestsMain .topNavbar,
+  .managerTeamMain .topNavbar,
+  .managerCalendarMain .topNavbar,
+  .managerSettingsMain .topNavbar {
+    min-height: 64px;
+  }
+
+  .leaveMain,
+  .myLeavesMain,
+  .calendarMain,
+  .settingsMain,
+  .dashboardContent,
+  .statsGrid,
+  .contentGrid,
+  .managerDashboardContent,
+  .leaveRequestsContent,
+  .teamGrid,
+  .calendarLayout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .fc .fc-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .fc .fc-toolbar-title { font-size: 1.1rem; }
+  .fc .fc-view-harness { min-height: 0; }
+
+  .tableWrapper,
+  .tableWrap { overflow-x: auto; }
+  .tableWrapper table,
+  .tableWrap table { min-width: 680px; white-space: nowrap; }
+
+  .loginPage .loginNavbar,
+  .loginNavbar,
+  .landingNavbar {
+    padding: 0 1rem !important;
+  }
+
+  .loginPage .loginBrand p,
+  .brand-text .tagline { display: none; }
+
+  .loginPage .loginContainer,
+  .registerContainer {
+    justify-content: flex-start;
+    padding: 1.25rem 1rem 2rem;
+  }
+
+  .loginPage .loginContainer form,
+  .registerContainer form {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .container { padding-inline: 0.75rem !important; }
+
+  .greetingText,
+  .welcomeName { min-width: 0; }
+  .welcomeName { font-size: 1.25rem !important; }
+  .muted, .applyInfo { font-size: 0.85rem !important; }
+
+  .navActions { gap: 0.45rem; }
+
+  .topNavbar { padding: 0.85rem !important; }
+
+  .loginPage .loginContainer form,
+  .registerContainer form {
+    padding: 1.25rem !important;
+    border-radius: 16px;
+  }
+
+  .loginPage .otherOption button,
+  .otherOption button { width: 100%; }
+
+  .loginPage .passAndForget { align-items: flex-start; flex-direction: column; }
+
+  .loginRoleSwitch,
+  .registerRoleSwitch { width: 100% !important; }
+
+  .registrationActions { flex-direction: column; }
+
+  .fc .fc-toolbar { gap: 8px; }
+  .fc .fc-toolbar-chunk { display: flex; }
+  .fc .fc-button { padding: 6px 8px; font-size: 0.78rem; }
+
+  .hero-section,
+  .stats-row { grid-template-columns: 1fr !important; }
+  .hero-copy h1 { font-size: 2rem !important; }
+  .hero-buttons { flex-direction: column; }
+  .hero-buttons a { width: 100%; text-align: center; }
+  .calendar-grid { grid-template-columns: repeat(7, minmax(34px, 1fr)) !important; overflow-x: auto; }
+}

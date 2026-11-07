@@ -730,6 +730,126 @@
 }
 
 @media (max-width: 600px) {
+  .leaveRequestsPage {
+    gap: 0.85rem;
+  }
+  
+  .leaveRequestsPanel {
+    border-radius: 16px;
+    margin-top: 1rem;
+  }
+
+  .leaveRequestsFilters {
+    padding: 0.85rem;
+  }
+
+  .leaveRequestTabs {
+    padding: 0.65rem 0.85rem;
+    scrollbar-width: none;
+  }
+
+  .leaveRequestTabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .leaveRequestsTableWrap {
+    overflow: visible;
+    padding: 0.75rem;
+  }
+
+  .leaveRequestsTable,
+  .leaveRequestsTable tbody {
+    display: block;
+    width: 100%;
+  }
+
+  .leaveRequestsTable thead {
+    display: none;
+  }
+
+  .leaveRequestsTable .leaveRequestRow {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    padding: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: var(--card);
+    box-shadow: 0 8px 20px rgba(15, 23, 42, 0.07);
+  }
+
+  .leaveRequestsTable .leaveRequestRow:last-child {
+    margin-bottom: 0;
+  }
+
+  .leaveRequestsTable td,
+  .leaveRequestsTable th:first-child,
+  .leaveRequestsTable td:first-child,
+  .leaveRequestsTable th:last-child,
+  .leaveRequestsTable td:last-child {
+    min-width: 0;
+    padding: 0;
+    border-top: 0;
+    white-space: normal;
+  }
+
+  .leaveRequestsTable td:not([data-label="Employee"]):not([data-label="Actions"])::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .leaveRequestsTable td[data-label="Employee"] {
+    grid-column: 1 / -1;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .leaveRequestsTable td[data-label="Actions"] {
+    grid-column: 1 / -1;
+    padding-top: 0.15rem;
+  }
+
+  .leaveRequestsTable td[data-label="Actions"]::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.4rem;
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .leaveRequestActions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .leaveRequestActions button {
+    width: 100%;
+  }
+
+  .leaveRequestsFooter {
+    padding: 0.85rem;
+  }
+
+  .leaveRequestsPagination {
+    justify-content: space-between;
+  }
+
+  .leaveRequestsEmpty {
+    display: block;
+    width: 100%;
+    padding: 2rem 0.5rem !important;
+  }
+
   .leaveRequestDialogBackdrop {
     padding: 0.7rem;
   }
@@ -812,6 +932,7 @@
 
 @media (max-width: 420px) {
   .leaveRequestsSummary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.65rem;
   }
 

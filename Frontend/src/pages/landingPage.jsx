@@ -1,5 +1,6 @@
 import './landingPage.css'
 import Footer from '../components/footer'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 const calendarCells = [
     { day: '1', status: 'holiday', label: 'Holiday' },
@@ -36,6 +37,10 @@ const calendarCells = [
 ]
 
 function LandingPage() {
+    const [mobileNavOpen, setMobileNavOpen] = useState(false)
+
+    const closeMobileNav = () => setMobileNavOpen(false)
+
     return (
         <div data-theme='light'>
             <header className="landingNavbar">
@@ -47,22 +52,29 @@ function LandingPage() {
                     </div>
                 </div>
 
-                <div className="right">
-                    <nav className="links">
-                        <a href="#hero">Home</a>
-                        <a href="#calendar">Calendar</a>
-                        <a href="#about">About</a>
-                        <a href="#pricing">Pricing</a>
-                        <a href="#contact">Contact</a>
+                <button
+                    type="button"
+                    className="landingMenuButton"
+                    aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
+                    aria-expanded={mobileNavOpen}
+                    onClick={() => setMobileNavOpen((open) => !open)}
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+
+                <div className={`right${mobileNavOpen ? ' mobileOpen' : ''}`}>
+                    <nav className="links" aria-label="Primary navigation">
+                        <a href="#hero" onClick={closeMobileNav}>Home</a>
+                        <a href="#calendar" onClick={closeMobileNav}>Calendar</a>
+                        <a href="#about" onClick={closeMobileNav}>About</a>
+                        <a href="#pricing" onClick={closeMobileNav}>Pricing</a>
+                        <a href="#contact" onClick={closeMobileNav}>Contact</a>
                     </nav>
                     <div className="sign">
-                        <Link to="/login" className="loginBtn">
-                            Login
-                        </Link>
-
-                        <Link to="/register" className="getStartedBtn">
-                            Get Started
-                        </Link>
+                        <Link to="/login" className="loginBtn" onClick={closeMobileNav}>Login</Link>
+                        <Link to="/register" className="getStartedBtn" onClick={closeMobileNav}>Get Started</Link>
                     </div>
                 </div>
             </header>
