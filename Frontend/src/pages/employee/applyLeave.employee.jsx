@@ -3,6 +3,7 @@ import Sidebar from '../../components/sidebar'
 import Navbar from '../../components/header'
 import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
+import holidayData from '../../assets/holiday.json'
 
 const getTodayDate = () => {
     const today = new Date()
@@ -144,10 +145,17 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
     }, [])
 
 
-    const holidays = [
-        { date: 'Aug 15', label: 'Independence Day' },
-        { date: 'Aug 27', label: 'Company Holiday' },
-    ]
+    const upcomingHolidays = holidayData
+        .filter((holiday) => holiday.date >= today)
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(0, 2)
+        .map((holiday) => ({
+            ...holiday,
+            displayDate: new Date(`${holiday.date}T00:00:00`).toLocaleDateString('en-US', {
+                month: 'short',
+                day: 'numeric'
+            })
+        }))
 
     return (
         <>
@@ -266,10 +274,10 @@ function ApplyLeaveEmployee({submitedFormData ,}) {
                                     <h4>Upcoming Holidays</h4>
                                 </div>
                                 <ul className="holidayList">
-                                    {holidays.map((item) => (
+                                    {upcomingHolidays.map((item) => (
                                         <li key={item.date} className="holidayItem">
-                                            <span className="holidayDate">{item.date}</span>
-                                            <span>{item.label}</span>
+                                            <span className="holidayDate">{item.displayDate}</span>
+                                            <span>{item.name}</span>
                                         </li>
                                     ))}
                                 </ul>

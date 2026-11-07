@@ -2,6 +2,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { useEffect, useState } from "react";
+import holidays from "../../assets/holiday.json";
 
 function LeaveCalendar({ submitedFormData }) {
 
@@ -14,11 +15,22 @@ function LeaveCalendar({ submitedFormData }) {
     return date.toISOString().slice(0, 10);
   };
 
-  const calendarEvents = (submitedFormData || []).map((event) => ({
+  const leaveEvents = (submitedFormData || []).map((event) => ({
     ...event,
     allDay: true,
     end: event.endReal ? shiftDate(event.endReal, 1) : event.end,
   }));
+
+  const holidayEvents = holidays.map((holiday) => ({
+    id: `holiday-${holiday.date}`,
+    title: holiday.name,
+    start: holiday.date,
+    allDay: true,
+    classNames: ["company-holiday"],
+    extendedProps: { ...holiday, isHoliday: true },
+  }));
+
+  const calendarEvents = [...leaveEvents, ...holidayEvents];
 
   const getDayCellClassNames = ({ date }) => {
     const dateStr = [
@@ -86,6 +98,24 @@ function LeaveCalendar({ submitedFormData }) {
   const handleEventClick = (info) => {
     const event = info.event;
     const dayElement = info.el.closest(".fc-daygrid-day");
+
+    if (event.extendedProps.isHoliday) {
+      setIsClosing(false);
+      setSelectedDate({
+        dayName: event.start?.toLocaleString("en-US", { weekday: "long" }) || "Holiday",
+        monthName: event.start?.toLocaleString("en-US", { month: "long" }) || "",
+        dayNumber: event.start?.getDate() || "",
+        dateStr: event.startStr,
+        ...getPopoverPosition(dayElement || info.el),
+        holidayDetails: {
+          name: event.title,
+          category: event.extendedProps.category,
+          description: event.extendedProps.description,
+        },
+      });
+      return;
+    }
+
     const endDate = event.extendedProps.endReal || (
       event.endStr ? shiftDate(event.endStr, -1) : event.startStr
     );
@@ -107,17 +137,31 @@ function LeaveCalendar({ submitedFormData }) {
     });
   };
 
-  const getEventsForDate = (dateStr) => (submitedFormData || []).filter((event) => {
-    const start = event.start?.slice(0, 10);
-    const inclusiveEnd = event.endReal?.slice(0, 10);
-    const exclusiveEnd = event.end?.slice(0, 10);
+  const getEventsForDate = (dateStr) => {
+    const leaveMatches = (submitedFormData || []).filter((event) => {
+      const start = event.start?.slice(0, 10);
+      const inclusiveEnd = event.endReal?.slice(0, 10);
+      const exclusiveEnd = event.end?.slice(0, 10);
 
-    if (!start) return false;
-    if (inclusiveEnd) return dateStr >= start && dateStr <= inclusiveEnd;
-    if (!exclusiveEnd || exclusiveEnd === start) return dateStr === start;
+      if (!start) return false;
+      if (inclusiveEnd) return dateStr >= start && dateStr <= inclusiveEnd;
+      if (!exclusiveEnd || exclusiveEnd === start) return dateStr === start;
 
-    return dateStr >= start && dateStr < exclusiveEnd;
-  });
+      return dateStr >= start && dateStr < exclusiveEnd;
+    });
+
+    const holidayMatches = holidays
+      .filter((holiday) => holiday.date === dateStr)
+      .map((holiday) => ({
+        title: holiday.name,
+        status: holiday.category,
+        classNames: ["company-holiday"],
+        isHoliday: true,
+        description: holiday.description,
+      }));
+
+    return [...leaveMatches, ...holidayMatches];
+  };
 
   useEffect(() => {
     if (!selectedDate) return undefined;
@@ -185,7 +229,24 @@ function LeaveCalendar({ submitedFormData }) {
             </button>
           </div>
 
-          {selectedDate.eventDetails ? (
+          {selectedDate.holidayDetails ? (
+            <div className="event-details">
+              <div className="event-detail-row">
+                <span>Holiday</span>
+                <strong>{selectedDate.holidayDetails.name}</strong>
+              </div>
+              <div className="event-detail-row">
+                <span>Category</span>
+                <strong>{selectedDate.holidayDetails.category}</strong>
+              </div>
+              {selectedDate.holidayDetails.description && (
+                <div className="event-detail-row event-detail-reason">
+                  <span>Details</span>
+                  <strong>{selectedDate.holidayDetails.description}</strong>
+                </div>
+              )}
+            </div>
+          ) : selectedDate.eventDetails ? (
             <div className="event-details">
               <div className="event-detail-row">
                 <span>Leave type</span>
