@@ -15,11 +15,12 @@ function setManagerCookie(res, token) {
     const isProduction = process.env.NODE_ENV === 'production'
 
     res.cookie('token', token, {
-        httpOnly: true,
-        secure: isProduction,
-        sameSite: isProduction ? 'none' : 'lax',
-        maxAge: 1296000000
-    })
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            path: '/',
+            maxAge: 1296000000
+        });
 }
 
 export async function handleManagerSignUp(req, res) {

@@ -9,28 +9,29 @@ const secret_Key = process.env.JWT_SECRET_KEY
 export async function handleUserLogin(req, res) {
     const { email, password, userName } = req.body ?? {}
 
-    const user = await User.findOne({email}) 
-    
-    if(!user) return res.status(401).json({message: 'Invalid email or password'});
+    const user = await User.findOne({ email })
+
+    if (!user) return res.status(401).json({ message: 'Invalid email or password' });
 
     const isMatch = await user.matchPassword(password)
     if (!isMatch) {
-        return res.status(401).json({message: 'Invalid email or password'});
+        return res.status(401).json({ message: 'Invalid email or password' });
     }
-    else{
-        const token = jwt.sign({email, userName},secret_Key,{expiresIn:process.env.JWT_EXPIREIN})
+    else {
+        const token = jwt.sign({ email, userName }, secret_Key, { expiresIn: process.env.JWT_EXPIREIN })
 
         const isProduction = process.env.NODE_ENV === 'production'
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: isProduction,
-            sameSite: isProduction ? 'none' : 'lax', 
+            secure: true,
+            sameSite: 'none',
+            path: '/',
             maxAge: 1296000000
-        })
+        });
         // return res.json({message: 'success',  ema: email, name: userName, jwtToken: token})
-        return res.status(201).json({message: 'success',  ema: email, name: userName, jwtToken: token})   
-        
+        return res.status(201).json({ message: 'success', ema: email, name: userName, jwtToken: token })
+
         // const user = await User.findOne({email});
         // if (user) {
         //     // console.log(user); // Returns full user object
@@ -52,17 +53,18 @@ export async function handleUserSignUp(req, res) {
         await User.create({
             userName, email, password, department, leaveBalance
         });
-        
-        const token = jwt.sign({email, userName},secret_Key,{expiresIn:process.env.JWT_EXPIREIN})
+
+        const token = jwt.sign({ email, userName }, secret_Key, { expiresIn: process.env.JWT_EXPIREIN })
 
         const isProduction = process.env.NODE_ENV === 'production'
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: isProduction,
-            sameSite: isProduction ? 'none' : 'lax', 
+            secure: true,
+            sameSite: 'none',
+            path: '/',
             maxAge: 1296000000
-        })
+        });
         return res.status(201).json({ message: 'success', user: userName, email, department });
     } catch (error) {
         if (error.code === 11000) {
@@ -125,8 +127,9 @@ export async function FireBaseAuthenticaton(req, res) {
 
         res.cookie('token', token, {
             httpOnly: true,
-            secure: isProduction,
-            sameSite: isProduction ? 'none' : 'lax',
+            secure: true,
+            sameSite: 'none',
+            path: '/',
             maxAge: 1296000000
         });
 
@@ -137,7 +140,7 @@ export async function FireBaseAuthenticaton(req, res) {
     }
 }
 
-export async function handlePasswordChange(req, res){
+export async function handlePasswordChange(req, res) {
     const { currentPassword, newPassword, confirmPassword } = req.body ?? {}
 
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -153,7 +156,7 @@ export async function handlePasswordChange(req, res){
 
     try {
         const verified = jwt.verify(token, process.env.JWT_SECRET_KEY);
-        const user = await User.findOne({ email: verified.email }) 
+        const user = await User.findOne({ email: verified.email })
         if (!user) return res.status(401).json({ error: 'User not found' });
 
         const isMatch = await user.matchPassword(currentPassword)

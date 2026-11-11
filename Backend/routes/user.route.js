@@ -32,17 +32,18 @@ userRouter.get('/getleaves', getUserLeaves)
 userRouter.post('/edit-leave', editLeave)
 userRouter.post('/delete-leave', deleteLeave)
 
-// Logout route
 userRouter.post('/logout', (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: true,    // must match what you set during login
-    path: '/',       // must match 
-    // domain: '.yourdomain.com',  // add if you set domain on login
+    secure: true,
+    sameSite: 'none',
+    path: '/'
   });
 
-  res.status(200).json({ message: 'Logged out' });
-});   
+  res.status(200).json({
+    message: 'Logged out successfully'
+  });
+});
 
 userRouter.post('/firebase-exchange', FireBaseAuthenticaton)
 
