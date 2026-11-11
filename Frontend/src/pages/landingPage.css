@@ -269,6 +269,7 @@ body{
     max-width: 1240px;
     margin: 2rem auto 4rem;
     padding: 0 2rem;
+    scroll-margin-top: 90px;
 }
 
 .calendar-header{

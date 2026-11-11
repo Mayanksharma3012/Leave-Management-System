@@ -6,6 +6,7 @@ import { userContext } from './context/userContext.js'
 import './App.css'
 
 import LandingPage from './pages/landingPage'
+import { AboutPage, ContactPage, PricingPage } from './pages/publicPages'
 import Login from './pages/login.jsx'
 import Register from './pages/register'
 // import EmployeeDashboa from './pages/dashboard'
@@ -117,6 +118,9 @@ function App() {
       <userContext.Provider value={{ userData, setLoginRole }}>
         <Routes>
           <Route path='/' element={<LandingPage />} />
+          <Route path='/about' element={<AboutPage />} />
+          <Route path='/pricing' element={<PricingPage />} />
+          <Route path='/contact' element={<ContactPage />} />
           <Route element={<PublicOnlyRoute loginRole={loginRole} setLoginRole={setLoginRole} />}>
             <Route path='/login' element={<Login />} />
             <Route path='/register' element={<Register/>} />

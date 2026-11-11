@@ -1,7 +1,8 @@
 import './landingPage.css'
 import Footer from '../components/footer'
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { PublicNavbar } from './publicPages'
+import { useEffect } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 const calendarCells = [
     { day: '1', status: 'holiday', label: 'Holiday' },
     { day: '2', status: 'approved', label: 'Approved' },
@@ -37,47 +38,20 @@ const calendarCells = [
 ]
 
 function LandingPage() {
-    const [mobileNavOpen, setMobileNavOpen] = useState(false)
+    const location = useLocation()
 
-    const closeMobileNav = () => setMobileNavOpen(false)
+    useEffect(() => {
+        if (location.hash !== '#calendar' && location.hash !== '#hero') return
+
+        document.getElementById(location.hash.slice(1))?.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
+        })
+    }, [location.hash])
 
     return (
         <div data-theme='light'>
-            <header className="landingNavbar">
-                <div className="left">
-                    <div className="logo"></div>
-                    <div className="brand-text">
-                        <h1 className="name">LeaveManager</h1>
-                        <p className="tagline">Smart leave approval for modern teams</p>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    className="landingMenuButton"
-                    aria-label={mobileNavOpen ? 'Close navigation menu' : 'Open navigation menu'}
-                    aria-expanded={mobileNavOpen}
-                    onClick={() => setMobileNavOpen((open) => !open)}
-                >
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-
-                <div className={`right${mobileNavOpen ? ' mobileOpen' : ''}`}>
-                    <nav className="links" aria-label="Primary navigation">
-                        <a href="#hero" onClick={closeMobileNav}>Home</a>
-                        <a href="#calendar" onClick={closeMobileNav}>Calendar</a>
-                        <a href="#about" onClick={closeMobileNav}>About</a>
-                        <a href="#pricing" onClick={closeMobileNav}>Pricing</a>
-                        <a href="#contact" onClick={closeMobileNav}>Contact</a>
-                    </nav>
-                    <div className="sign">
-                        <Link to="/login" className="loginBtn" onClick={closeMobileNav}>Login</Link>
-                        <Link to="/register" className="getStartedBtn" onClick={closeMobileNav}>Get Started</Link>
-                    </div>
-                </div>
-            </header>
+            <PublicNavbar />
 
             <main className="hero-section" id="hero">
                 <section className="hero-copy">
@@ -86,7 +60,7 @@ function LandingPage() {
                     <p>Track requests, approve faster, and keep your team aligned with a clean, modern dashboard built for HR and managers.</p>
                     <div className="hero-buttons">
                         <Link className="btn btn-primary" to='/register'>Get Started</Link>
-                        <button className="btn btn-secondary">See Features</button>
+                        <a className="btn btn-secondary" href="#calendar">See Features</a>
                     </div>
                 </section>
 

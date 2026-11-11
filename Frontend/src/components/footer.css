@@ -64,6 +64,7 @@
     background: rgba(255, 255, 255, 0.1);
     border: 1px solid rgba(255, 255, 255, 0.18);
     color: #F8FAFC;
+    text-decoration: none;
     transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease;
 }
 
@@ -76,4 +77,3 @@
 .Links a i {
     font-size: 1.2rem;
 }
-
