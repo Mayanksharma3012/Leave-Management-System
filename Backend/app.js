@@ -25,7 +25,7 @@ async function startServer() {
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://leave-management-system-mayank3013.vercel.app"
+  "https://leave-management-system-sigma-five.vercel.app/"
 ];
 
 app.use(cors({
