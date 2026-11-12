@@ -29,11 +29,11 @@ The application implements role-based access control to provide separate functio
 
 ### Employee Leaves
 
-![Leave Application](Screenshots/employeeLeaves.jpg)
+![Employee Leaves](Screenshots/employeeLeaves.jpg)
 
 ### Manager Leave Requests
 
-![Leave Calendar](screenshots/managerLeaveRequests.jpg)
+![Leave Requests](Screenshots/managerLeaveRequests.jpg)
 
 ---
 
